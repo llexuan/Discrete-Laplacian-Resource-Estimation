@@ -1,0 +1,21 @@
+=== 1D periodic Laplacian block encoding U_L^(1) (scalable form) ===
+drawn at n = 3 (grid N = 8); <00|_{l0 l1} U_L |00> = L~_p^(1).
+
+registers:
+  q_0 = l0 = block-encoding ancilla
+  q_1 = l1 = block-encoding ancilla
+  q_2.. = system grid register (n = 3)
+
+S^+ / S^- are reversible modular increment / decrement circuits.
+
+     ┌───┐┌───┐              ┌───┐
+q_0: ┤ H ├┤ Z ├──────────■───┤ H ├
+     ├───┤├───┤          │   ├───┤
+q_1: ┤ H ├┤ Z ├───o──────┼───┤ H ├
+     └───┘└───┘┌──┴──┐┌──┴──┐└───┘
+q_2: ──────────┤0    ├┤0    ├─────
+               │     ││     │     
+q_3: ──────────┤1 S- ├┤1 S+ ├─────
+               │     ││     │     
+q_4: ──────────┤2    ├┤2    ├─────
+               └─────┘└─────┘     

@@ -1,0 +1,11 @@
+{
+  "source_json": "phases_inversion.json",
+  "target_function": "matrix_inversion_1_over_x",
+  "degree": 117,
+  "effective_degree": 117,
+  "sequence_mode": "qsvt",
+  "readout": "P(A)=Im(block on |+>_q|0>_a); Q(A)=Re(block)",
+  "block_max_entry_error": 1.4377388168895777e-14,
+  "block_spectral_error": 2.8393953854788385e-14,
+  "poly_scale_returned": 1.0
+}

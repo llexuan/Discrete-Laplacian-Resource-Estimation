@@ -1,0 +1,20 @@
+{
+  "epsilon_target": 0.01,
+  "epsilon_poly_max": 6.661338147750939e-16,
+  "epsilon_phase_max": 2.1094237467877974e-15,
+  "epsilon_block_2": 2.2926105458509483e-14,
+  "epsilon_exec": 0.0,
+  "epsilon_all_max_sum_bound": 2.5701663020072374e-14,
+  "epsilon_all_rss": 2.3032579410422042e-14,
+  "epsilon_e2e_max_direct": 1.9984014443252818e-15,
+  "epsilon_e2e_rms_direct": 6.102072268270461e-16,
+  "passes_threshold_conservative": true,
+  "passes_threshold_rss": true,
+  "passes_threshold_direct": true,
+  "target_function": "cos(x)",
+  "degree": 20,
+  "effective_degree": 20,
+  "num_phases": 21,
+  "phase_metrics_source": "phases_target.json",
+  "block_metrics_source": "block_metrics.json"
+}

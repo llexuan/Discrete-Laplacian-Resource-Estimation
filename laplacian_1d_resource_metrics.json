@@ -1,0 +1,92 @@
+{
+  "scope": "1d_periodic_laplacian_block_encoding_steps_1_2",
+  "verify_n": 3,
+  "target_n": 20,
+  "grid_points_target": 1048576,
+  "verification": {
+    "3": {
+      "increment_max_err": 0.0,
+      "decrement_max_err": 0.0,
+      "wrap_increment_ok": true,
+      "wrap_decrement_ok": true,
+      "block_encoding_err": 7.226480170019933e-16
+    }
+  },
+  "high_level_counts": {
+    "H_gates": 4,
+    "Z_gates": 2,
+    "controlled_S_plus": 1,
+    "controlled_S_minus": 1,
+    "mcx_control_counts_per_shift": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "note": "Each controlled shift is a cascade of C^kX for k = 1..n (k=1 is a CNOT). Two shifts => two such cascades."
+  },
+  "resource_counts_u_cx": {
+    "basis_gates": [
+      "u",
+      "cx"
+    ],
+    "gate_counts": {
+      "u": 474002,
+      "cx": 275710
+    },
+    "total_gates": 749712,
+    "depth": 600873,
+    "num_qubits": 22
+  },
+  "resource_counts_clifford_t": {
+    "basis_gates": [
+      "h",
+      "t",
+      "tdg",
+      "s",
+      "sdg",
+      "x",
+      "z",
+      "cx"
+    ],
+    "gate_counts": {
+      "h": 13697792,
+      "t": 13641716,
+      "s": 7289636,
+      "cx": 275710,
+      "tdg": 108710,
+      "sdg": 66138,
+      "x": 52344,
+      "z": 2
+    },
+    "total_gates": 35132048,
+    "depth": 33772277,
+    "num_qubits": 22,
+    "t_depth": 13171691,
+    "t_count": 13750426,
+    "clifford_gate_count": 21381622
+  },
+  "fault_tolerant_summary": {
+    "logical_qubits": 22,
+    "clifford_gate_count": 21381622,
+    "t_count": 13750426,
+    "total_depth": 33772277,
+    "t_depth": 13171691
+  }
+}

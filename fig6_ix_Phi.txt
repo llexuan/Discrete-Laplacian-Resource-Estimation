@@ -1,0 +1,23 @@
+=== Fig. 6 sequence (qsvt mode) ===
+This is the implemented compact form of the Fig. 6 phase block.
+It is operator-equivalent to the paper's decomposed projector-rotation
+gadget, but the projector rotation is built directly as a 2-qubit unitary.
+
+sequence_form: R(phi_0) W R(phi_1) W ... W R(phi_d)
+  R(phi) = exp(i phi (2|Pi><Pi| - I)),  |Pi> = |+>_q |0>_a
+Representative short segment (first phase + one W):
+     ┌─────────┐┌────┐┌─────────┐
+q_0: ┤0        ├┤0   ├┤0        ├
+     │  R(phi) ││    ││  R(phi) │
+q_1: ┤1        ├┤1 W ├┤1        ├
+     └─────────┘│    │└─────────┘
+q_2: ───────────┤2   ├───────────
+                └────┘           
+
+Full-sequence usage:
+- One R(phi_k) for every QSP phase angle (118 total).
+- One W between neighboring phase rotations (117 total).
+- No W dagger is used in this compact repeated-walk convention.
+Full-sequence usage:
+- Number of phase values: 3
+- Number of W applications: 2

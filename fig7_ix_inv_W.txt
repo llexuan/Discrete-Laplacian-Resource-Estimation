@@ -1,0 +1,27 @@
+=== Fig. 7 walk operator W (current implementation) ===
+This is the signal unitary used by build_qsp_sequence.
+
+registers:
+  q_0 = q = qubitization control
+  q_1 = a = block-encoding ancilla
+  q_2 = s = system qubit
+
+operator_form:
+  W = (U_R \otimes I_s) S U_H'
+  U_H' = |0><0|_q \otimes U_H + |1><1|_q \otimes U_H^dag
+  S = X_q
+  U_R = 2|+_q,0_a><+_q,0_a| - I
+
+circuit_order:
+  1. controlled U_H on q=0 branch and controlled U_H^dag on q=1 branch
+  2. X on q (the shift S)
+  3. decomposed reflector U_R: H_q, X_q, X_a, CZ_qa, X_q, X_a, H_q
+
+Qiskit drawing of W:
+     ┌───┐        ┌───┐         ┌───┐┌───┐┌───┐   ┌───┐┌───┐
+q_0: ┤ X ├───■────┤ X ├────■────┤ X ├┤ H ├┤ X ├─■─┤ X ├┤ H ├
+     └───┘┌──┴───┐└───┘┌───┴───┐├───┤└───┘└───┘ │ ├───┤└───┘
+q_1: ─────┤0     ├─────┤0      ├┤ X ├───────────■─┤ X ├─────
+          │  U_H │     │  U_H† │└───┘             └───┘     
+q_2: ─────┤1     ├─────┤1      ├────────────────────────────
+          └──────┘     └───────┘                            

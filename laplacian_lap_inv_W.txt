@@ -1,0 +1,33 @@
+=== Fig. 7-style qubitization walk W for the periodic Laplacian ===
+Combined walk built from U' plus the operators X_q and U_R.
+
+definition:
+  W = U_R * X_q * U'
+  U' = |0><0|_q ⊗ U_L + |1><1|_q ⊗ U_L^dag
+  U_R = I - 2|Pi><Pi|, |Pi> = |+>_q |0>^(⊗3)
+
+registers:
+  q_0 = q  = qubitization control
+  q_1 = l0 = block-encoding ancilla
+  q_2 = l1 = block-encoding ancilla
+  q_3..q_3 = k selector register (K = 1)
+  remaining 4 qubits = system grid register
+
+Qiskit drawing of W:
+     ┌───┐        ┌───┐         ┌───┐┌──────┐
+q_0: ┤ X ├───■────┤ X ├────■────┤ X ├┤0     ├
+     └───┘┌──┴───┐└───┘┌───┴───┐└───┘│      │
+q_1: ─────┤0     ├─────┤0      ├─────┤1     ├
+          │      │     │       │     │  U_R │
+q_2: ─────┤1     ├─────┤1      ├─────┤2     ├
+          │      │     │       │     │      │
+q_3: ─────┤2     ├─────┤2      ├─────┤3     ├
+          │      │     │       │     └──────┘
+q_4: ─────┤3 U_L ├─────┤3 U_L† ├─────────────
+          │      │     │       │             
+q_5: ─────┤4     ├─────┤4      ├─────────────
+          │      │     │       │             
+q_6: ─────┤5     ├─────┤5      ├─────────────
+          │      │     │       │             
+q_7: ─────┤6     ├─────┤6      ├─────────────
+          └──────┘     └───────┘             

@@ -1,0 +1,38 @@
+{
+  "scope": "3d_periodic_laplacian_block_encoding_unit",
+  "dims": 3,
+  "selector_qubits": 2,
+  "verify_n": 2,
+  "target_n": 4,
+  "prep_tol": 1e-08,
+  "grid_points_target": 4096,
+  "block_encoding_err": 1.0214082101325809e-14,
+  "logical_qubits_pre_decomp": 16,
+  "fault_tolerant_summary": {
+    "logical_qubits": 16,
+    "clifford_gate_count": 285748,
+    "t_count": 187692,
+    "total_depth": 386147,
+    "t_depth": 152590
+  },
+  "n_arbitrary_rotations": 2,
+  "rotation_synthesis": {
+    "model": "ross_selinger ~ 3 log2(1/eps) T per rotation",
+    "prep_tol": 1e-08,
+    "eps_per_rotation": 5e-09,
+    "t_per_rotation": 83,
+    "exact_t": 187526,
+    "synthesized_t": 166,
+    "exact_clifford": 285582
+  },
+  "gate_counts": {
+    "h": 185458,
+    "t": 184888,
+    "s": 92984,
+    "cx": 5660,
+    "tdg": 2638,
+    "sdg": 746,
+    "x": 732,
+    "z": 2
+  }
+}
