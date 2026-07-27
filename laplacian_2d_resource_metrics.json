@@ -8,23 +8,57 @@
   "grid_points_target": 1099511627776,
   "block_encoding_err": 7.803829202758118e-16,
   "logical_qubits_pre_decomp": 43,
+  "controlled_shifts": 4,
+  "mcx_control_counts_per_shift": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
   "fault_tolerant_summary": {
     "logical_qubits": 43,
-    "clifford_gate_count": 95206440,
-    "t_count": 62433667,
-    "total_depth": 134588763,
-    "t_depth": 53132955
+    "clifford_gate_count": 11892,
+    "t_count": 8292,
+    "total_depth": 8457,
+    "t_depth": 3324
   },
   "n_arbitrary_rotations": 0,
   "rotation_synthesis": null,
+  "resource_counts_u_cx": {
+    "basis_gates": [
+      "u",
+      "cx"
+    ],
+    "gate_counts": {
+      "u": 10921,
+      "cx": 5534
+    },
+    "total_gates": 16455,
+    "depth": 9531,
+    "num_qubits": 43
+  },
   "gate_counts": {
-    "h": 62126056,
-    "t": 61825496,
-    "s": 31122948,
-    "cx": 1461390,
-    "tdg": 608171,
-    "sdg": 273504,
-    "x": 222540,
+    "cx": 6294,
+    "t": 4196,
+    "tdg": 4096,
+    "h": 4002,
+    "x": 1594,
     "z": 2
   }
 }

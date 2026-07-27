@@ -3,13 +3,14 @@
   "verify_n": 3,
   "target_n": 20,
   "grid_points_target": 1048576,
+  "mcx_workspace": 2,
   "verification": {
     "3": {
       "increment_max_err": 0.0,
       "decrement_max_err": 0.0,
       "wrap_increment_ok": true,
       "wrap_decrement_ok": true,
-      "block_encoding_err": 7.226480170019933e-16
+      "block_encoding_err": 3.888027195306841e-16
     }
   },
   "high_level_counts": {
@@ -47,12 +48,12 @@
       "cx"
     ],
     "gate_counts": {
-      "u": 474002,
-      "cx": 275710
+      "u": 5006,
+      "cx": 2282
     },
-    "total_gates": 749712,
-    "depth": 600873,
-    "num_qubits": 22
+    "total_gates": 7288,
+    "depth": 3146,
+    "num_qubits": 24
   },
   "resource_counts_clifford_t": {
     "basis_gates": [
@@ -66,27 +67,25 @@
       "cx"
     ],
     "gate_counts": {
-      "h": 13697792,
-      "t": 13641716,
-      "s": 7289636,
-      "cx": 275710,
-      "tdg": 108710,
-      "sdg": 66138,
-      "x": 52344,
+      "cx": 2282,
+      "t": 1520,
+      "tdg": 1482,
+      "h": 1448,
+      "x": 554,
       "z": 2
     },
-    "total_gates": 35132048,
-    "depth": 33772277,
-    "num_qubits": 22,
-    "t_depth": 13171691,
-    "t_count": 13750426,
-    "clifford_gate_count": 21381622
+    "total_gates": 7288,
+    "depth": 3146,
+    "num_qubits": 24,
+    "t_depth": 1242,
+    "t_count": 3002,
+    "clifford_gate_count": 4286
   },
   "fault_tolerant_summary": {
-    "logical_qubits": 22,
-    "clifford_gate_count": 21381622,
-    "t_count": 13750426,
-    "total_depth": 33772277,
-    "t_depth": 13171691
+    "logical_qubits": 24,
+    "clifford_gate_count": 4286,
+    "t_count": 3002,
+    "total_depth": 3146,
+    "t_depth": 1242
   }
 }

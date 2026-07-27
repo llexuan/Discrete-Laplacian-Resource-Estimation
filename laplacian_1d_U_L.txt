@@ -4,9 +4,11 @@ drawn at n = 3 (grid N = 8); <00|_{l0 l1} U_L |00> = L~_p^(1).
 registers:
   q_0 = l0 = block-encoding ancilla
   q_1 = l1 = block-encoding ancilla
-  q_2.. = system grid register (n = 3)
+  q_2..q_4 = system grid register (n = 3)
+  q_5.. = MCX ancilla workspace (2, borrowed and returned to |0>)
 
-S^+ / S^- are reversible modular increment / decrement circuits.
+--- schematic form (shifts as opaque S+/S- boxes) ---
+This is the compact mathematical view of the controlled shifts.
 
      ┌───┐┌───┐              ┌───┐
 q_0: ┤ H ├┤ Z ├──────────■───┤ H ├
@@ -19,3 +21,26 @@ q_3: ──────────┤1 S- ├┤1 S+ ├─────
                │     ││     │     
 q_4: ──────────┤2    ├┤2    ├─────
                └─────┘└─────┘     
+q_5: ─────────────────────────────
+                                  
+q_6: ─────────────────────────────
+                                  
+
+--- counted form (shifts expanded into C^kX cascades) ---
+Each shift contains MCX control counts [1, 2, 3] at n = 3; this is the circuit passed to the transpiler.
+
+     ┌───┐┌───┐                                             ┌───┐
+q_0: ┤ H ├┤ Z ├───────────────────────────■────■─────────■──┤ H ├
+     ├───┤├───┤┌───┐               ┌───┐  │    │  ┌───┐  │  └───┘
+q_1: ┤ H ├┤ Z ├┤ X ├──■────■────■──┤ X ├──┼────┼──┤ H ├──┼───────
+     └───┘└───┘└───┘┌─┴─┐  │    │  └───┘  │    │  └───┘┌─┴─┐     
+q_2: ───────────────┤ X ├──■────■─────────■────■───────┤ X ├─────
+                    └───┘┌─┴─┐  │         │  ┌─┴─┐     └───┘     
+q_3: ────────────────────┤ X ├──■─────────■──┤ X ├───────────────
+                         └───┘┌─┴─┐     ┌─┴─┐└───┘               
+q_4: ─────────────────────────┤ X ├─────┤ X ├────────────────────
+                              └───┘     └───┘                    
+q_5: ────────────────────────────────────────────────────────────
+                                                                 
+q_6: ────────────────────────────────────────────────────────────
+                                                                 

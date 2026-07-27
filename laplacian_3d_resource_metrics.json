@@ -3,17 +3,40 @@
   "dims": 3,
   "selector_qubits": 2,
   "verify_n": 2,
-  "target_n": 4,
+  "target_n": 20,
   "prep_tol": 1e-08,
-  "grid_points_target": 4096,
+  "grid_points_target": 1152921504606846976,
   "block_encoding_err": 1.0214082101325809e-14,
-  "logical_qubits_pre_decomp": 16,
+  "logical_qubits_pre_decomp": 64,
+  "controlled_shifts": 6,
+  "mcx_control_counts_per_shift": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+  ],
   "fault_tolerant_summary": {
-    "logical_qubits": 16,
-    "clifford_gate_count": 285748,
-    "t_count": 187692,
-    "total_depth": 386147,
-    "t_depth": 152590
+    "logical_qubits": 64,
+    "clifford_gate_count": 18486,
+    "t_count": 12909,
+    "total_depth": 12939,
+    "t_depth": 5187
   },
   "n_arbitrary_rotations": 2,
   "rotation_synthesis": {
@@ -21,18 +44,19 @@
     "prep_tol": 1e-08,
     "eps_per_rotation": 5e-09,
     "t_per_rotation": 83,
-    "exact_t": 187526,
+    "exact_t": 12743,
     "synthesized_t": 166,
-    "exact_clifford": 285582
+    "exact_clifford": 18320
   },
+  "resource_counts_u_cx": null,
   "gate_counts": {
-    "h": 185458,
-    "t": 184888,
-    "s": 92984,
-    "cx": 5660,
-    "tdg": 2638,
-    "sdg": 746,
-    "x": 732,
-    "z": 2
+    "cx": 9662,
+    "t": 6442,
+    "tdg": 6301,
+    "h": 6166,
+    "x": 2486,
+    "z": 2,
+    "s": 2,
+    "sdg": 2
   }
 }
