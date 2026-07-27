@@ -104,10 +104,6 @@ def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
         start = 2 + k + d * n
         return list(range(start, start + n))
 
-    # The selector prep is composed in, not appended as one opaque gate: an
-    # opaque custom gate stops the transpiler from tracking which qubits are
-    # free, which pushes every MCX onto the ancilla-free (exponential) synthesis
-    # route instead of borrowing the idle registers.
     prep_sel = build_prep_selector(dims, omit_rotation=exact_bulk)
     unprep_sel = prep_sel.inverse()
 
