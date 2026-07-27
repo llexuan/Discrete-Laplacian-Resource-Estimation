@@ -137,10 +137,7 @@ def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
 
 def build_u_l_nd_schematic(n: int, dims: int) -> QuantumCircuit:
     """
-    Same unitary as build_u_l_nd, drawn with the shifts kept as opaque S+/S-
-    boxes. For visualisation only -- never transpile this, since Qiskit
-    synthesises controlled composite gates through a route that is far more
-    expensive than the explicit cascade used for the real estimate.
+  For visualisation only.
     """
     k = num_k_qubits(dims)
     qc = QuantumCircuit(2 + k + dims * n, name=f"U_L_{dims}D")

@@ -70,10 +70,6 @@ def build_decrement(n: int) -> QuantumCircuit:
 def mcx_control_counts(n: int, ext_controls: int = 1) -> list[int]:
     """
     Control counts of the multi-controlled-X gates inside a CONTROLLED shift.
-
-    The bare cascade holds C^rX for r = 1..n-1 plus a single X on the LSB;
-    `ext_controls` external controls (l0/l1, plus any selector qubits) raise
-    every count by that amount.
     """
     return sorted([r + ext_controls for r in range(1, n)] + [ext_controls])
 
@@ -87,15 +83,6 @@ def apply_controlled_shift(
 ) -> None:
     """
     Append a controlled modular shift S^+ (direction=+1) or S^- (direction=-1).
-
-    The external controls are pushed into every multi-controlled X of the
-    increment cascade instead of wrapping the shift as one composite controlled
-    gate. Both are the same unitary, but Qiskit synthesises a controlled
-    *composite* gate through a generic route whose cost explodes with n, while
-    the explicit cascade stays a plain sequence of C^kX gates.
-
-    `ctrl_state` follows Qiskit's convention: bit i selects the required value
-    of ctrl_qubits[i], and a 0 bit is an open control, realised by an X pair.
     """
     open_ctrls = [
         q for i, q in enumerate(ctrl_qubits) if not (ctrl_state >> i) & 1
@@ -122,17 +109,6 @@ def apply_controlled_shift(
 def build_u_l_1d(n: int, mcx_workspace: int = 2) -> QuantumCircuit:
     """
     block encoding of L~_p^(1) on (l0, l1, j0..j_{n-1}) plus a small workspace.
-
-    Qubit order: 0 = l0, 1 = l1, 2..n+1 = system j, then `mcx_workspace`
-    borrowable ancillas. Valid at any n (including n = 20).
-
-    The workspace carries no data and is returned to |0>, but its presence lets
-    the C^kX cascade use an ancilla-assisted decomposition that is linear in the
-    number of controls instead of the ancilla-free one, whose cost grows
-    exponentially: at n = 20 the two forms differ by 13.75e6 versus 3.0e3 T
-    gates. Two ancillas already reach the linear regime and more do not help.
-    The multidimensional unit gets the same benefit for free, since the idle
-    registers of the other dimensions can be borrowed.
     """
     qc = QuantumCircuit(2 + n + mcx_workspace, name="U_L")
     sysq = list(range(2, 2 + n))
