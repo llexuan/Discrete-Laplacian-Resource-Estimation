@@ -39,8 +39,10 @@ from qiskit.quantum_info import Operator
 
 # Reuse the tested 1D primitives + counting utility.
 from laplacian_1d_resource import (
+    apply_controlled_shift,
     build_decrement,
     build_increment,
+    mcx_control_counts,
     resource_counts,
     shift_matrices,
 )
@@ -102,14 +104,12 @@ def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
         start = 2 + k + d * n
         return list(range(start, start + n))
 
-    prep_sel = build_prep_selector(dims, omit_rotation=exact_bulk).to_gate(
-        label="U_prep_k"
-    )
-    unprep_sel = (
-        build_prep_selector(dims, omit_rotation=exact_bulk)
-        .inverse()
-        .to_gate(label="U_prep_k+")
-    )
+    # The selector prep is composed in, not appended as one opaque gate: an
+    # opaque custom gate stops the transpiler from tracking which qubits are
+    # free, which pushes every MCX onto the ancilla-free (exponential) synthesis
+    # route instead of borrowing the idle registers.
+    prep_sel = build_prep_selector(dims, omit_rotation=exact_bulk)
+    unprep_sel = prep_sel.inverse()
 
     # PREP ancillas: H then Z on each -> |->_{l0} |->_{l1}.
     qc.h(l0)
@@ -118,22 +118,49 @@ def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
     qc.z(l1)
 
     # PREP selector.
-    qc.append(prep_sel, sel)
+    qc.compose(prep_sel, sel, inplace=True)
 
     # SELECT: for each dimension, selector-and-ancilla-controlled shifts.
     for d in range(dims):
-        inc = build_increment(n).to_gate(label="S+")
-        dec = build_decrement(n).to_gate(label="S-")
         # control state bits: bit0 = ancilla, bits 1.. = selector value d.
         cs_minus = d << 1            # l1 = 0 (open) and sel = d
         cs_plus = 1 | (d << 1)       # l0 = 1        and sel = d
-        qc.append(dec.control(1 + k, ctrl_state=cs_minus), [l1] + sel + sys_d(d))
-        qc.append(inc.control(1 + k, ctrl_state=cs_plus), [l0] + sel + sys_d(d))
+        apply_controlled_shift(qc, [l1] + sel, cs_minus, sys_d(d), -1)
+        apply_controlled_shift(qc, [l0] + sel, cs_plus, sys_d(d), +1)
 
     # UNPREP selector, then final Hadamards on the ancillas.
-    qc.append(unprep_sel, sel)
+    qc.compose(unprep_sel, sel, inplace=True)
     qc.h(l0)
     qc.h(l1)
+    return qc
+
+
+def build_u_l_nd_schematic(n: int, dims: int) -> QuantumCircuit:
+    """
+    Same unitary as build_u_l_nd, drawn with the shifts kept as opaque S+/S-
+    boxes. For visualisation only -- never transpile this, since Qiskit
+    synthesises controlled composite gates through a route that is far more
+    expensive than the explicit cascade used for the real estimate.
+    """
+    k = num_k_qubits(dims)
+    qc = QuantumCircuit(2 + k + dims * n, name=f"U_L_{dims}D")
+    sel = list(range(2, 2 + k))
+    qc.h(0)
+    qc.h(1)
+    qc.z(0)
+    qc.z(1)
+    qc.append(build_prep_selector(dims).to_gate(label="U_prep_k"), sel)
+    for d in range(dims):
+        sys_d = list(range(2 + k + d * n, 2 + k + (d + 1) * n))
+        inc = build_increment(n).to_gate(label="S+")
+        dec = build_decrement(n).to_gate(label="S-")
+        qc.append(dec.control(1 + k, ctrl_state=d << 1), [1] + sel + sys_d)
+        qc.append(inc.control(1 + k, ctrl_state=1 | (d << 1)), [0] + sel + sys_d)
+    qc.append(
+        build_prep_selector(dims).inverse().to_gate(label="U_prep_k+"), sel
+    )
+    qc.h(0)
+    qc.h(1)
     return qc
 
 
@@ -193,6 +220,8 @@ def estimate_resources(n: int, dims: int, prep_tol: float) -> dict:
     qc = build_u_l_nd(n, dims)
 
     if dims == 2:
+        # Coarse logical reference: arbitrary one-qubit rotations + CNOT.
+        res_ucx = resource_counts(qc, ["u", "cx"])
         # Everything decomposes exactly into Clifford+T.
         res = resource_counts(qc, CT_BASIS, count_t_depth=True)
         gc = res["gate_counts"]
@@ -205,6 +234,7 @@ def estimate_resources(n: int, dims: int, prep_tol: float) -> dict:
             "total_depth": int(res["depth"]),
             "t_depth": int(res["t_depth"]),
             "gate_counts": gc,
+            "resource_counts_u_cx": res_ucx,
             "n_arbitrary_rotations": 0,
             "rotation_synthesis": None,
         }
@@ -232,6 +262,7 @@ def estimate_resources(n: int, dims: int, prep_tol: float) -> dict:
         "total_depth": int(res["depth"] + synth_t),
         "t_depth": int(res["t_depth"] + synth_t),
         "gate_counts": gc,
+        "resource_counts_u_cx": None,
         "n_arbitrary_rotations": int(n_rot),
         "rotation_synthesis": {
             "model": "ross_selinger ~ 3 log2(1/eps) T per rotation",
@@ -328,9 +359,25 @@ def main() -> None:
     print(f"system qubits           : {dims} x {args.target_n} = {dims * args.target_n}")
     print(f"logical qubits (pre-decomp) : {logical_before}")
 
+    target_ctrl_counts = mcx_control_counts(args.target_n, 1 + k)
+    print(f"controlled shifts       : {2 * dims} (S^+ and S^- per dimension)")
+    print(
+        f"per-shift MCX controls  : C^kX for k in "
+        f"[{target_ctrl_counts[0]}..{target_ctrl_counts[-1]}] "
+        f"(1 ancilla + {k} selector control(s) on every gate)"
+    )
+
+    est = estimate_resources(args.target_n, dims, args.prep_tol)
+    if dims == 2:
+        res_ucx = est["resource_counts_u_cx"]
+        print(f"\n--- decomposed resource counts (n={args.target_n}) ---")
+        print(f"[basis u, cx] total gates : {res_ucx['total_gates']}")
+        print(f"[basis u, cx] gate counts : {res_ucx['gate_counts']}")
+        print(f"[basis u, cx] depth       : {res_ucx['depth']}")
+        print(f"[basis u, cx] qubits      : {res_ucx['num_qubits']}")
+
     # --- fault-tolerant resource estimate at target n. ---
     print(f"\n--- fault-tolerant resource estimate (Clifford+T, n={args.target_n}) ---")
-    est = estimate_resources(args.target_n, dims, args.prep_tol)
     print(f"logical qubits      : {est['logical_qubits']}")
     print(f"Clifford gate count : {est['clifford_gate_count']}")
     print(f"T-count             : {est['t_count']}")
@@ -353,6 +400,8 @@ def main() -> None:
         "grid_points_target": 2 ** (args.target_n * dims),
         "block_encoding_err": be_err,
         "logical_qubits_pre_decomp": logical_before,
+        "controlled_shifts": 2 * dims,
+        "mcx_control_counts_per_shift": target_ctrl_counts,
         "fault_tolerant_summary": {
             "logical_qubits": est["logical_qubits"],
             "clifford_gate_count": est["clifford_gate_count"],
@@ -362,12 +411,12 @@ def main() -> None:
         },
         "n_arbitrary_rotations": est["n_arbitrary_rotations"],
         "rotation_synthesis": est["rotation_synthesis"],
+        "resource_counts_u_cx": est["resource_counts_u_cx"],
         "gate_counts": est["gate_counts"],
     }
     out_path.write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
 
     draw_n = args.verify_n
-    draw_circ = build_u_l_nd(draw_n, dims)
     draw_path = Path(f"laplacian_{args.save_prefix}_{dims}d_U_L.txt")
     draw_text = (
         f"=== {dims}D periodic Laplacian block encoding U_L^({dims}) "
@@ -379,7 +428,12 @@ def main() -> None:
         f"  q_2..q_{2 + k - 1}        = selector (K = {k})\n"
         f"  q_{2 + k}..           = {dims} system registers of n = {draw_n} qubits\n\n"
         "U_prep_k prepares (1/sqrt D) sum_d |d>; shifts are selector-controlled.\n\n"
-        f"{draw_circ.draw(output='text')}\n"
+        "--- schematic form (shifts as opaque S+/S- boxes) ---\n\n"
+        f"{build_u_l_nd_schematic(draw_n, dims).draw(output='text')}\n\n"
+        "--- counted form: each shift is a C^kX cascade carrying the ancilla\n"
+        f"    and the K = {k} selector qubits as extra controls, so k runs over\n"
+        f"    {mcx_control_counts(draw_n, 1 + k)} at n = {draw_n} ---\n\n"
+        f"{build_u_l_nd(draw_n, dims).draw(output='text')}\n"
     )
     draw_path.write_text(draw_text, encoding="utf-8")
 

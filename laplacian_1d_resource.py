@@ -67,28 +67,75 @@ def build_decrement(n: int) -> QuantumCircuit:
     return dec
 
 
-def mcx_control_counts(n: int) -> list[int]:
+def mcx_control_counts(n: int, ext_controls: int = 1) -> list[int]:
     """
-    Control counts of the multi-controlled-X gates inside a CONTROLLED shift
-    (S^+ or S^- with one extra external control l0/l1).
+    Control counts of the multi-controlled-X gates inside a CONTROLLED shift.
+
+    The bare cascade holds C^rX for r = 1..n-1 plus a single X on the LSB;
+    `ext_controls` external controls (l0/l1, plus any selector qubits) raise
+    every count by that amount.
     """
-    return list(range(1, n + 1))
+    return sorted([r + ext_controls for r in range(1, n)] + [ext_controls])
+
+
+def apply_controlled_shift(
+    qc: QuantumCircuit,
+    ctrl_qubits: list[int],
+    ctrl_state: int,
+    sys_qubits: list[int],
+    direction: int,
+) -> None:
+    """
+    Append a controlled modular shift S^+ (direction=+1) or S^- (direction=-1).
+
+    The external controls are pushed into every multi-controlled X of the
+    increment cascade instead of wrapping the shift as one composite controlled
+    gate. Both are the same unitary, but Qiskit synthesises a controlled
+    *composite* gate through a generic route whose cost explodes with n, while
+    the explicit cascade stays a plain sequence of C^kX gates.
+
+    `ctrl_state` follows Qiskit's convention: bit i selects the required value
+    of ctrl_qubits[i], and a 0 bit is an open control, realised by an X pair.
+    """
+    open_ctrls = [
+        q for i, q in enumerate(ctrl_qubits) if not (ctrl_state >> i) & 1
+    ]
+    n = len(sys_qubits)
+    for q in open_ctrls:
+        qc.x(q)
+    # S^- is the reverse of S^+, and every C^kX is its own inverse.
+    if direction < 0:
+        qc.mcx(ctrl_qubits, sys_qubits[0])
+        targets = range(1, n)
+    else:
+        targets = range(n - 1, 0, -1)
+    for target in targets:
+        qc.mcx(ctrl_qubits + sys_qubits[:target], sys_qubits[target])
+    if direction > 0:
+        qc.mcx(ctrl_qubits, sys_qubits[0])
+    for q in open_ctrls:
+        qc.x(q)
 
 
 
 # Step 2: high-level 1D block encoding U_L^(1).
-def build_u_l_1d(n: int) -> QuantumCircuit:
+def build_u_l_1d(n: int, mcx_workspace: int = 2) -> QuantumCircuit:
     """
-    block encoding of L~_p^(1) on (l0, l1, j0..j_{n-1}).
+    block encoding of L~_p^(1) on (l0, l1, j0..j_{n-1}) plus a small workspace.
 
-    Qubit order: 0 = l0, 1 = l1, 2.. = system j. Uses the scalable
-    increment/decrement gates so it is valid at any n (including n = 20).
+    Qubit order: 0 = l0, 1 = l1, 2..n+1 = system j, then `mcx_workspace`
+    borrowable ancillas. Valid at any n (including n = 20).
+
+    The workspace carries no data and is returned to |0>, but its presence lets
+    the C^kX cascade use an ancilla-assisted decomposition that is linear in the
+    number of controls instead of the ancilla-free one, whose cost grows
+    exponentially: at n = 20 the two forms differ by 13.75e6 versus 3.0e3 T
+    gates. Two ancillas already reach the linear regime and more do not help.
+    The multidimensional unit gets the same benefit for free, since the idle
+    registers of the other dimensions can be borrowed.
     """
-    qc = QuantumCircuit(2 + n, name="U_L")
+    qc = QuantumCircuit(2 + n + mcx_workspace, name="U_L")
     sysq = list(range(2, 2 + n))
-
-    inc = build_increment(n).to_gate(label="S+")
-    dec = build_decrement(n).to_gate(label="S-")
 
     # PREP: H then Z on each ancilla -> |->_{l0} |->_{l1}.
     qc.h(0)
@@ -97,10 +144,33 @@ def build_u_l_1d(n: int) -> QuantumCircuit:
     qc.z(1)
 
     # SELECT: S^- fires when l1 = 0 (open control); S^+ fires when l0 = 1.
-    qc.append(dec.control(1, ctrl_state=0), [1] + sysq)
-    qc.append(inc.control(1, ctrl_state=1), [0] + sysq)
+    apply_controlled_shift(qc, [1], 0, sysq, -1)
+    apply_controlled_shift(qc, [0], 1, sysq, +1)
 
     # UNPREP: final Hadamards on the ancilla register.
+    qc.h(0)
+    qc.h(1)
+    return qc
+
+
+def build_u_l_1d_schematic(n: int, mcx_workspace: int = 2) -> QuantumCircuit:
+    """
+    Same unitary as build_u_l_1d, drawn with opaque S+/S- boxes.
+
+    This form is for presentation only. Resource estimation uses build_u_l_1d,
+    whose explicit C^kX cascades expose the shift implementation to Qiskit.
+    """
+    qc = QuantumCircuit(2 + n + mcx_workspace, name="U_L")
+    sysq = list(range(2, 2 + n))
+    inc = build_increment(n).to_gate(label="S+")
+    dec = build_decrement(n).to_gate(label="S-")
+
+    qc.h(0)
+    qc.h(1)
+    qc.z(0)
+    qc.z(1)
+    qc.append(dec.control(1, ctrl_state=0), [1] + sysq)
+    qc.append(inc.control(1, ctrl_state=1), [0] + sysq)
     qc.h(0)
     qc.h(1)
     return qc
@@ -134,15 +204,24 @@ def verify_shifts(n: int) -> dict:
     }
 
 
-def verify_block_encoding(n: int) -> float:
-    """Check <00|_{l0 l1} U_L |00> = L~_p^(1) densely for small n."""
-    u_l_op = Operator(build_u_l_1d(n)).data
+def verify_block_encoding(n: int, mcx_workspace: int = 2) -> float:
+    """
+    Check <00|_{l0 l1} U_L |00> = L~_p^(1) densely for small n.
+
+    The workspace is projected onto |0..0> on both sides, which also confirms
+    that the ancilla-assisted C^kX decompositions hand it back untouched.
+    """
+    u_l_op = Operator(build_u_l_1d(n, mcx_workspace)).data
     lap = scaled_1d_laplacian(n)
     anc0 = np.zeros(4, dtype=complex)
     anc0[0] = 1.0  # |l1=0, l0=0>
-    left = np.kron(np.eye(2**n, dtype=complex), anc0.conj()[None, :])
-    right = np.kron(np.eye(2**n, dtype=complex), anc0[:, None])
-    block = left @ u_l_op @ right
+    ws0 = np.zeros(2**mcx_workspace, dtype=complex)
+    ws0[0] = 1.0
+    # Little-endian qubit order: ancillas lowest, workspace highest.
+    right = np.kron(
+        np.kron(ws0[:, None], np.eye(2**n, dtype=complex)), anc0[:, None]
+    )
+    block = right.conj().T @ u_l_op @ right
     return float(np.max(np.abs(block - lap)))
 
 
@@ -205,6 +284,13 @@ def main() -> None:
         help="Register size for the resource estimate (default 20 ~ 10^6 pts).",
     )
     parser.add_argument(
+        "--mcx-workspace",
+        type=int,
+        default=2,
+        help="Borrowable ancillas for the C^kX cascades (default 2). 0 forces "
+        "the ancilla-free decomposition, whose cost explodes with n.",
+    )
+    parser.add_argument(
         "--save-prefix",
         type=Path,
         default=Path("1d"),
@@ -222,6 +308,8 @@ def main() -> None:
         raise ValueError("--verify-n must be >= 1.")
     if args.target_n < 1:
         raise ValueError("--target-n must be >= 1.")
+    if args.mcx_workspace < 0:
+        raise ValueError("--mcx-workspace must be >= 0.")
 
     print("=== 1D periodic Laplacian block-encoding basic unit (U_L^(1)) ===")
     print("scope            : classical L~_p^(1) + U_L^(1)")
@@ -233,7 +321,7 @@ def main() -> None:
     print("\n--- correctness verification (dense, small n) ---")
     n = args.verify_n
     shifts = verify_shifts(n)
-    be_err = verify_block_encoding(n)
+    be_err = verify_block_encoding(n, args.mcx_workspace)
     verify_report = {n: {**shifts, "block_encoding_err": be_err}}
     print(
         f"n={n}: S+ err={shifts['increment_max_err']:.2e}, "
@@ -249,6 +337,7 @@ def main() -> None:
     print(f"H gates                 : {hlc['H_gates']}")
     print(f"Z gates                 : {hlc['Z_gates']}")
     print(f"controlled S^+ / S^-    : 1 / 1")
+    print(f"MCX ancilla workspace   : {args.mcx_workspace} (borrowable, returned to |0>)")
     print(
         f"per-shift MCX controls  : C^kX for k in "
         f"[{hlc['mcx_control_counts_per_shift'][0]}.."
@@ -257,7 +346,7 @@ def main() -> None:
 
     # --- Decomposed resource counts at target n  ---
     print(f"\n--- decomposed resource counts (n={args.target_n}) ---")
-    u_l_target = build_u_l_1d(args.target_n)
+    u_l_target = build_u_l_1d(args.target_n, args.mcx_workspace)
 
     # Coarse logical reference (arbitrary 1-qubit rotations + CNOT). Fast, but
     # hides non-Clifford cost inside 'u'.
@@ -289,6 +378,7 @@ def main() -> None:
         "verify_n": args.verify_n,
         "target_n": args.target_n,
         "grid_points_target": 2**args.target_n,
+        "mcx_workspace": args.mcx_workspace,
         "verification": {str(k): v for k, v in verify_report.items()},
         "high_level_counts": hlc,
         "resource_counts_u_cx": res_ucx,
@@ -304,7 +394,6 @@ def main() -> None:
     args.output_metrics.write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
 
     draw_n = args.verify_n
-    draw_circ = build_u_l_1d(draw_n)
     draw_path = Path(f"laplacian_{args.save_prefix}_U_L.txt")
     draw_text = (
         "=== 1D periodic Laplacian block encoding U_L^(1) (scalable form) ===\n"
@@ -313,9 +402,16 @@ def main() -> None:
         "registers:\n"
         "  q_0 = l0 = block-encoding ancilla\n"
         "  q_1 = l1 = block-encoding ancilla\n"
-        f"  q_2.. = system grid register (n = {draw_n})\n\n"
-        "S^+ / S^- are reversible modular increment / decrement circuits.\n\n"
-        f"{draw_circ.draw(output='text')}\n"
+        f"  q_2..q_{1 + draw_n} = system grid register (n = {draw_n})\n"
+        f"  q_{2 + draw_n}.. = MCX ancilla workspace "
+        f"({args.mcx_workspace}, borrowed and returned to |0>)\n\n"
+        "--- schematic form (shifts as opaque S+/S- boxes) ---\n"
+        "This is the compact mathematical view of the controlled shifts.\n\n"
+        f"{build_u_l_1d_schematic(draw_n, args.mcx_workspace).draw(output='text')}\n\n"
+        "--- counted form (shifts expanded into C^kX cascades) ---\n"
+        f"Each shift contains MCX control counts {mcx_control_counts(draw_n)} "
+        f"at n = {draw_n}; this is the circuit passed to the transpiler.\n\n"
+        f"{build_u_l_1d(draw_n, args.mcx_workspace).draw(output='text')}\n"
     )
     draw_path.write_text(draw_text, encoding="utf-8")
 
