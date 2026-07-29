@@ -339,9 +339,10 @@ def main() -> None:
     # --- correctness verification (dense, small n). ---
     print("\n--- correctness verification (dense, small n) ---")
     be_err = verify_block_encoding_nd(args.verify_n, dims)
+    precision_label = " [machine precision]" if be_err <= 1e-12 else ""
     print(
         f"n={args.verify_n}: <0..0|U_L^({dims})|0..0> - L~_p^({dims}) "
-        f"max err = {be_err:.2e}"
+        f"max err = {be_err:.2e}{precision_label}"
     )
 
     # --- register / qubit breakdown at target n. ---
