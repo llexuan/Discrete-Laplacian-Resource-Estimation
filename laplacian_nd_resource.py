@@ -35,6 +35,7 @@ import numpy as np
 
 os.environ["MPLCONFIGDIR"] = str(Path(".mplconfig").resolve())
 from qiskit import QuantumCircuit
+from qiskit.circuit.library import ZGate
 from qiskit.quantum_info import Operator
 
 # Reuse the tested 1D primitives + counting utility.
@@ -86,48 +87,100 @@ def count_prep_rotations(dims: int) -> int:
 
 
 # --- Step: high-level D-dimensional block encoding U_L^(D). ------------------
-def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
+def sys_registers(n: int, dims: int, offset: int) -> list[list[int]]:
+    """The D system registers of n qubits each, starting at `offset`."""
+    return [list(range(offset + d * n, offset + (d + 1) * n)) for d in range(dims)]
+
+
+def append_mc_h(qc: QuantumCircuit, controls: list[int], target: int) -> None:
     """
-    Block encoding of L~_p^(D) = 1/(4D) [ sum_d (S_d^+ + S_d^-) - 2D I ].
-
-    exact_bulk=True drops the arbitrary selector-prep rotation (3D) so the
-    circuit is exactly Clifford+T; use it for resource counting only, never for
-    the dense correctness check.
+    Append a multi-controlled Hadamard, C^k H, in exact Clifford+T.
     """
-    k = num_k_qubits(dims)
-    total = 2 + k + dims * n
-    qc = QuantumCircuit(total, name=f"U_L_{dims}D")
-    l0, l1 = 0, 1
-    sel = list(range(2, 2 + k))
+    if not controls:
+        qc.h(target)
+        return
+    # Global phases of the T and Tdg halves cancel, so this is exact.
+    for sign in (+1, -1):
+        if sign < 0:
+            qc.mcx(controls, target)
+        qc.sdg(target)
+        qc.h(target)
+        qc.t(target) if sign > 0 else qc.tdg(target)
+        qc.h(target)
+        qc.s(target)
 
-    def sys_d(d: int) -> list[int]:
-        start = 2 + k + d * n
-        return list(range(start, start + n))
 
-    prep_sel = build_prep_selector(dims, omit_rotation=exact_bulk)
-    unprep_sel = prep_sel.inverse()
+def apply_u_l_nd(
+    qc: QuantumCircuit,
+    n: int,
+    dims: int,
+    anc: list[int],
+    sel: list[int],
+    sys_regs: list[list[int]],
+    extra_controls: list[int] = (),
+    omit_rotation: bool = False,
+) -> None:
+    """
+    Append U_L^(D) onto `qc` at the given qubit positions.
+    """
+    l0, l1 = anc
+    ec = list(extra_controls)
+    k = len(sel)
+    # Every extra control is closed, so its ctrl_state bits are all 1. They sit
+    # above the ancilla bit (1) and the selector bits (k).
+    ec_state = ((1 << len(ec)) - 1) << (1 + k)
+
+    def add_prep(prep: QuantumCircuit) -> None:
+        for instr in prep.data:
+            qc.append(
+                instr.operation,
+                [sel[prep.find_bit(b).index] for b in instr.qubits],
+            )
+
+    prep_sel = build_prep_selector(dims, omit_rotation=omit_rotation)
 
     # PREP ancillas: H then Z on each -> |->_{l0} |->_{l1}.
-    qc.h(l0)
-    qc.h(l1)
-    qc.z(l0)
-    qc.z(l1)
+    append_mc_h(qc, ec, l0)
+    append_mc_h(qc, ec, l1)
+    if ec:
+        qc.append(ZGate().control(len(ec)), ec + [l0])
+        qc.append(ZGate().control(len(ec)), ec + [l1])
+    else:
+        qc.z(l0)
+        qc.z(l1)
 
     # PREP selector.
-    qc.compose(prep_sel, sel, inplace=True)
+    add_prep(prep_sel)
 
     # SELECT: for each dimension, selector-and-ancilla-controlled shifts.
     for d in range(dims):
-        # control state bits: bit0 = ancilla, bits 1.. = selector value d.
-        cs_minus = d << 1            # l1 = 0 (open) and sel = d
-        cs_plus = 1 | (d << 1)       # l0 = 1        and sel = d
-        apply_controlled_shift(qc, [l1] + sel, cs_minus, sys_d(d), -1)
-        apply_controlled_shift(qc, [l0] + sel, cs_plus, sys_d(d), +1)
+        # control state bits: bit0 = ancilla, bits 1..k = selector value d.
+        cs_minus = (d << 1) | ec_state           # l1 = 0 (open) and sel = d
+        cs_plus = 1 | (d << 1) | ec_state        # l0 = 1        and sel = d
+        apply_controlled_shift(qc, [l1] + sel + ec, cs_minus, sys_regs[d], -1)
+        apply_controlled_shift(qc, [l0] + sel + ec, cs_plus, sys_regs[d], +1)
 
     # UNPREP selector, then final Hadamards on the ancillas.
-    qc.compose(unprep_sel, sel, inplace=True)
-    qc.h(l0)
-    qc.h(l1)
+    add_prep(prep_sel.inverse())
+    append_mc_h(qc, ec, l0)
+    append_mc_h(qc, ec, l1)
+
+
+def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
+    """
+    Block encoding of L~_p^(D) = 1/(4D) [ sum_d (S_d^+ + S_d^-) - 2D I ].
+    """
+    k = num_k_qubits(dims)
+    qc = QuantumCircuit(2 + k + dims * n, name=f"U_L_{dims}D")
+    apply_u_l_nd(
+        qc,
+        n,
+        dims,
+        anc=[0, 1],
+        sel=list(range(2, 2 + k)),
+        sys_regs=sys_registers(n, dims, 2 + k),
+        omit_rotation=exact_bulk,
+    )
     return qc
 
 

@@ -1,0 +1,97 @@
+{
+  "scope": "3d_periodic_laplacian_qubitization_walk_operator",
+  "definition": "W = U_R . X_q . U'",
+  "dims": 3,
+  "selector_qubits": 2,
+  "signal_ancillas_m": 4,
+  "verify_n": 2,
+  "target_n": 20,
+  "prep_tol": 1e-08,
+  "verification": {
+    "reflection_err": 3.3341173221255336e-15,
+    "u_prime_err": 6.417102655358922e-14,
+    "unitarity_err": 2.0250467969162855e-13,
+    "signal_block_err": 5.057083864798153e-14
+  },
+  "logical_qubits_pre_decomp": 65,
+  "controlled_shifts": 12,
+  "mcx_control_counts_per_shift": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "fault_tolerant_summary": {
+    "logical_qubits": 65,
+    "clifford_gate_count": 53451,
+    "t_count": 37073,
+    "total_depth": 35670,
+    "t_depth": 14175
+  },
+  "n_arbitrary_rotations": 4,
+  "rotation_synthesis": {
+    "model": "ross_selinger ~ 3 log2(1/eps) T per rotation",
+    "prep_tol": 1e-08,
+    "eps_per_rotation": 2.5e-09,
+    "t_per_rotation": 86,
+    "exact_t": 36729,
+    "synthesized_t": 344,
+    "exact_clifford": 53107
+  },
+  "resource_counts_u_cx": null,
+  "reflection_counts": {
+    "basis_gates": [
+      "h",
+      "t",
+      "tdg",
+      "s",
+      "sdg",
+      "x",
+      "z",
+      "cx"
+    ],
+    "gate_counts": {
+      "cx": 18,
+      "h": 14,
+      "x": 12,
+      "t": 12,
+      "tdg": 11
+    },
+    "total_gates": 67,
+    "depth": 44,
+    "num_qubits": 65,
+    "t_depth": 18
+  },
+  "gate_counts": {
+    "cx": 27832,
+    "t": 18556,
+    "tdg": 18173,
+    "h": 17830,
+    "x": 7405,
+    "sdg": 20,
+    "s": 20
+  },
+  "u_l_baseline": {
+    "logical_qubits": 64,
+    "clifford_gate_count": 18486,
+    "t_count": 12909,
+    "total_depth": 12939,
+    "t_depth": 5187
+  }
+}

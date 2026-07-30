@@ -1,0 +1,101 @@
+{
+  "scope": "2d_periodic_laplacian_qubitization_walk_operator",
+  "definition": "W = U_R . X_q . U'",
+  "dims": 2,
+  "selector_qubits": 1,
+  "signal_ancillas_m": 3,
+  "verify_n": 2,
+  "target_n": 20,
+  "prep_tol": null,
+  "verification": {
+    "reflection_err": 4.44522679167363e-16,
+    "u_prime_err": 1.4766410160768233e-14,
+    "unitarity_err": 6.283862319378386e-14,
+    "signal_block_err": 1.5877843319260646e-14
+  },
+  "logical_qubits_pre_decomp": 44,
+  "controlled_shifts": 8,
+  "mcx_control_counts_per_shift": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+  ],
+  "fault_tolerant_summary": {
+    "logical_qubits": 44,
+    "clifford_gate_count": 33259,
+    "t_count": 23057,
+    "total_depth": 22713,
+    "t_depth": 8894
+  },
+  "n_arbitrary_rotations": 0,
+  "rotation_synthesis": null,
+  "resource_counts_u_cx": {
+    "basis_gates": [
+      "u",
+      "cx"
+    ],
+    "gate_counts": {
+      "u": 23588,
+      "cx": 13590
+    },
+    "total_gates": 37178,
+    "depth": 27922,
+    "num_qubits": 44
+  },
+  "reflection_counts": {
+    "basis_gates": [
+      "h",
+      "t",
+      "tdg",
+      "s",
+      "sdg",
+      "x",
+      "z",
+      "cx"
+    ],
+    "gate_counts": {
+      "cx": 12,
+      "h": 10,
+      "x": 8,
+      "t": 8,
+      "tdg": 7
+    },
+    "total_gates": 45,
+    "depth": 26,
+    "num_qubits": 44,
+    "t_depth": 11
+  },
+  "gate_counts": {
+    "cx": 17490,
+    "t": 11660,
+    "tdg": 11397,
+    "h": 11174,
+    "x": 4563,
+    "sdg": 16,
+    "s": 16
+  },
+  "u_l_baseline": {
+    "logical_qubits": 43,
+    "clifford_gate_count": 11892,
+    "t_count": 8292,
+    "total_depth": 8457,
+    "t_depth": 3324
+  }
+}
