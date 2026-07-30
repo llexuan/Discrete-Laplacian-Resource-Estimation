@@ -203,14 +203,6 @@ def verify_w_signal_block(n: int, dims: int) -> tuple[float, float]:
 
 # --- resource estimation (target n, no dense math) --------------------------
 def count_w_rotations(dims: int) -> int:
-    """
-    Arbitrary single-qubit rotations in W (3D selector amplitude prep only).
-
-    The selector PREP/UNPREP are left uncontrolled inside controlled-U_L (they
-    sandwich the controlled shifts and cancel on the q = 0 branch), so each Ry
-    stays a bare rotation rather than becoming a controlled pair: 2 per U_L,
-    and W contains both U_L and U_L^dag.
-    """
     return 4 * count_prep_rotations(dims)
 
 

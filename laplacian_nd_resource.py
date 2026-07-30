@@ -436,7 +436,7 @@ def main() -> None:
               f"(eps/rot = {rs['eps_per_rotation']:.2e}, "
               f"{rs['t_per_rotation']} T/rot)")
 
-    # --- persist metrics + a small-n circuit drawing. ---
+    # --- persist metrics + the target-n circuit drawing. ---
     metrics = {
         "scope": f"{dims}d_periodic_laplacian_block_encoding_unit",
         "dims": dims,
@@ -463,7 +463,10 @@ def main() -> None:
     }
     out_path.write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
 
-    draw_n = args.verify_n
+    # Draw the same circuit size used for resource estimation. Verification
+    # remains at verify_n because dense matrix construction only scales to
+    # small n, but the ASCII circuit should visibly follow --target-n.
+    draw_n = args.target_n
     draw_path = Path(f"laplacian_{args.save_prefix}_{dims}d_U_L.txt")
     draw_text = (
         f"=== {dims}D periodic Laplacian block encoding U_L^({dims}) "
@@ -484,7 +487,10 @@ def main() -> None:
     )
     draw_path.write_text(draw_text, encoding="utf-8")
 
-    print("\nSaved:", out_path, "and", draw_path)
+    print(
+        f"\nSaved: {out_path} and {draw_path} "
+        f"(circuit drawing uses target n = {draw_n})"
+    )
 
 
 if __name__ == "__main__":
