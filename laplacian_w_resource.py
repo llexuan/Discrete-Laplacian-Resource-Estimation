@@ -15,14 +15,6 @@ laplacian_nd_resource.py, and the signal property that makes W useful is
 
 which is what the dense check at small n confirms here.
 
-W is NOT costed by rescaling the U_L numbers. The qubitization control q is an
-extra control on essentially every gate inside U_L, which changes the synthesis
-cost of each one (C^kX becomes C^{k+1}X), so U' is built explicitly: the control
-is distributed over the individual gates via apply_u_l_nd(extra_controls=[q]),
-and U_L^dag is the gate-by-gate inverse of that same explicit circuit. U_R is
-likewise a real gate sequence (H . X^(x) . MCZ . X^(x) . H), not a dense
-UnitaryGate, so it can be transpiled and counted at n = 20.
-
 Usage:
   python laplacian_w_resource.py --dims 2
   python laplacian_w_resource.py --dims 3 --prep-tol 1e-8
@@ -55,7 +47,6 @@ from laplacian_nd_resource import (
     sys_registers,
 )
 
-
 # --- register layout ---------------------------------------------------------
 def w_layout(n: int, dims: int) -> dict:
     """
@@ -65,9 +56,6 @@ def w_layout(n: int, dims: int) -> dict:
       l0 = 1, l1 = 2            block-encoding ancillas
       sel= 3 .. 3+K-1           dimension selector
       sys= 3+K ..               D system registers of n qubits each
-
-    The m = 2 + K ancillas that define |Pi> are contiguous right after q, so the
-    reflection acts on the low 1 + m qubits.
     """
     k = num_k_qubits(dims)
     return {
@@ -120,11 +108,6 @@ def build_u_prime(n: int, dims: int, omit_rotation: bool = False) -> QuantumCirc
 def build_reflection_circuit(m: int) -> QuantumCircuit:
     """
     U_R = I - 2|Pi><Pi| on q plus the m block-encoding/selector ancillas.
-
-    Basis-change route: H_q maps |+>_q -> |0>_q, so |Pi> becomes |0...0>; a layer
-    of X turns that into |1...1>; a multi-controlled Z (H . MCX . H on the last
-    qubit) puts -1 on exactly that state; then undo. Every factor is Clifford or
-    a plain MCX, so this is exactly Clifford+T at any m.
     """
     qc = QuantumCircuit(1 + m, name="U_R")
     allq = list(range(1 + m))
@@ -206,10 +189,6 @@ def verify_u_prime(n: int, dims: int) -> float:
 def verify_w_signal_block(n: int, dims: int) -> tuple[float, float]:
     """
     Check the qubitization signal property <Pi| W |Pi> = -L~_p^(D).
-
-    Since U_R kills |Pi> with a minus sign, the projected block picks up the
-    Hermitian average (L~ + L~^dag)/2 = L~ of the two U' branches, negated.
-    Also returns the deviation of W from unitarity.
     """
     w = Operator(build_w_operator(n, dims)).data
     m = 2 + num_k_qubits(dims)
