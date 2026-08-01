@@ -18,6 +18,7 @@ which is what the dense check at small n confirms here.
 Usage:
   python laplacian_w_resource.py --dims 2
   python laplacian_w_resource.py --dims 3 --prep-tol 1e-8
+  python laplacian_w_resource.py --dims 2 --target-n 4
 """
 
 from __future__ import annotations
