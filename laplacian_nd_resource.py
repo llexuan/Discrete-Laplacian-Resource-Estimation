@@ -14,7 +14,7 @@ It adds, on top of the 1D unit:
 2D:  U_prep_k is a single Hadamard (exactly Clifford), so the whole unit is
      exactly Clifford+T.
 3D:  |sel> = (|00>+|01>+|10>)/sqrt3 needs one arbitrary Ry rotation, which is
-     NOT exactly Clifford+T.  Its T-cost is estimated from --prep-tol using the
+     NOT exactly Clifford+T. Its T-cost is estimated from --prep-tol using the
      Ross-Selinger single-qubit synthesis scaling (~ 3 log2(1/eps) T gates).
 
 Usage:
@@ -257,6 +257,8 @@ def ross_selinger_t_count(eps: float) -> int:
     Ross-Selinger single-qubit z-rotation synthesis scaling: the T-count to
     approximate an arbitrary rotation to accuracy eps is ~ 3 log2(1/eps).
     """
+    if not 0.0 < eps < 1.0:
+        raise ValueError("Rotation tolerance must satisfy 0 < eps < 1.")
     return int(math.ceil(3.0 * math.log2(1.0 / eps)))
 
 
@@ -296,7 +298,7 @@ def estimate_resources(n: int, dims: int, prep_tol: float) -> dict:
 
     n_rot = 2 * count_prep_rotations(dims)  # prep + inverse unprep
     eps_per = prep_tol / max(n_rot, 1)
-    t_per = ross_selinger_t_count(eps_per) if n_rot else 0
+    t_per = ross_selinger_t_count(eps_per)
     synth_t = n_rot * t_per
     # Synthesized sequences interleave T's with Clifford gates (~1:1).
     synth_clifford = synth_t
@@ -370,8 +372,8 @@ def main() -> None:
         raise ValueError("--verify-n must be >= 1.")
     if args.target_n < 1:
         raise ValueError("--target-n must be >= 1.")
-    if args.prep_tol <= 0:
-        raise ValueError("--prep-tol must be > 0.")
+    if not 0.0 < args.prep_tol < 1.0:
+        raise ValueError("--prep-tol must satisfy 0 < tolerance < 1.")
 
     dims = args.dims
     k = num_k_qubits(dims)

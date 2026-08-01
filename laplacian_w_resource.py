@@ -235,7 +235,7 @@ def estimate_w_resources(n: int, dims: int, prep_tol: float) -> dict:
     eps_per = prep_tol / max(n_rot, 1)
     t_per = ross_selinger_t_count(eps_per) if n_rot else 0
     synth_t = n_rot * t_per
-    # Synthesised sequences interleave T's with Clifford gates (~1:1).
+    # Synthesized sequences interleave T's with Clifford gates (~1:1).
     synth_clifford = synth_t
 
     out = {
@@ -296,8 +296,8 @@ def main() -> None:
 
     if args.verify_n < 1 or args.target_n < 1:
         raise ValueError("--verify-n and --target-n must be >= 1.")
-    if args.prep_tol <= 0:
-        raise ValueError("--prep-tol must be > 0.")
+    if not 0.0 < args.prep_tol < 1.0:
+        raise ValueError("--prep-tol must satisfy 0 < tolerance < 1.")
 
     dims, n_t = args.dims, args.target_n
     lay = w_layout(n_t, dims)
