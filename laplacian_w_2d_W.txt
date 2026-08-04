@@ -30,7 +30,7 @@ q_7: ┤6     ├┤6      ├─────────────
      └──────┘└───────┘             
 
 --- counted form (every gate carries the q control explicitly) ---
-Each shift is a cascade with MCX control counts [3, 4] at n = 2 (the estimate at n = 4 uses [3, 4, 5, 6]); this is the form passed to the transpiler.
+Each shift is a cascade with MCX control counts [3, 4] at n = 2 (the estimate at n = 2 uses [3, 4]); this is the form passed to the transpiler.
 
       ┌───┐                                                                                  »
 q_0: ─┤ X ├───────────────────────■───────────■──────────────────────────────■───■────────■──»

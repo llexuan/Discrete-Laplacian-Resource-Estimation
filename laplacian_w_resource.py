@@ -41,7 +41,6 @@ from laplacian_nd_resource import (
     apply_u_l_nd,
     build_u_l_nd,
     count_prep_rotations,
-    estimate_resources,
     num_k_qubits,
     ross_selinger_t_count,
     scaled_nd_laplacian,
@@ -167,7 +166,6 @@ def signal_state(m: int) -> np.ndarray:
         vec = np.kron(ket0, vec)
     return vec
 
-
 def verify_reflection(m: int) -> float:
     """Check the gate sequence for U_R against the dense I - 2|Pi><Pi|."""
     sig = signal_state(m)
@@ -181,7 +179,6 @@ def verify_u_prime(n: int, dims: int) -> float:
     u_l = Operator(build_u_l_nd(n, dims)).data
     p0 = np.array([[1.0, 0.0], [0.0, 0.0]], dtype=complex)
     p1 = np.array([[0.0, 0.0], [0.0, 1.0]], dtype=complex)
-    # q is qubit 0, i.e. the last (fastest) factor in the MSB-first kron.
     target = np.kron(u_l, p0) + np.kron(u_l.conj().T, p1)
     got = Operator(build_u_prime(n, dims)).data
     return float(np.max(np.abs(got - target)))
@@ -210,10 +207,6 @@ def count_w_rotations(dims: int) -> int:
 def in_w_register(sub: QuantumCircuit, qubits: list[int], n: int, dims: int) -> QuantumCircuit:
     """
     Embed a component of W into the full W register, leaving the rest idle.
-
-    Costing a component standalone is misleading: its multi-controlled X gates
-    would find no free qubit to borrow and fall back on the expensive ancilla-free
-    synthesis. Padding to the real register reproduces the cost it has inside W.
     """
     lay = w_layout(n, dims)
     qc = QuantumCircuit(lay["total"], name=sub.name)
@@ -289,8 +282,6 @@ def main() -> None:
                         help="Per-dimension register size for the resource estimate.")
     parser.add_argument("--prep-tol", type=float, default=1e-8,
                         help="3D selector-preparation synthesis tolerance.")
-    parser.add_argument("--skip-ul-baseline", action="store_true",
-                        help="Skip the U_L^(D) reference estimate (saves one transpile).")
     parser.add_argument("--output-metrics", type=Path, default=None,
                         help="Where to write metrics JSON.")
     args = parser.parse_args()
@@ -373,21 +364,6 @@ def main() -> None:
     print(f"T-count / Clifford / depth : "
           f"{ref_t} / {ref['total_gates'] - ref_t} / {ref['depth']}")
 
-    ul_est = None
-    if not args.skip_ul_baseline:
-        ul_est = estimate_resources(n_t, dims, args.prep_tol)
-        print(f"\n--- U_L^({dims}) baseline vs W (Clifford+T, n={n_t}) ---")
-        print(f"{'metric':<20}{'U_L':>14}{'W':>14}{'ratio':>9}")
-        for key, name in (
-            ("logical_qubits", "logical qubits"),
-            ("clifford_gate_count", "Clifford count"),
-            ("t_count", "T-count"),
-            ("total_depth", "total depth"),
-            ("t_depth", "T-depth"),
-        ):
-            a, b = ul_est[key], est[key]
-            print(f"{name:<20}{a:>14}{b:>14}{b / a:>9.2f}")
-
     # --- persist metrics + a small-n circuit drawing. ---
     metrics = {
         "scope": f"{dims}d_periodic_laplacian_qubitization_walk_operator",
@@ -419,21 +395,12 @@ def main() -> None:
         "resource_counts_u_cx": est["resource_counts_u_cx"],
         "reflection_counts": est["reflection"],
         "gate_counts": est["gate_counts"],
-        "u_l_baseline": (
-            None
-            if ul_est is None
-            else {
-                "logical_qubits": ul_est["logical_qubits"],
-                "clifford_gate_count": ul_est["clifford_gate_count"],
-                "t_count": ul_est["t_count"],
-                "total_depth": ul_est["total_depth"],
-                "t_depth": ul_est["t_depth"],
-            }
-        ),
     }
     out_path.write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
 
-    draw_n = args.verify_n
+    # Draw the same circuit size used for resource estimation. Dense
+    # verification remains at verify_n because it only scales to small n.
+    draw_n = args.target_n
     draw_lay = w_layout(draw_n, dims)
     draw_path = Path(f"laplacian_w_{dims}d_W.txt")
     sel_lo, sel_hi = draw_lay["sel"][0], draw_lay["sel"][-1]

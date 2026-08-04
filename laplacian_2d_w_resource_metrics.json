@@ -5,7 +5,7 @@
   "selector_qubits": 1,
   "signal_ancillas_m": 3,
   "verify_n": 2,
-  "target_n": 4,
+  "target_n": 2,
   "prep_tol": null,
   "verification": {
     "reflection_err": 4.44522679167363e-16,
@@ -13,20 +13,18 @@
     "unitarity_err": 6.283862319378386e-14,
     "signal_block_err": 1.5877843319260646e-14
   },
-  "logical_qubits_pre_decomp": 12,
+  "logical_qubits_pre_decomp": 8,
   "controlled_shifts": 8,
   "mcx_control_counts_per_shift": [
     3,
-    4,
-    5,
-    6
+    4
   ],
   "fault_tolerant_summary": {
-    "logical_qubits": 12,
-    "clifford_gate_count": 1833,
-    "t_count": 1313,
-    "total_depth": 2219,
-    "t_depth": 878
+    "logical_qubits": 8,
+    "clifford_gate_count": 689,
+    "t_count": 467,
+    "total_depth": 827,
+    "t_depth": 318
   },
   "n_arbitrary_rotations": 0,
   "rotation_synthesis": null,
@@ -36,12 +34,12 @@
       "cx"
     ],
     "gate_counts": {
-      "u": 1538,
-      "cx": 870
+      "u": 610,
+      "cx": 324
     },
-    "total_gates": 2408,
-    "depth": 1894,
-    "num_qubits": 12
+    "total_gates": 934,
+    "depth": 700,
+    "num_qubits": 8
   },
   "reflection_counts": {
     "basis_gates": [
@@ -63,23 +61,16 @@
     },
     "total_gates": 45,
     "depth": 26,
-    "num_qubits": 12,
+    "num_qubits": 8,
     "t_depth": 11
   },
   "gate_counts": {
-    "cx": 1026,
-    "t": 684,
-    "tdg": 629,
-    "h": 614,
-    "x": 161,
+    "cx": 372,
+    "t": 248,
+    "h": 230,
+    "tdg": 219,
+    "x": 55,
     "sdg": 16,
     "s": 16
-  },
-  "u_l_baseline": {
-    "logical_qubits": 11,
-    "clifford_gate_count": 500,
-    "t_count": 372,
-    "total_depth": 625,
-    "t_depth": 250
   }
 }
