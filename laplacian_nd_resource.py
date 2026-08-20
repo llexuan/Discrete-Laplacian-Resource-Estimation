@@ -13,9 +13,8 @@ It adds, on top of the 1D unit:
 
 2D:  U_prep_k is a single Hadamard (exactly Clifford), so the whole unit is
      exactly Clifford+T.
-3D:  |sel> = (|00>+|01>+|10>)/sqrt3 needs one arbitrary Ry rotation, which is
-     NOT exactly Clifford+T. Its T-cost is estimated from --prep-tol using the
-     Ross-Selinger single-qubit synthesis scaling (~ 3 log2(1/eps) T gates).
+3D:  |sel> = (|00>+|01>+|10>)/sqrt3 needs one arbitrary Ry rotation. pyLIQTR
+     explicitly approximates it with a Clifford+T sequence at --prep-tol.
 
 Usage:
   python laplacian_nd_resource.py --dims 2                 # verify n=2, target n=20
@@ -47,6 +46,7 @@ from laplacian_1d_resource import (
     resource_counts,
     shift_matrices,
 )
+from rotation_synthesis import RotationSynthesis, synthesize_ry
 
 
 CT_BASIS = ["h", "t", "tdg", "s", "sdg", "x", "z", "cx"]
@@ -58,17 +58,36 @@ def num_k_qubits(dims: int) -> int:
     return max(1, math.ceil(math.log2(dims)))
 
 
-def build_prep_selector(dims: int, omit_rotation: bool = False) -> QuantumCircuit:
+def selector_rotation_angle_3d() -> float:
+    """Ry angle that splits selector probability as 2/3 : 1/3."""
+    return 2.0 * math.acos(math.sqrt(2.0 / 3.0))
+
+
+def build_prep_selector(
+    dims: int,
+    omit_rotation: bool = False,
+    synthesis_eps: float | None = None,
+) -> QuantumCircuit:
     """
     Prepare |sel> = (1/sqrt D) sum_{d=0}^{D-1} |d> on K selector qubits.
+
+    ``synthesis_eps`` replaces the native 3D Ry with pyLIQTR's explicit
+    Clifford+T approximation. ``omit_rotation`` is retained only for counting
+    the exactly decomposable bulk separately.
     """
+    if omit_rotation and synthesis_eps is not None:
+        raise ValueError("Cannot both omit and synthesize the selector rotation.")
+
     k = num_k_qubits(dims)
     prep = QuantumCircuit(k, name="U_prep_k")
     if dims == 2:
         prep.h(0)
     elif dims == 3:
-        theta1 = 2.0 * math.acos(math.sqrt(2.0 / 3.0))
-        if not omit_rotation:
+        theta1 = selector_rotation_angle_3d()
+        if synthesis_eps is not None:
+            synthesized = synthesize_ry(theta1, synthesis_eps)
+            prep.compose(synthesized.circuit, qubits=[1], inplace=True)
+        elif not omit_rotation:
             prep.ry(theta1, 1)           # split amplitude 2/3 : 1/3 on sel1
         prep.ch(1, 0, ctrl_state=0)      # equalize |0>,|1> of sel0 when sel1=0
     else:
@@ -119,6 +138,7 @@ def apply_u_l_nd(
     sys_regs: list[list[int]],
     extra_controls: list[int] = (),
     omit_rotation: bool = False,
+    synthesis_eps: float | None = None,
 ) -> None:
     """
     Append U_L^(D) onto `qc` at the given qubit positions.
@@ -131,13 +151,18 @@ def apply_u_l_nd(
     ec_state = ((1 << len(ec)) - 1) << (1 + k)
 
     def add_prep(prep: QuantumCircuit) -> None:
+        qc.global_phase += prep.global_phase
         for instr in prep.data:
             qc.append(
                 instr.operation,
                 [sel[prep.find_bit(b).index] for b in instr.qubits],
             )
 
-    prep_sel = build_prep_selector(dims, omit_rotation=omit_rotation)
+    prep_sel = build_prep_selector(
+        dims,
+        omit_rotation=omit_rotation,
+        synthesis_eps=synthesis_eps,
+    )
 
     # PREP ancillas: H then Z on each -> |->_{l0} |->_{l1}.
     append_mc_h(qc, ec, l0)
@@ -166,7 +191,12 @@ def apply_u_l_nd(
     append_mc_h(qc, ec, l1)
 
 
-def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
+def build_u_l_nd(
+    n: int,
+    dims: int,
+    exact_bulk: bool = False,
+    synthesis_eps: float | None = None,
+) -> QuantumCircuit:
     """
     Block encoding of L~_p^(D) = 1/(4D) [ sum_d (S_d^+ + S_d^-) - 2D I ].
     """
@@ -180,6 +210,7 @@ def build_u_l_nd(n: int, dims: int, exact_bulk: bool = False) -> QuantumCircuit:
         sel=list(range(2, 2 + k)),
         sys_regs=sys_registers(n, dims, 2 + k),
         omit_rotation=exact_bulk,
+        synthesis_eps=synthesis_eps,
     )
     return qc
 
@@ -233,9 +264,11 @@ def scaled_nd_laplacian(n: int, dims: int) -> np.ndarray:
     return lap / (4.0 * dims)
 
 
-def verify_block_encoding_nd(n: int, dims: int) -> float:
+def verify_block_encoding_nd(
+    n: int, dims: int, synthesis_eps: float | None = None
+) -> float:
     """Check <0..0|_{l,sel} U_L^(D) |0..0>_{l,sel} = L~_p^(D) densely."""
-    u_op = Operator(build_u_l_nd(n, dims)).data
+    u_op = Operator(build_u_l_nd(n, dims, synthesis_eps=synthesis_eps)).data
     k = num_k_qubits(dims)
     low = k + 2  # ancilla + selector qubits are the low-order bits
     dim_total = (2**n) ** dims
@@ -245,29 +278,52 @@ def verify_block_encoding_nd(n: int, dims: int) -> float:
     return float(np.max(np.abs(block - lap)))
 
 
-# --- rotation synthesis model (3D selector prep only). ----------------------
+# --- rotation synthesis helpers (3D selector prep only). --------------------
 def is_clifford_angle(theta: float) -> bool:
     """True if theta is a multiple of pi/2 (i.e. exactly Clifford)."""
     ratio = theta / (math.pi / 2.0)
     return abs(ratio - round(ratio)) < 1e-9
 
 
-def ross_selinger_t_count(eps: float) -> int:
-    """
-    Ross-Selinger single-qubit z-rotation synthesis scaling: the T-count to
-    approximate an arbitrary rotation to accuracy eps is ~ 3 log2(1/eps).
-    """
-    if not 0.0 < eps < 1.0:
-        raise ValueError("Rotation tolerance must satisfy 0 < eps < 1.")
-    return int(math.ceil(3.0 * math.log2(1.0 / eps)))
+def rotation_synthesis_details(
+    synthesis: RotationSynthesis,
+    prep_tol: float,
+    eps_per: float,
+    n_rot: int,
+    exact_t: int,
+    exact_clifford: int,
+    synthesized_t: int,
+    synthesized_clifford: int,
+) -> dict:
+    """Serializable metadata for pyLIQTR's emitted Clifford+T sequence."""
+    return {
+        "backend": "pyLIQTR",
+        "backend_version": synthesis.backend_version,
+        "method": "get_ring_elts_direct + exact_decomp",
+        "mode": "explicit_gate_sequence",
+        "prep_tol": prep_tol,
+        "eps_per_rotation": eps_per,
+        "angle_radians": selector_rotation_angle_3d(),
+        "projective_error_per_rotation": synthesis.projective_error,
+        "raw_phase_offset": synthesis.raw_phase_offset,
+        "gate_counts_per_rotation": synthesis.gate_counts,
+        "t_per_rotation": synthesis.t_count,
+        "clifford_per_rotation": synthesis.clifford_count,
+        "depth_per_rotation": synthesis.depth,
+        "t_depth_per_rotation": synthesis.t_depth,
+        "n_rotations": n_rot,
+        "exact_t": exact_t,
+        "synthesized_t": synthesized_t,
+        "exact_clifford": exact_clifford,
+        "synthesized_clifford": synthesized_clifford,
+    }
 
 
 # --- resource estimation (target n, no dense math). -------------------------
 def estimate_resources(n: int, dims: int, prep_tol: float) -> dict:
     """Fault-tolerant (Clifford+T) resource estimate for U_L^(D) at size n."""
-    qc = build_u_l_nd(n, dims)
-
     if dims == 2:
+        qc = build_u_l_nd(n, dims)
         # Coarse logical reference: arbitrary one-qubit rotations + CNOT.
         res_ucx = resource_counts(qc, ["u", "cx"])
         # Everything decomposes exactly into Clifford+T.
@@ -287,40 +343,47 @@ def estimate_resources(n: int, dims: int, prep_tol: float) -> dict:
             "rotation_synthesis": None,
         }
 
-    # 3D: everything except the selector-prep Ry decomposes exactly into
-    # Clifford+T.  Count that exact bulk, then add the arbitrary rotations
-    # (one per prep, one per unprep) via a synthesis model.
-    bulk = build_u_l_nd(n, dims, exact_bulk=True)
-    res = resource_counts(bulk, CT_BASIS, count_t_depth=True)
-    gc = res["gate_counts"]
-    exact_t = int(gc.get("t", 0) + gc.get("tdg", 0))
-    exact_clifford = int(res["total_gates"] - exact_t)
-
+    # 3D: synthesize one Ry explicitly, reuse its exact inverse for UNPREP, and
+    # count the resulting complete circuit. The omitted-rotation bulk is
+    # counted separately only to report the synthesis contribution.
     n_rot = 2 * count_prep_rotations(dims)  # prep + inverse unprep
-    eps_per = prep_tol / max(n_rot, 1)
-    t_per = ross_selinger_t_count(eps_per)
-    synth_t = n_rot * t_per
-    # Synthesized sequences interleave T's with Clifford gates (~1:1).
-    synth_clifford = synth_t
+    eps_per = prep_tol / n_rot
+    synthesis = synthesize_ry(selector_rotation_angle_3d(), eps_per)
+    qc = build_u_l_nd(n, dims, synthesis_eps=eps_per)
+    res = resource_counts(qc, CT_BASIS, count_t_depth=True)
+    gc = res["gate_counts"]
+    t_count = int(gc.get("t", 0) + gc.get("tdg", 0))
+    clifford = int(res["total_gates"] - t_count)
+
+    bulk = build_u_l_nd(n, dims, exact_bulk=True)
+    bulk_res = resource_counts(bulk, CT_BASIS, count_t_depth=True)
+    bulk_gc = bulk_res["gate_counts"]
+    exact_t = int(bulk_gc.get("t", 0) + bulk_gc.get("tdg", 0))
+    exact_clifford = int(bulk_res["total_gates"] - exact_t)
+    synth_t = t_count - exact_t
+    synth_clifford = clifford - exact_clifford
+    if synth_t != n_rot * synthesis.t_count:
+        raise RuntimeError("Full-circuit T-count disagrees with synthesized rotations.")
 
     return {
         "logical_qubits": int(res["num_qubits"]),
-        "clifford_gate_count": exact_clifford + synth_clifford,
-        "t_count": exact_t + synth_t,
-        "total_depth": int(res["depth"] + synth_t),
-        "t_depth": int(res["t_depth"] + synth_t),
+        "clifford_gate_count": clifford,
+        "t_count": t_count,
+        "total_depth": int(res["depth"]),
+        "t_depth": int(res["t_depth"]),
         "gate_counts": gc,
         "resource_counts_u_cx": None,
         "n_arbitrary_rotations": int(n_rot),
-        "rotation_synthesis": {
-            "model": "ross_selinger ~ 3 log2(1/eps) T per rotation",
-            "prep_tol": prep_tol,
-            "eps_per_rotation": eps_per,
-            "t_per_rotation": int(t_per),
-            "exact_t": exact_t,
-            "synthesized_t": int(synth_t),
-            "exact_clifford": int(exact_clifford),
-        },
+        "rotation_synthesis": rotation_synthesis_details(
+            synthesis,
+            prep_tol,
+            eps_per,
+            n_rot,
+            exact_t,
+            exact_clifford,
+            synth_t,
+            synth_clifford,
+        ),
     }
 
 
@@ -437,6 +500,8 @@ def main() -> None:
         print(f"arbitrary rotations : {est['n_arbitrary_rotations']} "
               f"(eps/rot = {rs['eps_per_rotation']:.2e}, "
               f"{rs['t_per_rotation']} T/rot)")
+        print(f"synthesis error     : {rs['projective_error_per_rotation']:.2e} "
+              "(projective operator norm per rotation)")
 
     # --- persist metrics + the target-n circuit drawing. ---
     metrics = {
@@ -470,6 +535,16 @@ def main() -> None:
     # small n, but the ASCII circuit should visibly follow --target-n.
     draw_n = args.target_n
     draw_path = Path(f"laplacian_{args.save_prefix}_{dims}d_U_L.txt")
+    # Keep the drawing readable: in 3D its Ry box represents the explicit
+    # pyLIQTR sequence that is inserted into the circuit used for all counts.
+    counted_drawing = build_u_l_nd(draw_n, dims).draw(output="text")
+    synthesis_note = (
+        "For readability the 3D selector Ry is shown as one box here; the "
+        "resource-counted circuit replaces it and its inverse with the "
+        "explicit pyLIQTR Clifford+T sequence.\n\n"
+        if dims == 3
+        else ""
+    )
     draw_text = (
         f"=== {dims}D periodic Laplacian block encoding U_L^({dims}) "
         "(scalable form) ===\n"
@@ -480,12 +555,13 @@ def main() -> None:
         f"  q_2..q_{2 + k - 1}        = selector (K = {k})\n"
         f"  q_{2 + k}..           = {dims} system registers of n = {draw_n} qubits\n\n"
         "U_prep_k prepares (1/sqrt D) sum_d |d>; shifts are selector-controlled.\n\n"
+        f"{synthesis_note}"
         "--- schematic form (shifts as opaque S+/S- boxes) ---\n\n"
         f"{build_u_l_nd_schematic(draw_n, dims).draw(output='text')}\n\n"
-        "--- counted form: each shift is a C^kX cascade carrying the ancilla\n"
+        "--- structural counted form: each shift is a C^kX cascade carrying the ancilla\n"
         f"    and the K = {k} selector qubits as extra controls, so k runs over\n"
         f"    {mcx_control_counts(draw_n, 1 + k)} at n = {draw_n} ---\n\n"
-        f"{build_u_l_nd(draw_n, dims).draw(output='text')}\n"
+        f"{counted_drawing}\n"
     )
     draw_path.write_text(draw_text, encoding="utf-8")
 

@@ -42,10 +42,12 @@ from laplacian_nd_resource import (
     build_u_l_nd,
     count_prep_rotations,
     num_k_qubits,
-    ross_selinger_t_count,
+    rotation_synthesis_details,
     scaled_nd_laplacian,
+    selector_rotation_angle_3d,
     sys_registers,
 )
+from rotation_synthesis import synthesize_ry
 
 # --- register layout ---------------------------------------------------------
 def w_layout(n: int, dims: int) -> dict:
@@ -70,7 +72,12 @@ def w_layout(n: int, dims: int) -> dict:
 
 
 # --- U': controlled U_L on one branch, controlled U_L^dag on the other -------
-def build_controlled_u_l(n: int, dims: int, omit_rotation: bool = False) -> QuantumCircuit:
+def build_controlled_u_l(
+    n: int,
+    dims: int,
+    omit_rotation: bool = False,
+    synthesis_eps: float | None = None,
+) -> QuantumCircuit:
     """q-controlled U_L^(D), with the control pushed into the individual gates."""
     lay = w_layout(n, dims)
     qc = QuantumCircuit(lay["total"], name="C-U_L")
@@ -83,14 +90,25 @@ def build_controlled_u_l(n: int, dims: int, omit_rotation: bool = False) -> Quan
         sys_regs=lay["sys_regs"],
         extra_controls=[lay["q"]],
         omit_rotation=omit_rotation,
+        synthesis_eps=synthesis_eps,
     )
     return qc
 
 
-def build_u_prime(n: int, dims: int, omit_rotation: bool = False) -> QuantumCircuit:
+def build_u_prime(
+    n: int,
+    dims: int,
+    omit_rotation: bool = False,
+    synthesis_eps: float | None = None,
+) -> QuantumCircuit:
     """U' = |0><0|_q (x) U_L + |1><1|_q (x) U_L^dag."""
     lay = w_layout(n, dims)
-    cu_l = build_controlled_u_l(n, dims, omit_rotation)
+    cu_l = build_controlled_u_l(
+        n,
+        dims,
+        omit_rotation=omit_rotation,
+        synthesis_eps=synthesis_eps,
+    )
 
     qc = QuantumCircuit(lay["total"], name="U'")
     # U_L on the q = 0 branch: the X pair turns the closed q control into an open one.
@@ -122,11 +140,24 @@ def build_reflection_circuit(m: int) -> QuantumCircuit:
 
 
 # --- W ----------------------------------------------------------------------
-def build_w_operator(n: int, dims: int, omit_rotation: bool = False) -> QuantumCircuit:
+def build_w_operator(
+    n: int,
+    dims: int,
+    omit_rotation: bool = False,
+    synthesis_eps: float | None = None,
+) -> QuantumCircuit:
     """W = U_R . X_q . U' as one flat, transpiler-friendly circuit."""
     lay = w_layout(n, dims)
     qc = QuantumCircuit(lay["total"], name=f"W_{dims}D")
-    qc.compose(build_u_prime(n, dims, omit_rotation), inplace=True)
+    qc.compose(
+        build_u_prime(
+            n,
+            dims,
+            omit_rotation=omit_rotation,
+            synthesis_eps=synthesis_eps,
+        ),
+        inplace=True,
+    )
     qc.x(lay["q"])  # S = X_q
     qc.compose(
         build_reflection_circuit(lay["m"]),
@@ -174,21 +205,25 @@ def verify_reflection(m: int) -> float:
     return float(np.max(np.abs(got - target)))
 
 
-def verify_u_prime(n: int, dims: int) -> float:
+def verify_u_prime(
+    n: int, dims: int, synthesis_eps: float | None = None
+) -> float:
     """Check U' against |0><0|_q (x) U_L + |1><1|_q (x) U_L^dag."""
-    u_l = Operator(build_u_l_nd(n, dims)).data
+    u_l = Operator(build_u_l_nd(n, dims, synthesis_eps=synthesis_eps)).data
     p0 = np.array([[1.0, 0.0], [0.0, 0.0]], dtype=complex)
     p1 = np.array([[0.0, 0.0], [0.0, 1.0]], dtype=complex)
     target = np.kron(u_l, p0) + np.kron(u_l.conj().T, p1)
-    got = Operator(build_u_prime(n, dims)).data
+    got = Operator(build_u_prime(n, dims, synthesis_eps=synthesis_eps)).data
     return float(np.max(np.abs(got - target)))
 
 
-def verify_w_signal_block(n: int, dims: int) -> tuple[float, float]:
+def verify_w_signal_block(
+    n: int, dims: int, synthesis_eps: float | None = None
+) -> tuple[float, float]:
     """
     Check the qubitization signal property <Pi| W |Pi> = -L~_p^(D).
     """
-    w = Operator(build_w_operator(n, dims)).data
+    w = Operator(build_w_operator(n, dims, synthesis_eps=synthesis_eps)).data
     m = 2 + num_k_qubits(dims)
     dim_sys = (2**n) ** dims
     # The 1+m ancilla qubits are the low-order bits, so they are the right factor.
@@ -218,26 +253,28 @@ def estimate_w_resources(n: int, dims: int, prep_tol: float) -> dict:
     """Fault-tolerant (Clifford+T) resource estimate for W at size n."""
     lay = w_layout(n, dims)
     n_rot = count_w_rotations(dims)
-    # Drop the arbitrary rotations so the bulk is exactly Clifford+T, then price
-    # them separately; for 2D there are none and the bulk is the whole circuit.
-    bulk = build_w_operator(n, dims, omit_rotation=n_rot > 0)
-    res = resource_counts(bulk, CT_BASIS, count_t_depth=True)
-    gc = res["gate_counts"]
-    exact_t = int(gc.get("t", 0) + gc.get("tdg", 0))
-    exact_clifford = int(res["total_gates"] - exact_t)
+    synthesis = None
+    eps_per = None
+    if n_rot:
+        eps_per = prep_tol / n_rot
+        synthesis = synthesize_ry(selector_rotation_angle_3d(), eps_per)
+        counted = build_w_operator(n, dims, synthesis_eps=eps_per)
+    else:
+        counted = build_w_operator(n, dims)
 
-    eps_per = prep_tol / max(n_rot, 1)
-    t_per = ross_selinger_t_count(eps_per) if n_rot else 0
-    synth_t = n_rot * t_per
-    # Synthesized sequences interleave T's with Clifford gates (~1:1).
-    synth_clifford = synth_t
+    # Count the complete emitted circuit, including pyLIQTR's explicit rotation
+    # sequences. The omitted-rotation circuit is only a 3D breakdown reference.
+    res = resource_counts(counted, CT_BASIS, count_t_depth=True)
+    gc = res["gate_counts"]
+    t_count = int(gc.get("t", 0) + gc.get("tdg", 0))
+    clifford = int(res["total_gates"] - t_count)
 
     out = {
         "logical_qubits": int(res["num_qubits"]),
-        "clifford_gate_count": exact_clifford + synth_clifford,
-        "t_count": exact_t + synth_t,
-        "total_depth": int(res["depth"] + synth_t),
-        "t_depth": int(res["t_depth"] + synth_t),
+        "clifford_gate_count": clifford,
+        "t_count": t_count,
+        "total_depth": int(res["depth"]),
+        "t_depth": int(res["t_depth"]),
         "gate_counts": gc,
         "n_arbitrary_rotations": int(n_rot),
         "rotation_synthesis": None,
@@ -254,18 +291,32 @@ def estimate_w_resources(n: int, dims: int, prep_tol: float) -> dict:
         ),
     }
     if n_rot:
-        out["rotation_synthesis"] = {
-            "model": "ross_selinger ~ 3 log2(1/eps) T per rotation",
-            "prep_tol": prep_tol,
-            "eps_per_rotation": eps_per,
-            "t_per_rotation": int(t_per),
-            "exact_t": exact_t,
-            "synthesized_t": int(synth_t),
-            "exact_clifford": int(exact_clifford),
-        }
+        bulk = build_w_operator(n, dims, omit_rotation=True)
+        bulk_res = resource_counts(bulk, CT_BASIS, count_t_depth=True)
+        bulk_gc = bulk_res["gate_counts"]
+        exact_t = int(bulk_gc.get("t", 0) + bulk_gc.get("tdg", 0))
+        exact_clifford = int(bulk_res["total_gates"] - exact_t)
+        synth_t = t_count - exact_t
+        synth_clifford = clifford - exact_clifford
+        if synthesis is None or eps_per is None:
+            raise RuntimeError("Missing 3D selector synthesis result.")
+        if synth_t != n_rot * synthesis.t_count:
+            raise RuntimeError(
+                "Full-circuit T-count disagrees with synthesized rotations."
+            )
+        out["rotation_synthesis"] = rotation_synthesis_details(
+            synthesis,
+            prep_tol,
+            eps_per,
+            n_rot,
+            exact_t,
+            exact_clifford,
+            synth_t,
+            synth_clifford,
+        )
     else:
         # Coarse logical reference, matching the U_L report.
-        out["resource_counts_u_cx"] = resource_counts(bulk, ["u", "cx"])
+        out["resource_counts_u_cx"] = resource_counts(counted, ["u", "cx"])
     return out
 
 
@@ -357,6 +408,8 @@ def main() -> None:
         print(f"arbitrary rotations : {est['n_arbitrary_rotations']} "
               f"(eps/rot = {rs['eps_per_rotation']:.2e}, "
               f"{rs['t_per_rotation']} T/rot)")
+        print(f"synthesis error     : {rs['projective_error_per_rotation']:.2e} "
+              "(projective operator norm per rotation)")
 
     ref = est["reflection"]
     ref_t = int(ref["gate_counts"].get("t", 0) + ref["gate_counts"].get("tdg", 0))
@@ -406,6 +459,16 @@ def main() -> None:
     sel_lo, sel_hi = draw_lay["sel"][0], draw_lay["sel"][-1]
     sel_label = f"q_{sel_lo}" if sel_lo == sel_hi else f"q_{sel_lo}..q_{sel_hi}"
     draw_counts = mcx_control_counts(draw_n, 1 + k + 1)
+    # Keep the drawing readable: in 3D each Ry box represents the explicit
+    # pyLIQTR sequence that is inserted into the circuit used for all counts.
+    counted_drawing = build_w_operator(draw_n, dims).draw(output="text")
+    synthesis_note = (
+        "For readability each 3D selector Ry is shown as one box here; the "
+        "resource-counted circuit replaces it with the explicit pyLIQTR "
+        "Clifford+T sequence (and uses the exact inverse for unpreparation).\n\n"
+        if dims == 3
+        else ""
+    )
     draw_text = (
         f"=== {dims}D periodic Laplacian qubitization walk operator W ===\n"
         f"drawn at n = {draw_n} per dimension (grid = 2**{draw_n * dims}); "
@@ -415,15 +478,16 @@ def main() -> None:
         f"  q_{draw_lay['anc'][0]}, q_{draw_lay['anc'][1]} = block-encoding ancillas l0, l1\n"
         f"  {sel_label} = dimension selector (K = {draw_lay['k']})\n"
         f"  q_{draw_lay['sys_regs'][0][0]}.. = {dims} system registers of n = {draw_n} qubits\n\n"
+        f"{synthesis_note}"
         "--- schematic form (U_L, U_L+ and U_R as opaque boxes) ---\n"
         "Compact mathematical view: U' is controlled-U_L on the q=0 branch and\n"
         "controlled-U_L+ on the q=1 branch, then X_q, then the reflection U_R.\n\n"
         f"{build_w_schematic(draw_n, dims).draw(output='text')}\n\n"
-        "--- counted form (every gate carries the q control explicitly) ---\n"
+        "--- structural counted form (every gate carries q explicitly) ---\n"
         f"Each shift is a cascade with MCX control counts {draw_counts} at "
         f"n = {draw_n} (the estimate at n = {n_t} uses {ctrl_counts}); this is "
-        "the form passed to the transpiler.\n\n"
-        f"{build_w_operator(draw_n, dims).draw(output='text')}\n"
+        "the bulk structure passed to the transpiler.\n\n"
+        f"{counted_drawing}\n"
     )
     draw_path.write_text(draw_text, encoding="utf-8")
 

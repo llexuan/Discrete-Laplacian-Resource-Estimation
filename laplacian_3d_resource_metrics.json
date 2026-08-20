@@ -6,7 +6,7 @@
   "target_n": 20,
   "prep_tol": 1e-08,
   "grid_points_target": 1152921504606846976,
-  "block_encoding_err": 1.0214082101325809e-14,
+  "block_encoding_err": 9.936637229537954e-15,
   "logical_qubits_pre_decomp": 64,
   "controlled_shifts": 6,
   "mcx_control_counts_per_shift": [
@@ -33,30 +33,47 @@
   ],
   "fault_tolerant_summary": {
     "logical_qubits": 64,
-    "clifford_gate_count": 18486,
-    "t_count": 12909,
-    "total_depth": 12939,
-    "t_depth": 5187
+    "clifford_gate_count": 18622,
+    "t_count": 12935,
+    "total_depth": 13263,
+    "t_depth": 5211
   },
   "n_arbitrary_rotations": 2,
   "rotation_synthesis": {
-    "model": "ross_selinger ~ 3 log2(1/eps) T per rotation",
+    "backend": "pyLIQTR",
+    "backend_version": "1.4.2",
+    "method": "get_ring_elts_direct + exact_decomp",
+    "mode": "explicit_gate_sequence",
     "prep_tol": 1e-08,
     "eps_per_rotation": 5e-09,
-    "t_per_rotation": 83,
+    "angle_radians": 1.2309594173407747,
+    "projective_error_per_rotation": 4.659302790412809e-09,
+    "raw_phase_offset": -0.7853981633974483,
+    "gate_counts_per_rotation": {
+      "h": 98,
+      "t": 96,
+      "s": 52,
+      "sdg": 1
+    },
+    "t_per_rotation": 96,
+    "clifford_per_rotation": 151,
+    "depth_per_rotation": 247,
+    "t_depth_per_rotation": 96,
+    "n_rotations": 2,
     "exact_t": 12743,
-    "synthesized_t": 166,
-    "exact_clifford": 18320
+    "synthesized_t": 192,
+    "exact_clifford": 18320,
+    "synthesized_clifford": 302
   },
   "resource_counts_u_cx": null,
   "gate_counts": {
     "cx": 9662,
-    "t": 6442,
-    "tdg": 6301,
-    "h": 6166,
+    "t": 6538,
+    "tdg": 6397,
+    "h": 6362,
     "x": 2486,
-    "z": 2,
-    "s": 2,
-    "sdg": 2
+    "s": 55,
+    "sdg": 55,
+    "z": 2
   }
 }

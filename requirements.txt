@@ -2,3 +2,5 @@ numpy
 matplotlib
 pyqsp
 qiskit
+# Explicit Clifford+T synthesis; upstream currently requires Python <= 3.12.2.
+pyLIQTR @ git+https://github.com/isi-usc-edu/pyLIQTR.git@0465e1d9ed8ca4fd5ff08df350010ea35ebead66
