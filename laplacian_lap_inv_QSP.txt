@@ -11,7 +11,7 @@ registers:
   q_1 = l0 = block-encoding ancilla
   q_2 = l1 = block-encoding ancilla
   q_3..q_3 = k selector register (K = 1)
-  remaining 4 qubits = system grid register
+  remaining 2 qubits = system grid register
 
 full sequence uses 118 R(phi) rotations and 117 W walks.
 Illustrative slice below shows the first 4 rotations / 3 walks:
@@ -22,14 +22,10 @@ q_0: ┤0        ├┤0   ├┤0        ├┤0   ├┤0        ├┤0   ├
 q_1: ┤1        ├┤1   ├┤1        ├┤1   ├┤1        ├┤1   ├┤1        ├
      │  R(phi) ││    ││  R(phi) ││    ││  R(phi) ││    ││  R(phi) │
 q_2: ┤2        ├┤2   ├┤2        ├┤2   ├┤2        ├┤2   ├┤2        ├
-     │         ││    ││         ││    ││         ││    ││         │
+     │         ││  W ││         ││  W ││         ││  W ││         │
 q_3: ┤3        ├┤3   ├┤3        ├┤3   ├┤3        ├┤3   ├┤3        ├
-     └─────────┘│  W │└─────────┘│  W │└─────────┘│  W │└─────────┘
+     └─────────┘│    │└─────────┘│    │└─────────┘│    │└─────────┘
 q_4: ───────────┤4   ├───────────┤4   ├───────────┤4   ├───────────
                 │    │           │    │           │    │           
 q_5: ───────────┤5   ├───────────┤5   ├───────────┤5   ├───────────
-                │    │           │    │           │    │           
-q_6: ───────────┤6   ├───────────┤6   ├───────────┤6   ├───────────
-                │    │           │    │           │    │           
-q_7: ───────────┤7   ├───────────┤7   ├───────────┤7   ├───────────
                 └────┘           └────┘           └────┘           

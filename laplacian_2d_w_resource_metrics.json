@@ -8,10 +8,10 @@
   "target_n": 20,
   "prep_tol": null,
   "verification": {
-    "reflection_err": 4.44522679167363e-16,
-    "u_prime_err": 1.4766410160768233e-14,
-    "unitarity_err": 6.283862319378386e-14,
-    "signal_block_err": 1.5877843319260646e-14
+    "reflection_err": 4.440892098500626e-16,
+    "u_prime_err": 1.5270855973369237e-14,
+    "unitarity_err": 6.350475700855895e-14,
+    "signal_block_err": 1.5766388538599534e-14
   },
   "logical_qubits_pre_decomp": 44,
   "controlled_shifts": 8,

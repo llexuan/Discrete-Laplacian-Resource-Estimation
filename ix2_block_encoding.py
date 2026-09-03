@@ -13,12 +13,95 @@ Registers (1 qubit each):
 from __future__ import annotations
 
 import argparse
+import json
 import math
 from pathlib import Path
 
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Operator
+
+
+def load_phase_metadata(
+    path: str | Path,
+) -> tuple[str, int, int, int, list[float], float, np.ndarray | None]:
+    """Load and validate QSP phase data written by the phase-synthesis scripts."""
+    phase_path = Path(path)
+    payload = json.loads(phase_path.read_text(encoding="utf-8"))
+
+    if "phases" not in payload:
+        raise ValueError(f"{phase_path} has no 'phases' array.")
+    phases_array = np.asarray(payload["phases"], dtype=float)
+    if phases_array.ndim != 1 or phases_array.size == 0:
+        raise ValueError(f"{phase_path} must contain a non-empty 1D 'phases' array.")
+    if not np.all(np.isfinite(phases_array)):
+        raise ValueError(f"{phase_path} contains non-finite QSP phases.")
+
+    effective_degree = int(
+        payload.get("effective_degree", phases_array.size - 1)
+    )
+    degree = int(payload.get("degree", effective_degree))
+    parity = int(payload.get("parity", effective_degree % 2))
+    target_function = str(payload.get("target_function", "unknown"))
+    max_scale = float(
+        payload.get("max_scale", payload.get("returned_scale", 1.0))
+    )
+
+    raw_coeffs = payload.get("cheb_coeffs")
+    cheb_coeffs = None
+    if raw_coeffs is not None:
+        cheb_coeffs = np.asarray(raw_coeffs, dtype=float)
+        if cheb_coeffs.ndim != 1 or cheb_coeffs.size == 0:
+            raise ValueError(
+                f"{phase_path} must contain a non-empty 1D 'cheb_coeffs' array."
+            )
+        if not np.all(np.isfinite(cheb_coeffs)):
+            raise ValueError(
+                f"{phase_path} contains non-finite Chebyshev coefficients."
+            )
+
+    return (
+        target_function,
+        degree,
+        effective_degree,
+        parity,
+        phases_array.tolist(),
+        max_scale,
+        cheb_coeffs,
+    )
+
+
+def chebyshev_matrix_eval(
+    coefficients: list[float] | np.ndarray, matrix: np.ndarray
+) -> np.ndarray:
+    """Evaluate sum_k coefficients[k] T_k(matrix) using Clenshaw recurrence."""
+    coeffs = np.asarray(coefficients)
+    mat = np.asarray(matrix)
+    if coeffs.ndim != 1 or coeffs.size == 0:
+        raise ValueError("Chebyshev coefficients must be a non-empty 1D array.")
+    if mat.ndim != 2 or mat.shape[0] != mat.shape[1]:
+        raise ValueError("Chebyshev matrix evaluation requires a square matrix.")
+
+    dtype = np.result_type(coeffs.dtype, mat.dtype, np.float64)
+    coeffs = coeffs.astype(dtype, copy=False)
+    mat = mat.astype(dtype, copy=False)
+    identity = np.eye(mat.shape[0], dtype=dtype)
+
+    if coeffs.size == 1:
+        return coeffs[0] * identity
+
+    b_k_plus_1 = np.zeros_like(mat, dtype=dtype)
+    b_k_plus_2 = np.zeros_like(mat, dtype=dtype)
+    for coefficient in coeffs[:0:-1]:
+        b_k = (
+            2.0 * (mat @ b_k_plus_1)
+            - b_k_plus_2
+            + coefficient * identity
+        )
+        b_k_plus_2 = b_k_plus_1
+        b_k_plus_1 = b_k
+
+    return mat @ b_k_plus_1 - b_k_plus_2 + coeffs[0] * identity
 
 
 def build_u_h_for_i_plus_x_over_2() -> QuantumCircuit:
