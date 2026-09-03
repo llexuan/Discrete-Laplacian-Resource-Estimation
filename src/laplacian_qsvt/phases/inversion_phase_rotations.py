@@ -9,6 +9,7 @@ The target matrix-inversion polynomial:
 The user controls:
   --epsilon  target approximation error on the domain of validity
   --kappa    condition number; valid domain [1/kappa, 1] U [-1, -1/kappa]
+  --synthesis-tol  separate implementation-error budget for Clifford+T gates
 """
 
 from __future__ import annotations
@@ -19,7 +20,9 @@ import math
 import os
 from pathlib import Path
 
-os.environ["MPLCONFIGDIR"] = str(Path(".mplconfig").resolve())
+from ..paths import MPLCONFIG_DIR, PHASES_DIR, PLOTS_DIR, ensure_parent
+
+os.environ["MPLCONFIGDIR"] = str(MPLCONFIG_DIR)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -53,6 +56,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="Condition number. Valid domain: [1/kappa,1] U [-1,-1/kappa].",
     )
     parser.add_argument(
+        "--synthesis-tol",
+        type=float,
+        default=1e-8,
+        help=(
+            "Total Clifford+T implementation-error budget for the downstream "
+            "QSP resource estimate (default 1e-8)."
+        ),
+    )
+    parser.add_argument(
         "--rect-degree",
         type=int,
         default=None,
@@ -66,13 +78,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-phases",
         type=Path,
-        default=Path("phases_inversion.json"),
+        default=PHASES_DIR / "phases_inversion.json",
         help="Where to write synthesized phases as JSON.",
     )
     parser.add_argument(
         "--output-plot",
         type=Path,
-        default=Path("qsp_inversion_fit.png"),
+        default=PLOTS_DIR / "qsp_inversion_fit.png",
         help="Where to save the verification plot.",
     )
     return parser
@@ -181,6 +193,8 @@ def main() -> None:
         raise ValueError("--kappa must be > 1.")
     if args.epsilon <= 0.0:
         raise ValueError("--epsilon must be > 0.")
+    if not 0.0 < args.synthesis_tol < 1.0:
+        raise ValueError("--synthesis-tol must satisfy 0 < tolerance < 1.")
     if args.rect_degree is not None and args.rect_degree % 2 != 0:
         raise ValueError("--rect-degree must be even.")
 
@@ -307,6 +321,10 @@ def main() -> None:
         "rect_degree": None if not use_rect else int(rect_degree),
         "degree": degree,
         "effective_degree": effective_degree,
+        "num_projector_rotations": int(len(phases)),
+        "num_w_applications": int(max(len(phases) - 1, 0)),
+        "synthesis_tolerance": float(args.synthesis_tol),
+        "synthesis_tolerance_scope": "full_qsp_clifford_t_implementation",
         "max_scale": float(DEFAULT_MAX_SCALE),
         "returned_scale": float(fixed_scale),
         "parity": int(parity),
@@ -320,7 +338,9 @@ def main() -> None:
         "cheb_coeffs": cheb_coeffs.tolist(),
         "phases": phases.tolist(),
     }
-    args.output_phases.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    ensure_parent(args.output_phases).write_text(
+        json.dumps(payload, indent=2) + "\n", encoding="utf-8"
+    )
 
     plt.figure(figsize=(9, 5))
     plt.plot(x, p_target_poly, linewidth=2.0, label="P^{MI}(x) (target polynomial)")
@@ -336,7 +356,7 @@ def main() -> None:
     plt.grid(alpha=0.3)
     plt.legend(loc="upper center")
     plt.tight_layout()
-    plt.savefig(args.output_plot, dpi=160)
+    plt.savefig(ensure_parent(args.output_plot), dpi=160)
 
     print("=== matrix-inversion (1/x) phase synthesis (pyqsp) ===")
     print(f"epsilon            : {epsilon:g}")
@@ -352,6 +372,7 @@ def main() -> None:
         print(f"rect_degree        : {rect_degree}")
     print(f"polynomial_degree  : {degree}")
     print(f"effective_degree   : {effective_degree}")
+    print(f"synthesis_tolerance: {args.synthesis_tol:.1e} (separate from epsilon)")
     print(f"returned_scale     : {fixed_scale:.8f}")
     print(f"parity             : {parity}")
     print(f"domain_of_validity : [1/{kappa:g}, 1] U [-1, -1/{kappa:g}]")

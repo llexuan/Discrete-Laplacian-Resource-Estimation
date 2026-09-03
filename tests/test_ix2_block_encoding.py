@@ -10,7 +10,10 @@ import unittest
 import numpy as np
 from numpy.polynomial.chebyshev import chebval
 
-from ix2_block_encoding import chebyshev_matrix_eval, load_phase_metadata
+from laplacian_qsvt.demos.ix2_block_encoding import (
+    chebyshev_matrix_eval,
+    load_phase_metadata,
+)
 
 
 class Ix2HelperTests(unittest.TestCase):

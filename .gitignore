@@ -2,4 +2,8 @@
 .venv-python*/
 __pycache__/
 *.py[cod]
+.mplconfig/
+*.egg-info/
+build/
+dist/
 .DS_Store

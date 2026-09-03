@@ -7,17 +7,29 @@ import unittest
 import numpy as np
 from qiskit.quantum_info import Operator
 
-from laplacian_nd_resource import (
+from laplacian_qsvt.laplacian.laplacian_nd_resource import (
     build_prep_selector,
     estimate_resources,
     selector_rotation_angle_3d,
     verify_block_encoding_nd,
 )
-from laplacian_w_resource import verify_w_signal_block
-from rotation_synthesis import synthesize_ry
+from laplacian_qsvt.laplacian.laplacian_w_resource import verify_w_signal_block
+from laplacian_qsvt.synthesis.rotation_synthesis import synthesize_ry, synthesize_rz
 
 
 class RotationSynthesisTests(unittest.TestCase):
+    def test_rz_is_explicit_clifford_t_with_requested_error(self) -> None:
+        epsilon = 1e-6
+        result = synthesize_rz(0.43298, epsilon)
+
+        self.assertLessEqual(result.projective_error, epsilon)
+        self.assertGreater(result.t_count, 0)
+        self.assertTrue(
+            set(result.gate_counts).issubset(
+                {"h", "t", "tdg", "s", "sdg", "x", "y", "z"}
+            )
+        )
+
     def test_ry_is_explicit_clifford_t_with_requested_error(self) -> None:
         epsilon = 1e-6
         result = synthesize_ry(selector_rotation_angle_3d(), epsilon)

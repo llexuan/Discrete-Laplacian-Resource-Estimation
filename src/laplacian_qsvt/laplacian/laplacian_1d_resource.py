@@ -8,8 +8,8 @@ Two independent register sizes:
   --target-n : large (20)        -> transpile + resource counts, no dense math.
 
 Usage:
-  python laplacian_1d_resource.py                 # verify n=3, target n=20
-  python laplacian_1d_resource.py --verify-n 4 --target-n 20
+  laplacian-1d-resource                 # verify n=3, target n=20
+  laplacian-1d-resource --verify-n 4 --target-n 20
 """
 
 from __future__ import annotations
@@ -21,7 +21,9 @@ from pathlib import Path
 
 import numpy as np
 
-os.environ["MPLCONFIGDIR"] = str(Path(".mplconfig").resolve())
+from ..paths import CIRCUITS_DIR, METRICS_DIR, MPLCONFIG_DIR, ensure_parent
+
+os.environ["MPLCONFIGDIR"] = str(MPLCONFIG_DIR)
 from qiskit import QuantumCircuit, transpile
 from qiskit.quantum_info import Operator
 
@@ -268,14 +270,14 @@ def main() -> None:
     )
     parser.add_argument(
         "--save-prefix",
-        type=Path,
-        default=Path("1d"),
+        type=str,
+        default="1d",
         help="Prefix for the saved ASCII circuit drawing.",
     )
     parser.add_argument(
         "--output-metrics",
         type=Path,
-        default=Path("laplacian_1d_resource_metrics.json"),
+        default=METRICS_DIR / "laplacian_1d_resource_metrics.json",
         help="Where to write verification + resource metrics as JSON.",
     )
     args = parser.parse_args()
@@ -367,10 +369,12 @@ def main() -> None:
             "t_depth": res_ct["t_depth"],
         },
     }
-    args.output_metrics.write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
+    ensure_parent(args.output_metrics).write_text(
+        json.dumps(metrics, indent=2) + "\n", "utf-8"
+    )
 
     draw_n = args.verify_n
-    draw_path = Path(f"laplacian_{args.save_prefix}_U_L.txt")
+    draw_path = CIRCUITS_DIR / f"laplacian_{args.save_prefix}_U_L.txt"
     draw_text = (
         "=== 1D periodic Laplacian block encoding U_L^(1) (scalable form) ===\n"
         f"drawn at n = {draw_n} (grid N = {2**draw_n}); "
@@ -389,7 +393,7 @@ def main() -> None:
         f"at n = {draw_n}; this is the circuit passed to the transpiler.\n\n"
         f"{build_u_l_1d(draw_n, args.mcx_workspace).draw(output='text')}\n"
     )
-    draw_path.write_text(draw_text, encoding="utf-8")
+    ensure_parent(draw_path).write_text(draw_text, encoding="utf-8")
 
     print("\nSaved:", args.output_metrics, "and", draw_path)
 

@@ -3,8 +3,8 @@
 Find one-qubit QSP phase angles for approximating a target f(a) on a in [0, 1].
 
 Usage:
-  python one_qubit_phase_rotations.py --degree 12 "cos(x)"
-  python one_qubit_phase_rotations.py --degree 20 "exp(-x**2)"
+  qsp-phases --degree 12 "cos(x)"
+  qsp-phases --degree 20 "exp(-x**2)"
 """
 
 from __future__ import annotations
@@ -14,8 +14,10 @@ import json
 import os
 from pathlib import Path
 
+from ..paths import MPLCONFIG_DIR, PHASES_DIR, PLOTS_DIR, ensure_parent
+
 # Keep matplotlib cache writable inside the project directory.
-os.environ["MPLCONFIGDIR"] = str(Path(".mplconfig").resolve())
+os.environ["MPLCONFIGDIR"] = str(MPLCONFIG_DIR)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -47,13 +49,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-phases",
         type=Path,
-        default=Path("phases_target.json"),
+        default=PHASES_DIR / "phases_target.json",
         help="Where to write synthesized phases as JSON.",
     )
     parser.add_argument(
         "--output-plot",
         type=Path,
-        default=Path("qsp_target_fit.png"),
+        default=PLOTS_DIR / "qsp_target_fit.png",
         help="Where to save the verification plot.",
     )
     return parser
@@ -182,7 +184,7 @@ def main() -> None:
     max_abs_err = float(np.max(np.abs(p_of_a - target_scaled)))
     rms_err = float(np.sqrt(np.mean((p_of_a - target_scaled) ** 2)))
 
-    args.output_phases.write_text(
+    ensure_parent(args.output_phases).write_text(
         json.dumps(
             {
                 "degree": args.degree,
@@ -220,7 +222,7 @@ def main() -> None:
     plt.grid(alpha=0.3)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(args.output_plot, dpi=160)
+    plt.savefig(ensure_parent(args.output_plot), dpi=160)
 
     print("=== one-qubit phase-rotation synthesis (pyqsp) ===")
     print(f"target         : {target_expr}")

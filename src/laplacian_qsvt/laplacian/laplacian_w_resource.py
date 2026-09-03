@@ -16,9 +16,9 @@ laplacian_nd_resource.py, and the signal property that makes W useful is
 which is what the dense check at small n confirms here.
 
 Usage:
-  python laplacian_w_resource.py --dims 2
-  python laplacian_w_resource.py --dims 3 --prep-tol 1e-8
-  python laplacian_w_resource.py --dims 2 --target-n 4
+  laplacian-w-resource --dims 2
+  laplacian-w-resource --dims 3 --prep-tol 1e-8
+  laplacian-w-resource --dims 2 --target-n 4
 """
 
 from __future__ import annotations
@@ -31,12 +31,14 @@ from pathlib import Path
 
 import numpy as np
 
-os.environ["MPLCONFIGDIR"] = str(Path(".mplconfig").resolve())
+from ..paths import CIRCUITS_DIR, METRICS_DIR, MPLCONFIG_DIR, ensure_parent
+
+os.environ["MPLCONFIGDIR"] = str(MPLCONFIG_DIR)
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Operator
 
-from laplacian_1d_resource import mcx_control_counts, resource_counts
-from laplacian_nd_resource import (
+from .laplacian_1d_resource import mcx_control_counts, resource_counts
+from .laplacian_nd_resource import (
     CT_BASIS,
     apply_u_l_nd,
     build_u_l_nd,
@@ -47,7 +49,7 @@ from laplacian_nd_resource import (
     selector_rotation_angle_3d,
     sys_registers,
 )
-from rotation_synthesis import synthesize_ry
+from ..synthesis.rotation_synthesis import synthesize_ry
 
 # --- register layout ---------------------------------------------------------
 def w_layout(n: int, dims: int) -> dict:
@@ -345,7 +347,9 @@ def main() -> None:
     dims, n_t = args.dims, args.target_n
     lay = w_layout(n_t, dims)
     k, m = lay["k"], lay["m"]
-    out_path = args.output_metrics or Path(f"laplacian_{dims}d_w_resource_metrics.json")
+    out_path = args.output_metrics or (
+        METRICS_DIR / f"laplacian_{dims}d_w_resource_metrics.json"
+    )
 
     print(f"=== {dims}D periodic Laplacian qubitization walk operator W ===")
     print("definition       : W = U_R . X_q . U'")
@@ -449,13 +453,13 @@ def main() -> None:
         "reflection_counts": est["reflection"],
         "gate_counts": est["gate_counts"],
     }
-    out_path.write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
+    ensure_parent(out_path).write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
 
     # Draw the same circuit size used for resource estimation. Dense
     # verification remains at verify_n because it only scales to small n.
     draw_n = args.target_n
     draw_lay = w_layout(draw_n, dims)
-    draw_path = Path(f"laplacian_w_{dims}d_W.txt")
+    draw_path = CIRCUITS_DIR / f"laplacian_w_{dims}d_W.txt"
     sel_lo, sel_hi = draw_lay["sel"][0], draw_lay["sel"][-1]
     sel_label = f"q_{sel_lo}" if sel_lo == sel_hi else f"q_{sel_lo}..q_{sel_hi}"
     draw_counts = mcx_control_counts(draw_n, 1 + k + 1)
@@ -489,7 +493,7 @@ def main() -> None:
         "the bulk structure passed to the transpiler.\n\n"
         f"{counted_drawing}\n"
     )
-    draw_path.write_text(draw_text, encoding="utf-8")
+    ensure_parent(draw_path).write_text(draw_text, encoding="utf-8")
 
     print("\nSaved:", out_path, "and", draw_path)
 

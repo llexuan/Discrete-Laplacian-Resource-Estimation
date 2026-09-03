@@ -21,6 +21,8 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Operator
 
+from ..paths import CIRCUITS_DIR, ensure_parent
+
 
 def load_phase_metadata(
     path: str | Path,
@@ -226,8 +228,8 @@ def main() -> None:
     parser.add_argument("--phi-odd", type=float, default=0.8126827401045922)
     parser.add_argument(
         "--save-prefix",
-        type=Path,
-        default=Path("fig6_fig7_ix"),
+        type=str,
+        default="fig6_fig7_ix",
         help="Prefix for saved ASCII circuit files.",
     )
     args = parser.parse_args()
@@ -255,10 +257,14 @@ def main() -> None:
     print("\n=== Fig. 6-like Phi_j block ===")
     print(fig6_block.draw(output="text"))
 
-    w_path = Path(f"{args.save_prefix}_W.txt")
-    phi_path = Path(f"{args.save_prefix}_Phi_j.txt")
-    w_path.write_text(str(w.draw(output="text")) + "\n", encoding="utf-8")
-    phi_path.write_text(str(fig6_block.draw(output="text")) + "\n", encoding="utf-8")
+    w_path = CIRCUITS_DIR / f"{args.save_prefix}_W.txt"
+    phi_path = CIRCUITS_DIR / f"{args.save_prefix}_Phi_j.txt"
+    ensure_parent(w_path).write_text(
+        str(w.draw(output="text")) + "\n", encoding="utf-8"
+    )
+    ensure_parent(phi_path).write_text(
+        str(fig6_block.draw(output="text")) + "\n", encoding="utf-8"
+    )
     print(f"\nSaved: {w_path} and {phi_path}")
 
 

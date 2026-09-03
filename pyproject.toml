@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "laplacian-qsvt"
+version = "0.1.0"
+description = "Logical Clifford+T resource estimates for periodic Laplacian QSVT"
+readme = "README.md"
+requires-python = ">=3.10,<=3.12.2"
+dependencies = [
+    "gmpy2",
+    "matplotlib",
+    "numpy",
+    "pyqsp",
+    "qiskit",
+    "scipy",
+    "pyLIQTR @ git+https://github.com/isi-usc-edu/pyLIQTR.git@0465e1d9ed8ca4fd5ff08df350010ea35ebead66",
+]
+
+[project.scripts]
+qsp-phases = "laplacian_qsvt.phases.one_qubit_phase_rotations:main"
+inversion-phases = "laplacian_qsvt.phases.inversion_phase_rotations:main"
+laplacian-1d-resource = "laplacian_qsvt.laplacian.laplacian_1d_resource:main"
+laplacian-nd-resource = "laplacian_qsvt.laplacian.laplacian_nd_resource:main"
+laplacian-w-resource = "laplacian_qsvt.laplacian.laplacian_w_resource:main"
+laplacian-inversion-resource = "laplacian_qsvt.laplacian.laplacian_inversion_encode:main"
+ix2-block-encoding-demo = "laplacian_qsvt.demos.ix2_block_encoding:main"
+qsp-error-analysis = "laplacian_qsvt.analysis.error_analysis:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

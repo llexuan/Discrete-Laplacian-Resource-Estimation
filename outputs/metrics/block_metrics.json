@@ -1,5 +1,5 @@
 {
-  "source_json": "phases_inversion.json",
+  "source_json": "outputs/phases/phases_inversion.json",
   "target_function": "matrix_inversion_1_over_x",
   "degree": 117,
   "effective_degree": 117,

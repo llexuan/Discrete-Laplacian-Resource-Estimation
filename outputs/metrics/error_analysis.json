@@ -15,6 +15,6 @@
   "degree": 20,
   "effective_degree": 20,
   "num_phases": 21,
-  "phase_metrics_source": "phases_target.json",
-  "block_metrics_source": "block_metrics.json"
+  "phase_metrics_source": "outputs/phases/phases_target.json",
+  "block_metrics_source": "outputs/metrics/block_metrics.json"
 }

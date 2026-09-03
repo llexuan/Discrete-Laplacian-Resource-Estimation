@@ -4,7 +4,7 @@ Combine polynomial, phase, and block-encoding errors using:
 1) a conservative sum bound metric, and
 2) tighter proxy / direct metrics when available.
 
-python error_analysis.py --epsilon-target 1e-12
+qsp-error-analysis --epsilon-target 1e-12
 """
 
 from __future__ import annotations
@@ -13,6 +13,8 @@ import argparse
 import json
 import math
 from pathlib import Path
+
+from ..paths import METRICS_DIR, PHASES_DIR, ensure_parent
 
 
 def read_json(path: Path) -> dict:
@@ -28,13 +30,13 @@ def main() -> None:
     parser.add_argument(
         "--phase-metrics",
         type=Path,
-        default=Path("phases_target.json"),
-        help="Path to phase/polynomial metrics JSON (from one_qubit_phase_rotations.py).",
+        default=PHASES_DIR / "phases_target.json",
+        help="Path to phase/polynomial metrics JSON (from qsp-phases).",
     )
     parser.add_argument(
         "--block-metrics",
         type=Path,
-        default=Path("block_metrics.json"),
+        default=METRICS_DIR / "block_metrics.json",
         help="Path to block-encoding metrics JSON (optional).",
     )
     parser.add_argument(
@@ -58,7 +60,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("error_analysis.json"),
+        default=METRICS_DIR / "error_analysis.json",
         help="Where to write combined error analysis JSON.",
     )
     args = parser.parse_args()
@@ -118,7 +120,9 @@ def main() -> None:
         "block_metrics_source": block_source,
     }
 
-    args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    ensure_parent(args.output).write_text(
+        json.dumps(result, indent=2) + "\n", encoding="utf-8"
+    )
 
     print("=== Combined error analysis ===")
     print(f"epsilon_target    : {args.epsilon_target:.6e}")

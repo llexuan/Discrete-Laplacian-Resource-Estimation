@@ -1,1 +1,0 @@
-python one_qubit_phase_rotations.py --degree 12 "cos(x)"

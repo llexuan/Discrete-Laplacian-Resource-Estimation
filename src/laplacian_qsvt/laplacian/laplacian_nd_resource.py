@@ -17,9 +17,9 @@ It adds, on top of the 1D unit:
      explicitly approximates it with a Clifford+T sequence at --prep-tol.
 
 Usage:
-  python laplacian_nd_resource.py --dims 2                 # verify n=2, target n=20
-  python laplacian_nd_resource.py --dims 3 --prep-tol 1e-8
-  python laplacian_nd_resource.py --dims 2 --verify-n 2 --target-n 6
+  laplacian-nd-resource --dims 2                 # verify n=2, target n=20
+  laplacian-nd-resource --dims 3 --prep-tol 1e-8
+  laplacian-nd-resource --dims 2 --verify-n 2 --target-n 6
 """
 
 from __future__ import annotations
@@ -32,13 +32,15 @@ from pathlib import Path
 
 import numpy as np
 
-os.environ["MPLCONFIGDIR"] = str(Path(".mplconfig").resolve())
+from ..paths import CIRCUITS_DIR, METRICS_DIR, MPLCONFIG_DIR, ensure_parent
+
+os.environ["MPLCONFIGDIR"] = str(MPLCONFIG_DIR)
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import ZGate
 from qiskit.quantum_info import Operator
 
 # Reuse the tested 1D primitives + counting utility.
-from laplacian_1d_resource import (
+from .laplacian_1d_resource import (
     apply_controlled_shift,
     build_decrement,
     build_increment,
@@ -46,7 +48,7 @@ from laplacian_1d_resource import (
     resource_counts,
     shift_matrices,
 )
-from rotation_synthesis import RotationSynthesis, synthesize_ry
+from ..synthesis.rotation_synthesis import RotationSynthesis, synthesize_ry
 
 
 CT_BASIS = ["h", "t", "tdg", "s", "sdg", "x", "z", "cx"]
@@ -419,8 +421,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--save-prefix",
-        type=Path,
-        default=Path("nd"),
+        type=str,
+        default="nd",
         help="Prefix for the saved ASCII circuit drawing.",
     )
     parser.add_argument(
@@ -440,7 +442,9 @@ def main() -> None:
 
     dims = args.dims
     k = num_k_qubits(dims)
-    out_path = args.output_metrics or Path(f"laplacian_{dims}d_resource_metrics.json")
+    out_path = args.output_metrics or (
+        METRICS_DIR / f"laplacian_{dims}d_resource_metrics.json"
+    )
 
     print(f"=== {dims}D periodic Laplacian block-encoding basic unit (U_L^({dims})) ===")
     print("scope            : classical L~_p^(D) + U_L^(D), single segment")
@@ -528,13 +532,15 @@ def main() -> None:
         "resource_counts_u_cx": est["resource_counts_u_cx"],
         "gate_counts": est["gate_counts"],
     }
-    out_path.write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
+    ensure_parent(out_path).write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
 
     # Draw the same circuit size used for resource estimation. Verification
     # remains at verify_n because dense matrix construction only scales to
     # small n, but the ASCII circuit should visibly follow --target-n.
     draw_n = args.target_n
-    draw_path = Path(f"laplacian_{args.save_prefix}_{dims}d_U_L.txt")
+    draw_path = (
+        CIRCUITS_DIR / f"laplacian_{args.save_prefix}_{dims}d_U_L.txt"
+    )
     # Keep the drawing readable: in 3D its Ry box represents the explicit
     # pyLIQTR sequence that is inserted into the circuit used for all counts.
     counted_drawing = build_u_l_nd(draw_n, dims).draw(output="text")
@@ -563,7 +569,7 @@ def main() -> None:
         f"    {mcx_control_counts(draw_n, 1 + k)} at n = {draw_n} ---\n\n"
         f"{counted_drawing}\n"
     )
-    draw_path.write_text(draw_text, encoding="utf-8")
+    ensure_parent(draw_path).write_text(draw_text, encoding="utf-8")
 
     print(
         f"\nSaved: {out_path} and {draw_path} "
