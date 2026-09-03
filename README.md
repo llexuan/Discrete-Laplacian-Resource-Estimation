@@ -25,12 +25,12 @@ For `dims = D` spatial dimensions and `n` qubits per dimension, each axis has
 
 The normalized periodic Laplacian is
 
-\[
+$$
 \widetilde L_p^{(D)}
 = \frac{1}{D}\sum_{j=0}^{D-1}\widetilde L_{p,j}^{(1)},\qquad
 \widetilde L_p^{(1)}
 = \frac{1}{4}(S^+ + S^- - 2I),
-\]
+$$
 
 where `S+` and `S-` are cyclic increment and decrement operators.
 
