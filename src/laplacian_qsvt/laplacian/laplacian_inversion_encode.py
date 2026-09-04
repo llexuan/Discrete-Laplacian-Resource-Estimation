@@ -668,39 +668,6 @@ def main() -> None:
     print(f"phase numerical err : {phase_numerical_error:.2e}")
     print(f"conservative total  : {conservative_total_error:.2e}")
 
-    # Eigenvalue-level view: recovered P^{MI}(lambda) vs ideal scale/lambda.
-    from numpy.polynomial.chebyshev import chebval
-
-    evals = np.linalg.eigvalsh(lap)
-    uniq, counts = np.unique(np.round(evals, 8), return_counts=True)
-    forbidden_hit = False
-    print("\nEigenvalue inversion report (lambda in [-1, 0]):")
-    print(
-        f"  {'lambda':>10}  {'mult':>4}  {'P^MI(lambda)':>14}  "
-        f"{'scale/lambda':>14}  region"
-    )
-    for lam, mult in zip(uniq, counts):
-        pv = float(chebval(lam, cheb_coeffs))
-        if abs(lam) < 1e-12:
-            ideal = 0.0
-            region = "zero mode"
-        else:
-            ideal = poly_scale / lam
-            if kappa and abs(lam) >= 1.0 / kappa:
-                region = "valid"
-            else:
-                region = "forbidden"
-                forbidden_hit = True
-        print(f"  {lam:>10.5f}  {mult:>4d}  {pv:>14.6e}  {ideal:>14.6e}  {region}")
-
-    if forbidden_hit:
-        print(
-            f"\n[warning] Some non-zero eigenvalues fall inside |lambda| < 1/kappa "
-            f"= {1.0 / kappa:.4f}. The block encoding is still exact, but P^{{MI}} "
-            f"does not invert those modes accurately. Regenerate phases with a "
-            f"larger --kappa (need 1/kappa <= min non-zero |lambda|)."
-        )
-
     required_kappa = float(
         resource_estimate["minimum_kappa_for_full_nonzero_spectrum"]
     )
