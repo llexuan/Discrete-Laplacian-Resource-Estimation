@@ -99,12 +99,6 @@ def build_projector_rotation_clifford_t(
 ) -> tuple[QuantumCircuit, RotationSynthesis]:
     """
     Explicitly implement R(phi) with one clean flag and a synthesized Rz(2phi).
-
-    H and X map |Pi> = |+>_q|0>^m to the all-ones predicate. Computing that
-    predicate into the flag makes Rz(2phi) apply e^(+i phi) to |Pi> and
-    e^(-i phi) to its orthogonal complement. The flag is returned to |0>.
-    A V-chain borrows m-1 system qubits as dirty ancillas and restores them,
-    avoiding uncontrolled approximate rotations inside an ancilla-free MCX.
     """
     synthesis = synthesize_rz(2.0 * phi, synthesis_eps)
     predicate = list(range(1 + m))
