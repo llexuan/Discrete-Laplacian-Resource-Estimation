@@ -7,3 +7,7 @@ __pycache__/
 build/
 dist/
 .DS_Store
+
+# Isolated lattice-surgery compiler smoke-test artifacts.
+outputs/compiler/*
+!outputs/compiler/README.md
