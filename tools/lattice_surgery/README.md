@@ -12,13 +12,14 @@ lattice-surgery compiler pins Qiskit below 0.35 and its CI tested Python
 3.7–3.10. Installing both projects into one environment would downgrade and
 break the main resource-estimation package.
 
-The integration therefore uses an OpenQASM 2 file as the boundary:
+The integration therefore uses a standalone OpenQASM 2 file:
 
-1. The main `.venv` synthesizes a rotation and exports OpenQASM 2.
+1. You write a small circuit in `input_circuit.qasm`.
 2. A separate `lsqecc310` Conda environment compiles that QASM.
 3. Generated compiler files remain under `outputs/compiler/`.
 
-Nothing in `src/laplacian_qsvt/` imports `lsqecc`.
+Nothing in `src/laplacian_qsvt/` imports `lsqecc`, and the manual circuit is
+not generated from the Laplacian resource-estimation code.
 
 ## One-time setup
 
@@ -35,6 +36,7 @@ The script:
   `1d9d9f36c004847e478ad464085927eebc13a0fe`.
 - Initializes the required OpenSurgery submodule.
 - Creates the separate `lsqecc310` Python 3.10 Conda environment.
+- Installs the legacy Qiskit Terra version and a maintained Tweedledum build.
 - Installs `lsqecc` only in that environment.
 
 Override locations if needed:
@@ -45,55 +47,61 @@ LSQECC_ENV_NAME=my-lsqecc-env \
 bash tools/lattice_surgery/setup_compiler.sh
 ```
 
-## Export one synthesized rotation
+## Write a circuit
 
-Use the main project environment:
+Edit:
 
-```bash
-source .venv/bin/activate
+`tools/lattice_surgery/input_circuit.qasm`
 
-python tools/lattice_surgery/export_rotation_qasm.py \
-  --axis rz \
-  --theta 0.3 \
-  --epsilon 1e-6
+The tracked file contains only the required OpenQASM 2 header, one logical
+register, and commented example gates. Change the register size and add gates
+below it. For example:
+
+```qasm
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[2];
+
+h q[0];
+cx q[0],q[1];
+t q[1];
 ```
-
-This writes:
-
-- `outputs/compiler/synthesized_rotation.qasm`
-- `outputs/compiler/synthesized_rotation.json`
-
-The metadata records the requested angle, synthesis error, Clifford/T counts,
-and dropped global phase. OpenQASM 2 cannot represent global phase, but global
-phase is physically irrelevant to lattice-surgery compilation.
 
 ## Run the compiler
 
-The main environment does not need to be deactivated when using `conda run`:
+Use the isolated environment's interpreter directly:
 
 ```bash
-conda run -n lsqecc310 python \
+/opt/anaconda3/envs/lsqecc310/bin/python \
   tools/lattice_surgery/run_lattice_surgery_compiler.py
 ```
 
 This writes:
 
 - `outputs/compiler/compiler_report.txt`
+- `outputs/compiler/compiler_slices.json`
 - `outputs/compiler/compiler_summary.json`
 
 The runner disables state-vector simulation with `SimulatorType.NOOP`; this
 tests compilation and lattice-surgery slice generation without simulating the
-quantum state.
+quantum state. It also disables the pinned compiler's broken optional physical
+resource estimator, which receives the wrong internal object type upstream.
+This does not disable circuit compilation or slice generation.
+
+`compiler_slices.json` is the complete lattice-surgery result: an ordered
+array of 2D patch layouts, one layout per compiler timestep. It can be retained
+for visualization, patch scheduling inspection, and later space-time analysis.
 
 ## Scope
 
-Start with one synthesized rotation. Do not use this smoke-test path for the
-complete target-size QSP circuit yet:
+Start with a small hand-written Clifford+T circuit. Do not use this smoke-test
+path for the complete target-size QSP circuit yet:
 
 - The compiler is alpha software.
 - Its Python pipeline and dependency versions are old.
 - A fully expanded QSP circuit can contain millions of gates.
 
-Once the single-rotation path is validated, a separate adapter can be designed
-for small complete Clifford+T circuits or for the newer C++ `liblsqecc`
-slicer.
+`export_rotation_qasm.py` is retained as an optional future utility, but it is
+not connected to the default compiler input. A separate adapter can be
+designed later for small generated Clifford+T circuits or for the newer C++
+`liblsqecc` slicer.

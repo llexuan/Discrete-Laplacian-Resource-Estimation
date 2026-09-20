@@ -261,9 +261,9 @@ invoked from another working directory.
 ## Optional lattice-surgery compiler smoke test
 
 An isolated integration harness is available under
-`tools/lattice_surgery/`. It exports one pyLIQTR-synthesized rotation as
-OpenQASM 2 and sends that file to the Python lattice-surgery compiler in a
-separate Python 3.10 Conda environment.
+`tools/lattice_surgery/`. It compiles a small, manually written OpenQASM 2
+circuit using the Python lattice-surgery compiler in a separate Python 3.10
+Conda environment.
 
 The compiler is intentionally not a dependency of `laplacian-qsvt`: it
 requires a legacy Qiskit version that conflicts with this project's Qiskit
@@ -274,17 +274,14 @@ Set up and run the smoke test with:
 ```bash
 bash tools/lattice_surgery/setup_compiler.sh
 
-.venv/bin/python tools/lattice_surgery/export_rotation_qasm.py \
-  --axis rz \
-  --theta 0.3 \
-  --epsilon 1e-6
-
-conda run -n lsqecc310 python \
+/opt/anaconda3/envs/lsqecc310/bin/python \
   tools/lattice_surgery/run_lattice_surgery_compiler.py
 ```
 
-See `tools/lattice_surgery/README.md` for environment overrides, generated
-files, and current scope limitations.
+Write the circuit in `tools/lattice_surgery/input_circuit.qasm`. See
+`tools/lattice_surgery/README.md` for syntax, environment overrides, generated
+files, and current scope limitations. The complete ordered patch layouts are
+written to `outputs/compiler/compiler_slices.json`.
 
 ## Testing
 
