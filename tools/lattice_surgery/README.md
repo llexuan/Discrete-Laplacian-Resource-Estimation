@@ -22,6 +22,30 @@ The integration therefore uses a standalone OpenQASM 2 file:
 Nothing in `src/laplacian_qsvt/` imports `lsqecc`, and the manual circuit is
 not generated from the Laplacian resource-estimation code.
 
+## Native build dependencies
+
+On macOS, install the compiler toolchain and libraries with:
+
+```bash
+xcode-select --install
+brew install cmake pkg-config sqlite zstd libpq boost
+```
+
+On Debian/Ubuntu, the equivalent official dependencies are:
+
+```bash
+sudo apt install -y \
+  build-essential \
+  cmake \
+  pkg-config \
+  libsqlite3-dev \
+  libzstd-dev \
+  libpq-dev \
+  libboost-dev
+```
+
+Boost is optional, but enables faster path finding when detected.
+
 ## One-time setup
 
 Run from the GTRI repository root:
@@ -43,6 +67,15 @@ The script:
   `fddaecf0d929b0afa0ae72a1adc1df865fab4e18`.
 - Produces the optimized `liblsqecc/build/lsqecc_slicer` executable.
 
+The fast compiler is deliberately cloned next to GTRI rather than inside it:
+
+```text
+quantum_research/
+├── GTRI/
+├── lattice-surgery-compiler/
+└── liblsqecc/
+```
+
 Override locations if needed:
 
 ```bash
@@ -50,6 +83,14 @@ LSQECC_REPO_DIR=/path/to/lattice-surgery-compiler \
 LSQECC_ENV_NAME=my-lsqecc-env \
 LIBLSQECC_REPO_DIR=/path/to/liblsqecc \
 bash tools/lattice_surgery/setup_compiler.sh
+```
+
+The setup script performs the official native build steps:
+
+```bash
+git clone --recursive https://github.com/latticesurgery-com/liblsqecc.git
+cmake -S liblsqecc -B liblsqecc/build -DCMAKE_BUILD_TYPE=Release
+cmake --build liblsqecc/build --target lsqecc_slicer -j 4
 ```
 
 ## Write a circuit
@@ -127,6 +168,59 @@ To use the legacy Python backend explicitly:
 That fallback disables state-vector simulation and the pinned Python
 compiler's broken optional resource estimator. It does not disable slice
 generation.
+
+## Direct `lsqecc_slicer` usage
+
+The executable built by the setup script is:
+
+```text
+../liblsqecc/build/lsqecc_slicer
+```
+
+Basic QASM-to-JSON compilation:
+
+```bash
+../liblsqecc/build/lsqecc_slicer \
+  -I qasm \
+  -i tools/lattice_surgery/input_circuit.qasm \
+  -L compact \
+  -P stream \
+  --graceful \
+  -o outputs/compiler/compiler_slices.json
+```
+
+The resource-estimation preset used by the project runner is:
+
+```bash
+../liblsqecc/build/lsqecc_slicer \
+  -I qasm \
+  -i tools/lattice_surgery/input_circuit.qasm \
+  -L edpc \
+  --disttime 1 \
+  --nostagger \
+  --notwists \
+  --local \
+  -P wave \
+  --graceful \
+  -o outputs/compiler/compiler_slices.json \
+  -f stats
+```
+
+Important options:
+
+- `-I qasm`: parse OpenQASMmin input.
+- `-i`, `-o`: select input and output files.
+- `-L compact|compact_no_clogging|edpc`: generate a layout.
+- `-P stream|wave|edpc`: select the scheduling pipeline.
+- `-r graph_search|graph_search_cached`: select the router.
+- `-g djikstra|astar|boost`: select path finding.
+- `--numlanes`, `--condensed`, `--explicitfactories`: configure EDPC.
+- `--disttime`, `--nostagger`: configure magic-state distillation.
+- `--local`, `--notwists`: select direct local surgery decompositions.
+- `--printlli`, `--printdag`, `--noslices`: inspect intermediate forms.
+- `--graceful`: report slicing failures without an uncontrolled abort.
+
+Run `../liblsqecc/build/lsqecc_slicer --help` for the complete option list.
 
 ## Scope
 
