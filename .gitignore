@@ -11,3 +11,6 @@ dist/
 # Isolated lattice-surgery compiler smoke-test artifacts.
 outputs/compiler/*
 !outputs/compiler/README.md
+!outputs/compiler/compiler_report.txt
+!outputs/compiler/compiler_slices.json
+!outputs/compiler/compiler_summary.json

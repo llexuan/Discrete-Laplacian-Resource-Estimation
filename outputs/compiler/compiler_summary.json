@@ -1,0 +1,10 @@
+{
+  "compiler": "latticesurgery-com/lattice-surgery-compiler",
+  "source_qasm": "/Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm",
+  "apply_litinski_transform": true,
+  "simulation_type": "NOOP",
+  "upstream_resource_estimator_disabled": true,
+  "num_lattice_surgery_slices": 43,
+  "report_path": "/Users/huanglexuan/quantum_research/GTRI/outputs/compiler/compiler_report.txt",
+  "slices_path": "/Users/huanglexuan/quantum_research/GTRI/outputs/compiler/compiler_slices.json"
+}
