@@ -2,6 +2,14 @@
 # pyright: reportMissingImports=false
 """Compile OpenQASM with liblsqecc or the legacy Python compiler."""
 
+""".venv/bin/python \
+  tools/lattice_surgery/run_lattice_surgery_compiler.py \
+  --preset viewer"""
+
+""".venv/bin/python \
+  tools/lattice_surgery/run_lattice_surgery_compiler.py"""
+  
+
 from __future__ import annotations
 
 import argparse
