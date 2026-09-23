@@ -2,9 +2,9 @@
   "compiler": "latticesurgery-com/liblsqecc",
   "backend": "lsqecc_slicer",
   "backend_revision": "fddaecf0d929b0afa0ae72a1adc1df865fab4e18",
-  "preset": "direct",
+  "preset": "viewer",
   "source_qasm": "/Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm",
-  "num_lattice_surgery_slices": 17,
+  "num_lattice_surgery_slices": 14,
   "command": [
     "/Users/huanglexuan/quantum_research/liblsqecc/build/lsqecc_slicer",
     "-I",
@@ -17,14 +17,9 @@
     "stats",
     "--graceful",
     "-L",
-    "edpc",
-    "--disttime",
-    "1",
-    "--nostagger",
-    "--notwists",
-    "--local",
+    "compact",
     "-P",
-    "wave"
+    "stream"
   ],
   "intermediate_report_included": true,
   "legacy_python": "/opt/anaconda3/envs/lsqecc310/bin/python3.10",

@@ -18,17 +18,17 @@ pi*  1/8 -1/4 -1/4  1/4  1/4  1/4 -1/4 -1/4  1/4
 
 === Fast liblsqecc direct slicing report ===
 
-command: /Users/huanglexuan/quantum_research/liblsqecc/build/lsqecc_slicer -I qasm -i /Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm -o /Users/huanglexuan/quantum_research/GTRI/outputs/compiler/compiler_slices.json -f stats --graceful -L edpc --disttime 1 --nostagger --notwists --local -P wave
+command: /Users/huanglexuan/quantum_research/liblsqecc/build/lsqecc_slicer -I qasm -i /Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm -o /Users/huanglexuan/quantum_research/GTRI/outputs/compiler/compiler_slices.json -f stats --graceful -L compact -P stream
 exit_code: 0
 
 stdout:
-LS Instructions read  27
-Slices 18
-Made patch computation. Took 0.00131638s.
-Total volume: 833
-Distillation volume: 117 (14.0456%)
-Unused routing volume: 558 (66.9868%)
+LS Instructions read  13
+Slices 4
+Made patch computation. Took 0.000879833s.
+Total volume: 378
+Distillation volume: 210 (55.5556%)
+Unused routing volume: 119 (31.4815%)
 Dead volume: 0 (0%)
-Other active volume: 158 (18.9676%)
+Other active volume: 49 (12.963%)
 
 stderr:
