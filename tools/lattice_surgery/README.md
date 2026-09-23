@@ -1,21 +1,22 @@
-# Isolated lattice-surgery compiler smoke test
+# Isolated fast lattice-surgery compiler
 
 This directory tests
-[`latticesurgery-com/lattice-surgery-compiler`](https://github.com/latticesurgery-com/lattice-surgery-compiler)
-without adding its legacy dependencies to the main `laplacian-qsvt`
-environment.
+[`latticesurgery-com/liblsqecc`](https://github.com/latticesurgery-com/liblsqecc)
+without adding compiler dependencies to the main `laplacian-qsvt` package. The
+older Python
+[`lattice-surgery-compiler`](https://github.com/latticesurgery-com/lattice-surgery-compiler)
+is retained only as an explicit fallback backend.
 
 ## Why it is isolated
 
-The main project currently uses Qiskit 2.x and Python 3.12. The Python
-lattice-surgery compiler pins Qiskit below 0.35 and its CI tested Python
-3.7–3.10. Installing both projects into one environment would downgrade and
-break the main resource-estimation package.
+The main project currently uses Qiskit 2.x and Python 3.12. The legacy Python
+compiler pins Qiskit below 0.35, while the optimized slicer is a separate C++
+project. Neither compiler is imported by the Laplacian package.
 
 The integration therefore uses a standalone OpenQASM 2 file:
 
 1. You write a small circuit in `input_circuit.qasm`.
-2. A separate `lsqecc310` Conda environment compiles that QASM.
+2. `liblsqecc` performs direct Clifford+T compilation and slicing.
 3. Generated compiler files remain under `outputs/compiler/`.
 
 Nothing in `src/laplacian_qsvt/` imports `lsqecc`, and the manual circuit is
@@ -38,12 +39,16 @@ The script:
 - Creates the separate `lsqecc310` Python 3.10 Conda environment.
 - Installs the legacy Qiskit Terra version and a maintained Tweedledum build.
 - Installs `lsqecc` only in that environment.
+- Clones and builds pinned `liblsqecc` commit
+  `fddaecf0d929b0afa0ae72a1adc1df865fab4e18`.
+- Produces the optimized `liblsqecc/build/lsqecc_slicer` executable.
 
 Override locations if needed:
 
 ```bash
 LSQECC_REPO_DIR=/path/to/lattice-surgery-compiler \
 LSQECC_ENV_NAME=my-lsqecc-env \
+LIBLSQECC_REPO_DIR=/path/to/liblsqecc \
 bash tools/lattice_surgery/setup_compiler.sh
 ```
 
@@ -69,10 +74,10 @@ t q[1];
 
 ## Run the compiler
 
-Use the isolated environment's interpreter directly:
+The fast direct backend is the default and can run from the main environment:
 
 ```bash
-/opt/anaconda3/envs/lsqecc310/bin/python \
+.venv/bin/python \
   tools/lattice_surgery/run_lattice_surgery_compiler.py
 ```
 
@@ -82,26 +87,52 @@ This writes:
 - `outputs/compiler/compiler_slices.json`
 - `outputs/compiler/compiler_summary.json`
 
-The runner disables state-vector simulation with `SimulatorType.NOOP`; this
-tests compilation and lattice-surgery slice generation without simulating the
-quantum state. It also disables the pinned compiler's broken optional physical
-resource estimator, which receives the wrong internal object type upstream.
-This does not disable circuit compilation or slice generation.
+`compiler_report.txt` combines the legacy Python compiler's Pauli-rotation and
+Litinski-transformation views with the fast slicer's command and volume
+statistics. Pass `--no-intermediate-report` to skip the legacy section.
 
-`compiler_slices.json` is the complete lattice-surgery result: an ordered
-array of 2D patch layouts, one layout per compiler timestep. It can be retained
-for visualization, patch scheduling inspection, and later space-time analysis.
+By default, the runner uses the upgraded direct-compilation configuration from
+the liblsqecc resource-estimation workflow:
+
+- EDPC layout
+- Wave scheduling
+- Local lattice-surgery instruction decomposition
+- Distillation time 1 with unstaggered factories
+- Catalytic S-gate implementation disabled through `--notwists`
+
+`compiler_slices.json` is the viewer-compatible complete lattice-surgery
+result: an ordered array of 2D patch layouts, one layout per compiler
+timestep. It can be uploaded to
+[latticesurgery.com](https://latticesurgery.com) for visualization.
+
+For the compact/stream layout closest to the basic viewer example:
+
+```bash
+.venv/bin/python tools/lattice_surgery/run_lattice_surgery_compiler.py \
+  --preset viewer
+```
+
+The exact hosted QASM service can differ by deployed compiler revision and
+server settings. `compiler_summary.json` records the local backend commit and
+full command for reproducibility.
+
+To use the legacy Python backend explicitly:
+
+```bash
+/opt/anaconda3/envs/lsqecc310/bin/python \
+  tools/lattice_surgery/run_lattice_surgery_compiler.py \
+  --backend python
+```
+
+That fallback disables state-vector simulation and the pinned Python
+compiler's broken optional resource estimator. It does not disable slice
+generation.
 
 ## Scope
 
-Start with a small hand-written Clifford+T circuit. Do not use this smoke-test
-path for the complete target-size QSP circuit yet:
-
-- The compiler is alpha software.
-- Its Python pipeline and dependency versions are old.
-- A fully expanded QSP circuit can contain millions of gates.
+Start with a small hand-written Clifford+T circuit. A fully expanded
+target-size QSP circuit can contain millions of gates and should be tested only
+after validating progressively larger examples.
 
 `export_rotation_qasm.py` is retained as an optional future utility, but it is
-not connected to the default compiler input. A separate adapter can be
-designed later for small generated Clifford+T circuits or for the newer C++
-`liblsqecc` slicer.
+not connected to the default compiler input.

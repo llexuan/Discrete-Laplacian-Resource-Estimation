@@ -262,26 +262,26 @@ invoked from another working directory.
 
 An isolated integration harness is available under
 `tools/lattice_surgery/`. It compiles a small, manually written OpenQASM 2
-circuit using the Python lattice-surgery compiler in a separate Python 3.10
-Conda environment.
+circuit using the optimized C++ `liblsqecc` direct Clifford+T slicer. The
+legacy Python compiler remains available only as an explicit fallback.
 
-The compiler is intentionally not a dependency of `laplacian-qsvt`: it
-requires a legacy Qiskit version that conflicts with this project's Qiskit
-2.x environment.
+Neither compiler is a dependency of `laplacian-qsvt`; both remain external to
+the Laplacian resource-estimation package.
 
 Set up and run the smoke test with:
 
 ```bash
 bash tools/lattice_surgery/setup_compiler.sh
 
-/opt/anaconda3/envs/lsqecc310/bin/python \
+.venv/bin/python \
   tools/lattice_surgery/run_lattice_surgery_compiler.py
 ```
 
 Write the circuit in `tools/lattice_surgery/input_circuit.qasm`. See
 `tools/lattice_surgery/README.md` for syntax, environment overrides, generated
 files, and current scope limitations. The complete ordered patch layouts are
-written to `outputs/compiler/compiler_slices.json`.
+written to `outputs/compiler/compiler_slices.json` in the JSON format accepted
+by the lattice-surgery viewer.
 
 ## Testing
 

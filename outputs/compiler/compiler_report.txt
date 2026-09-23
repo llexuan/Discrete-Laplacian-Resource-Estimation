@@ -1,3 +1,5 @@
+=== Pauli rotation and Litinski transformation report ===
+
 Input Circuit:
      ┌───┐     ┌───┐
 q_0: ┤ H ├──■──┤ T ├
@@ -13,3 +15,20 @@ Circuit after the Litinski Transform:
  q0--|X|--|I|--|X|--|X|--|X|--|Z|--|X|--|Z|--|Z|
  q1--|I|--|X|--|I|--|X|--|I|--|I|--|I|--|I|--|I|
 pi*  1/8 -1/4 -1/4  1/4  1/4  1/4 -1/4 -1/4  1/4
+
+=== Fast liblsqecc direct slicing report ===
+
+command: /Users/huanglexuan/quantum_research/liblsqecc/build/lsqecc_slicer -I qasm -i /Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm -o /Users/huanglexuan/quantum_research/GTRI/outputs/compiler/compiler_slices.json -f stats --graceful -L edpc --disttime 1 --nostagger --notwists --local -P wave
+exit_code: 0
+
+stdout:
+LS Instructions read  27
+Slices 18
+Made patch computation. Took 0.00131638s.
+Total volume: 833
+Distillation volume: 117 (14.0456%)
+Unused routing volume: 558 (66.9868%)
+Dead volume: 0 (0%)
+Other active volume: 158 (18.9676%)
+
+stderr:
