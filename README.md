@@ -279,9 +279,9 @@ bash tools/lattice_surgery/setup_compiler.sh
 
 Write the circuit in `tools/lattice_surgery/input_circuit.qasm`. See
 `tools/lattice_surgery/README.md` for syntax, environment overrides, generated
-files, and current scope limitations. The complete ordered patch layouts are
-written to `outputs/compiler/compiler_slices.json` in the JSON format accepted
-by the lattice-surgery viewer.
+files, and current scope limitations. Layout-independent and scheduled lattice
+instructions are written to `outputs/compiler/compiler.lli` and
+`outputs/compiler/compiler_sliced.lli`.
 
 ## Testing
 

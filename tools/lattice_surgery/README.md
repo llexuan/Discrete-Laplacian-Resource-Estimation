@@ -125,12 +125,12 @@ The fast direct backend is the default and can run from the main environment:
 This writes:
 
 - `outputs/compiler/compiler_report.txt`
-- `outputs/compiler/compiler_slices.json`
-- `outputs/compiler/compiler_summary.json`
+- `outputs/compiler/compiler.lli`
+- `outputs/compiler/compiler_sliced.lli`
 
 `compiler_report.txt` combines the legacy Python compiler's Pauli-rotation and
-Litinski-transformation views with the fast slicer's command and volume
-statistics. Pass `--no-intermediate-report` to skip the legacy section.
+Litinski-transformation views with the exact fast-slicer LLI commands. Pass
+`--no-intermediate-report` to skip the legacy section.
 
 By default, the runner uses the upgraded direct-compilation configuration from
 the liblsqecc resource-estimation workflow:
@@ -141,10 +141,14 @@ the liblsqecc resource-estimation workflow:
 - Distillation time 1 with unstaggered factories
 - Catalytic S-gate implementation disabled through `--notwists`
 
-`compiler_slices.json` is the viewer-compatible complete lattice-surgery
-result: an ordered array of 2D patch layouts, one layout per compiler
-timestep. It can be uploaded to
-[latticesurgery.com](https://latticesurgery.com) for visualization.
+`compiler.lli` contains the layout-independent instructions before routing.
+`compiler_sliced.lli` contains the scheduled instructions, with operations on
+the same line executing in the same timestep.
+
+`compiler_sliced.lli` contains the same Clifford+T computation as
+layout-independent lattice-surgery instructions grouped by scheduled
+timestep. Operations on the same line, separated by semicolons, execute in the
+same slice.
 
 For the compact/stream layout closest to the basic viewer example:
 
@@ -152,10 +156,6 @@ For the compact/stream layout closest to the basic viewer example:
 .venv/bin/python tools/lattice_surgery/run_lattice_surgery_compiler.py \
   --preset viewer
 ```
-
-The exact hosted QASM service can differ by deployed compiler revision and
-server settings. `compiler_summary.json` records the local backend commit and
-full command for reproducibility.
 
 To use the legacy Python backend explicitly:
 
@@ -177,7 +177,7 @@ The executable built by the setup script is:
 ../liblsqecc/build/lsqecc_slicer
 ```
 
-Basic QASM-to-JSON compilation:
+Print layout-independent LLI:
 
 ```bash
 ../liblsqecc/build/lsqecc_slicer \
@@ -186,10 +186,11 @@ Basic QASM-to-JSON compilation:
   -L compact \
   -P stream \
   --graceful \
-  -o outputs/compiler/compiler_slices.json
+  --printlli before \
+  > outputs/compiler/compiler.lli
 ```
 
-The resource-estimation preset used by the project runner is:
+Print LLI sliced with the resource-estimation preset:
 
 ```bash
 ../liblsqecc/build/lsqecc_slicer \
@@ -202,8 +203,8 @@ The resource-estimation preset used by the project runner is:
   --local \
   -P wave \
   --graceful \
-  -o outputs/compiler/compiler_slices.json \
-  -f stats
+  --printlli sliced \
+  > outputs/compiler/compiler_sliced.lli
 ```
 
 Important options:

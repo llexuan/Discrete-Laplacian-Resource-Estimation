@@ -3,9 +3,14 @@
 This directory is reserved for the isolated compiler smoke test in
 `tools/lattice_surgery/`.
 
-The report, summary, and complete patch-layout slice file are tracked by Git.
-Each compiler run overwrites these files rather than appending to them, so they
-contain only the most recent circuit result. The editable QASM input is tracked
-separately at `tools/lattice_surgery/input_circuit.qasm`. The default runner
-uses the pinned `liblsqecc` direct EDPC/wave backend; its revision and complete
-command are recorded in `compiler_summary.json`.
+The tracked outputs are:
+
+- `compiler.lli`: layout-independent lattice-surgery instructions.
+- `compiler_sliced.lli`: instructions grouped by scheduled timestep.
+- `compiler_report.txt`: Pauli/Litinski transformations and exact commands.
+
+Each compiler run overwrites these files. The editable QASM input is tracked at
+`tools/lattice_surgery/input_circuit.qasm`.
+
+.venv/bin/python \
+  tools/lattice_surgery/run_lattice_surgery_compiler.py
