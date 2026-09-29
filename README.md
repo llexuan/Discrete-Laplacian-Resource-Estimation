@@ -283,6 +283,14 @@ files, and current scope limitations. Layout-independent and scheduled lattice
 instructions are written to `outputs/compiler/compiler.lli` and
 `outputs/compiler/compiler_sliced.lli`.
 
+Estimate schedule-aware timing and physical space with:
+
+```bash
+.venv/bin/python tools/lattice_surgery/estimate_sliced_resources.py \
+  --code-distance 7 \
+  --cycle-time-ns 1000
+```
+
 ## Testing
 
 Run the complete test suite:

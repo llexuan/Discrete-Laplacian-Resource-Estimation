@@ -1,0 +1,35 @@
+=== liblsqecc slice-based resource estimate ===
+
+source QASM             : /Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm
+preset                 : direct
+logical qubits         : 2
+scheduled slices       : 17
+layout rows x columns  : 7 x 7
+layout tiles           : 49
+max occupied tiles     : 22
+magic-state requests   : 1
+Y-state requests       : 2
+
+--- physical assumptions ---
+code distance          : 9
+cycle time             : 1000.0 ns
+physical qubits/tile   : 2.0 * d^2
+physical error rate    : 1.000e-03
+target failure prob.   : 1.000e-02
+
+--- schedule-aware estimate ---
+core QEC rounds        : 153
+core runtime           : 153000.000 ns
+core runtime           : 1.530000e-04 s
+layout physical qubits : 7938.000
+core space-time volume : 1.214514e+09 ns*qubits
+failure proxy          : 7.497000e-03
+
+--- legacy repository-compatible core values ---
+core timesteps         : 17
+core time              : 153000.000 ns
+core space qubits      : 3969
+core space-time volume : 6.072570e+08 ns*qubits
+
+--- warnings ---
+- No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only.

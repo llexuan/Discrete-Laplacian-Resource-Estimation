@@ -18,3 +18,5 @@ outputs/compiler/*
 !outputs/compiler/compiler_report.txt
 !outputs/compiler/compiler.lli
 !outputs/compiler/compiler_sliced.lli
+!outputs/compiler/slice_resource_estimate.json
+!outputs/compiler/slice_resource_report.txt

@@ -145,10 +145,45 @@ the liblsqecc resource-estimation workflow:
 `compiler_sliced.lli` contains the scheduled instructions, with operations on
 the same line executing in the same timestep.
 
-`compiler_sliced.lli` contains the same Clifford+T computation as
-layout-independent lattice-surgery instructions grouped by scheduled
-timestep. Operations on the same line, separated by semicolons, execute in the
-same slice.
+## Estimate scheduled physical resources
+
+Run the standalone schedule-aware estimator:
+
+```bash
+.venv/bin/python \
+  tools/lattice_surgery/estimate_sliced_resources.py \
+  --code-distance 7 \
+  --cycle-time-ns 1000
+```
+
+It reruns the same `liblsqecc` preset into a temporary patch JSON, extracts
+the exact schedule and layout dimensions, counts state requests from LLI, and
+deletes the temporary JSON. It writes:
+
+- `outputs/compiler/slice_resource_estimate.json`
+- `outputs/compiler/slice_resource_report.txt`
+
+The transparent core model is:
+
+```text
+QEC rounds  = scheduled slices * code distance
+core time   = QEC rounds * surface-code cycle time
+core qubits = layout tiles * tile factor * code distance^2
+```
+
+The JSON also includes the repository-compatible legacy core formulas for
+comparison. For an optional physical factory-throughput model:
+
+```bash
+.venv/bin/python \
+  tools/lattice_surgery/estimate_sliced_resources.py \
+  --factory-cycle-rounds 15 \
+  --factory-physical-qubits 1000 \
+  --num-factories 2
+```
+
+Without a factory cadence, the report uses the scheduler's `--disttime`
+assumption and emits a warning instead of inventing a factory runtime.
 
 For the compact/stream layout closest to the basic viewer example:
 
