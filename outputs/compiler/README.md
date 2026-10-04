@@ -14,6 +14,7 @@ The tracked outputs are:
 Each compiler run overwrites these files. The editable QASM input is tracked at
 `tools/lattice_surgery/input_circuit.qasm`.
 
+EDPC style compile: 
 .venv/bin/python \
   tools/lattice_surgery/run_lattice_surgery_compiler.py
 
@@ -21,3 +22,17 @@ Each compiler run overwrites these files. The editable QASM input is tracked at
   tools/lattice_surgery/estimate_sliced_resources.py \
   --code-distance 7 \
   --cycle-time-ns 1000
+
+Compact style compile: 
+.venv/bin/python tools/lattice_surgery/run_lattice_surgery_compiler.py \
+  --preset viewer \
+  --lli outputs/compiler/compact.lli \
+  --sliced-lli outputs/compiler/compact_sliced.lli \
+  --report outputs/compiler/compact_compiler_report.txt
+
+.venv/bin/python tools/lattice_surgery/estimate_sliced_resources.py \
+  --preset viewer \
+  --code-distance 9 \
+  --cycle-time-ns 1000 \
+  --output-json outputs/compiler/compact_resource_estimate.json \
+  --output-report outputs/compiler/compact_resource_report.txt

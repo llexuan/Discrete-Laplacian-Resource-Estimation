@@ -5,7 +5,7 @@
     "backend": "liblsqecc/lsqecc_slicer",
     "preset": "direct",
     "disttime_slices": 1,
-    "stats_stdout": "LS Instructions read  27\nSlices 18\nMade patch computation. Took 0.00122008s.\nTotal volume: 833\nDistillation volume: 117 (14.0456%)\nUnused routing volume: 558 (66.9868%)\nDead volume: 0 (0%)\nOther active volume: 158 (18.9676%)",
+    "stats_stdout": "LS Instructions read  27\nSlices 18\nMade patch computation. Took 0.00154612s.\nTotal volume: 833\nDistillation volume: 117 (14.0456%)\nUnused routing volume: 558 (66.9868%)\nDead volume: 0 (0%)\nOther active volume: 158 (18.9676%)",
     "temporary_patch_json_retained": false
   },
   "logical_circuit": {

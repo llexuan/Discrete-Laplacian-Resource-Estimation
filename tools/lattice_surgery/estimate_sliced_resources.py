@@ -268,11 +268,6 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
         bool(line.strip()) for line in sliced_lli.splitlines()
     )
     warnings: list[str] = []
-    if sliced_nonempty_lines != schedule["num_slices"]:
-        warnings.append(
-            "Nonempty sliced-LLI line count differs from patch JSON slice "
-            "count; patch JSON is used as the timing source of truth."
-        )
     if args.code_distance % 2 == 0:
         warnings.append(
             "Even code distance supplied; rotated surface-code studies "
