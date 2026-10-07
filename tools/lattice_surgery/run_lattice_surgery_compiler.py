@@ -38,9 +38,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--preset",
-        choices=("direct", "viewer"),
+        choices=("direct", "viewer", "edpc", "compact"),
         default="direct",
-        help="Use EDPC/wave direct compilation or compact/stream scheduling.",
+        help=(
+            "Historical direct/viewer configurations, or matched edpc/compact "
+            "configurations for layout comparisons."
+        ),
     )
     parser.add_argument(
         "--slicer",
@@ -98,7 +101,24 @@ def _backend_options(preset: str) -> list[str]:
             "-P",
             "wave",
         ]
-    return ["-L", "compact", "-P", "stream"]
+    if preset == "viewer":
+        return ["-L", "compact", "-P", "stream"]
+    return [
+        "-L",
+        preset,
+        "-P",
+        "wave",
+        "--local",
+        "--disttime",
+        "1",
+        "--nostagger",
+        "--cnotcorrections",
+        "never",
+        "-r",
+        "graph_search",
+        "-g",
+        "djikstra",
+    ]
 
 
 def _run_command(command: list[str], output_name: str) -> str:

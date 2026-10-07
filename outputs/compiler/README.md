@@ -14,25 +14,82 @@ The tracked outputs are:
 Each compiler run overwrites these files. The editable QASM input is tracked at
 `tools/lattice_surgery/input_circuit.qasm`.
 
-EDPC style compile: 
-.venv/bin/python \
-  tools/lattice_surgery/run_lattice_surgery_compiler.py
+For a controlled layout comparison, the `edpc` and `compact` presets both use
+wave scheduling, local compilation, twist-based S gates, `--disttime 1`,
+`--nostagger`, no CNOT corrections, the graph-search router, and Dijkstra.
+Only `-L edpc` versus `-L compact` differs.
 
-.venv/bin/python \
-  tools/lattice_surgery/estimate_sliced_resources.py \
-  --code-distance 7 \
-  --cycle-time-ns 1000
+EDPC LLI and resource report:
 
-Compact style compile: 
+```shell
 .venv/bin/python tools/lattice_surgery/run_lattice_surgery_compiler.py \
-  --preset viewer \
+  --preset edpc
+
+.venv/bin/python tools/lattice_surgery/estimate_sliced_resources.py \
+  --preset edpc \
+  --code-distance 9 \
+  --cycle-time-ns 1000 \
+  --output-json outputs/compiler/slice_resource_estimate.json \
+  --output-report outputs/compiler/slice_resource_report.txt
+```
+
+Compact LLI and resource report:
+
+```shell
+.venv/bin/python tools/lattice_surgery/run_lattice_surgery_compiler.py \
+  --preset compact \
   --lli outputs/compiler/compact.lli \
   --sliced-lli outputs/compiler/compact_sliced.lli \
   --report outputs/compiler/compact_compiler_report.txt
 
 .venv/bin/python tools/lattice_surgery/estimate_sliced_resources.py \
-  --preset viewer \
+  --preset compact \
   --code-distance 9 \
   --cycle-time-ns 1000 \
   --output-json outputs/compiler/compact_resource_estimate.json \
   --output-report outputs/compiler/compact_resource_report.txt
+```
+
+SLICER=../liblsqecc/build/lsqecc_slicer
+
+# EDPC unsliced LLI
+"$SLICER" -I qasm \
+  -i tools/lattice_surgery/input_circuit.qasm \
+  -L edpc -P wave --local \
+  --disttime 1 --nostagger \
+  --cnotcorrections never \
+  -r graph_search -g djikstra \
+  --printlli before --graceful \
+  > outputs/compiler/compiler.lli
+
+# EDPC sliced LLI
+"$SLICER" -I qasm \
+  -i tools/lattice_surgery/input_circuit.qasm \
+  -L edpc -P wave --local \
+  --disttime 1 --nostagger \
+  --cnotcorrections never \
+  -r graph_search -g djikstra \
+  --printlli sliced --graceful \
+  > outputs/compiler/compiler_sliced.lli
+
+SLICER=../liblsqecc/build/lsqecc_slicer
+
+# Compact unsliced LLI
+"$SLICER" -I qasm \
+  -i tools/lattice_surgery/input_circuit.qasm \
+  -L compact -P wave --local \
+  --disttime 1 --nostagger \
+  --cnotcorrections never \
+  -r graph_search -g djikstra \
+  --printlli before --graceful \
+  > outputs/compiler/compact.lli
+
+# Compact sliced LLI
+"$SLICER" -I qasm \
+  -i tools/lattice_surgery/input_circuit.qasm \
+  -L compact -P wave --local \
+  --disttime 1 --nostagger \
+  --cnotcorrections never \
+  -r graph_search -g djikstra \
+  --printlli sliced --graceful \
+  > outputs/compiler/compact_sliced.lli

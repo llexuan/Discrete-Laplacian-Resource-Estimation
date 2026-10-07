@@ -37,8 +37,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--preset",
-        choices=("direct", "viewer"),
+        choices=("direct", "viewer", "edpc", "compact"),
         default="direct",
+        help=(
+            "Historical direct/viewer configurations, or matched edpc/compact "
+            "configurations for layout comparisons."
+        ),
     )
     parser.add_argument("--code-distance", type=int, default=7)
     parser.add_argument("--cycle-time-ns", type=float, default=1000.0)
@@ -104,7 +108,24 @@ def backend_options(preset: str, disttime: int) -> list[str]:
             "-P",
             "wave",
         ]
-    return ["-L", "compact", "-P", "stream"]
+    if preset == "viewer":
+        return ["-L", "compact", "-P", "stream"]
+    return [
+        "-L",
+        preset,
+        "-P",
+        "wave",
+        "--local",
+        "--disttime",
+        str(disttime),
+        "--nostagger",
+        "--cnotcorrections",
+        "never",
+        "-r",
+        "graph_search",
+        "-g",
+        "djikstra",
+    ]
 
 
 def run_checked(command: list[str]) -> str:
@@ -370,6 +391,7 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
         "compiler": {
             "backend": "liblsqecc/lsqecc_slicer",
             "preset": args.preset,
+            "options": options,
             "disttime_slices": args.disttime,
             "stats_stdout": stats_stdout.strip(),
             "temporary_patch_json_retained": False,
@@ -429,6 +451,7 @@ def render_report(result: dict[str, Any]) -> str:
         "",
         f"source QASM             : {result['source_qasm']}",
         f"preset                 : {result['compiler']['preset']}",
+        f"compiler options        : {' '.join(result['compiler']['options'])}",
         f"logical qubits         : {logical['logical_qubits']}",
         f"scheduled slices       : {schedule['num_slices']}",
         (
