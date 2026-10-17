@@ -1,0 +1,36 @@
+=== liblsqecc slice-based resource estimate ===
+
+source QASM             : /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm
+preset                 : compact
+compiler options        : -L compact -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
+logical qubits         : 2
+scheduled slices       : 10
+layout rows x columns  : 3 x 9
+layout tiles           : 27
+max occupied tiles     : 24
+magic-state requests   : 1
+Y-state requests       : 1
+
+--- physical assumptions ---
+code distance          : 9
+cycle time             : 1000.0 ns
+physical qubits/tile   : 2.0 * d^2
+physical error rate    : 1.000e-03
+target failure prob.   : 1.000e-02
+
+--- schedule-aware estimate ---
+core QEC rounds        : 90
+core runtime           : 90000.000 ns
+core runtime           : 9.000000e-05 s
+layout physical qubits : 4374.000
+core space-time volume : 3.936600e+08 ns*qubits
+failure proxy          : 2.430000e-03
+
+--- legacy repository-compatible core values ---
+core timesteps         : 10
+core time              : 90000.000 ns
+core space qubits      : 2187
+core space-time volume : 1.968300e+08 ns*qubits
+
+--- warnings ---
+- No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only.

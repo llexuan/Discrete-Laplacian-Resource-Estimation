@@ -1,0 +1,106 @@
+{
+  "scope": "liblsqecc_schedule_aware_physical_resource_estimate",
+  "source_qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm",
+  "compiler": {
+    "backend": "liblsqecc/lsqecc_slicer",
+    "preset": "compact",
+    "options": [
+      "-L",
+      "compact",
+      "-P",
+      "wave",
+      "--local",
+      "--disttime",
+      "1",
+      "--nostagger",
+      "--cnotcorrections",
+      "never",
+      "-r",
+      "graph_search",
+      "-g",
+      "djikstra"
+    ],
+    "disttime_slices": 1,
+    "stats_stdout": "LS Instructions read  15\nSlices 11\nMade patch computation. Took 0.000720083s.\nTotal volume: 270\nDistillation volume: 150 (55.5556%)\nUnused routing volume: 57 (21.1111%)\nDead volume: 0 (0%)\nOther active volume: 63 (23.3333%)",
+    "temporary_patch_json_retained": false
+  },
+  "logical_circuit": {
+    "logical_qubits": 2,
+    "magic_state_requests": 1,
+    "y_state_requests": 1,
+    "unsliced_instruction_counts": {
+      "BellBasedCNOT": 2,
+      "HGate": 1,
+      "MeasureSinglePatch": 2,
+      "MultiBodyMeasure": 1,
+      "RequestMagicState": 1,
+      "RequestYState": 1,
+      "RotateSingleCellPatch": 1,
+      "ZGate": 1
+    },
+    "sliced_instruction_counts": {
+      "BellBasedCNOT": 4,
+      "BellMeasure": 2,
+      "BellPrepare": 2,
+      "BusyRegion": 3,
+      "HGate": 1,
+      "MeasureSinglePatch": 2,
+      "MergeContract": 1,
+      "MultiBodyMeasure": 1,
+      "RequestMagicState": 1,
+      "RequestYState": 1,
+      "RotateSingleCellPatch": 1,
+      "ZGate": 1
+    }
+  },
+  "schedule": {
+    "num_slices": 10,
+    "layout_rows": 3,
+    "layout_columns": 9,
+    "layout_tiles": 27,
+    "max_occupied_tiles": 24,
+    "mean_occupied_tiles": 21.3,
+    "max_patch_types": {
+      "Ancilla": 2,
+      "DistillationQubit": 18,
+      "Qubit": 7
+    },
+    "reserved_distillation_tiles": 18,
+    "sliced_lli_nonempty_lines": 10
+  },
+  "assumptions": {
+    "code_distance": 9,
+    "cycle_time_ns": 1000.0,
+    "physical_qubits_per_tile_factor": 2.0,
+    "physical_error_rate": 0.001,
+    "target_failure_probability": 0.01,
+    "logical_error_proxy": "0.1 * (100 * p_phys)^((d + 1) / 2)"
+  },
+  "schedule_aware_estimate": {
+    "qec_rounds_core": 90,
+    "core_time_ns": 90000.0,
+    "core_time_seconds": 9e-05,
+    "layout_physical_qubits": 4374.0,
+    "core_space_time_volume_ns_qubits": 393660000.0,
+    "logical_error_per_round_proxy": 1.0000000000000004e-06,
+    "failure_opportunities_proxy": 2430,
+    "total_failure_probability_proxy": 0.0024300000000000007,
+    "factory_model": null,
+    "qec_rounds_with_factory_bottleneck": 90.0,
+    "runtime_with_factory_bottleneck_ns": 90000.0,
+    "runtime_with_factory_bottleneck_seconds": 9e-05,
+    "total_physical_qubits_with_factory": 4374.0,
+    "total_space_time_volume_ns_qubits": 393660000.0
+  },
+  "legacy_repository_comparison": {
+    "description": "Repository-compatible core formulas with fixed distance; known unit/model limitations are intentionally not hidden.",
+    "core_space_qubits": 2187,
+    "core_timesteps": 10,
+    "core_time_ns": 90000.0,
+    "core_space_time_volume_ns_qubits": 196830000.0,
+    "warning": "The upstream time_ms field is not reproduced because it sums nanosecond-labeled quantities without converting units."
+  },
+  "warnings": [
+    "No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only."
+  ]
+}

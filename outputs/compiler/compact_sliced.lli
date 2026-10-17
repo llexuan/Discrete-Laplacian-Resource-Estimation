@@ -1,0 +1,10 @@
+HGate 0;RotateSingleCellPatch 0;
+BusyRegion (0,0),(0,1),StepsToClear(2);
+BusyRegion (0,0),(0,1),StepsToClear(1);
+BusyRegion (0,0),(0,1),StepsToClear(0);BellBasedCNOT 0 1 2 3 [ExtendSplit (0,0),(1,0);BellPrepare (2,1),(1,1)];
+BellBasedCNOT 0 1 2 3 [MergeContract (2,0),(2,1);BellMeasure (1,1),(1,0)];RequestMagicState 4 0;
+BellBasedCNOT 0 4 5 6 [BellPrepare (0,2),(0,1);BellPrepare (1,1),(1,0)];
+BellBasedCNOT 0 4 5 6 [MergeContract (0,0),(1,0);MergeContract (0,3),(0,2);BellMeasure (0,1),(1,1)];MeasureSinglePatch 4 Z;
+RequestYState 7 0 [PrepareY (1,0)];
+MultiBodyMeasure 7:Z,0:Z [TwoPatchMeasure (1,0),(0,0)];MeasureSinglePatch 7 X;
+ZGate 0;

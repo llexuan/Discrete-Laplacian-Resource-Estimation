@@ -10,8 +10,17 @@ The tracked outputs are:
 - `compiler_report.txt`: Pauli/Litinski transformations and exact commands.
 - `slice_resource_estimate.json`: schedule-aware machine-readable resources.
 - `slice_resource_report.txt`: readable timing and space report.
+- `compact.lli` and `compact_sliced.lli`: compact-layout instructions before
+  routing and grouped by scheduled timestep.
+- `compact_compiler_report.txt`: exact compact compilation commands and
+  Pauli/Litinski transformations when the legacy compiler is available.
+- `compact_resource_estimate.json` and `compact_resource_report.txt`:
+  compact-layout machine-readable resources and readable timing/space report.
 
-Each compiler run overwrites these files. The editable QASM input is tracked at
+Default output paths contain the EDPC results. Use the explicit compact paths
+below to preserve both layouts; each run overwrites its selected output files.
+All files listed above are allowed by `.gitignore` so both layouts can be
+committed. The editable QASM input is tracked at
 `tools/lattice_surgery/input_circuit.qasm`.
 
 For a controlled layout comparison, the `edpc` and `compact` presets both use
