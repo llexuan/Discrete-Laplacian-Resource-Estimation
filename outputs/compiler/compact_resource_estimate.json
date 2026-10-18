@@ -2,7 +2,7 @@
   "scope": "liblsqecc_schedule_aware_physical_resource_estimate",
   "source_qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm",
   "compiler": {
-    "backend": "liblsqecc/lsqecc_slicer",
+    "backend": "liblsqecc/liblsqecc_adapter",
     "preset": "compact",
     "options": [
       "-L",
@@ -21,8 +21,17 @@
       "djikstra"
     ],
     "disttime_slices": 1,
-    "stats_stdout": "LS Instructions read  15\nSlices 11\nMade patch computation. Took 0.000720083s.\nTotal volume: 270\nDistillation volume: 150 (55.5556%)\nUnused routing volume: 57 (21.1111%)\nDead volume: 0 (0%)\nOther active volume: 63 (23.3333%)",
-    "temporary_patch_json_retained": false
+    "stats_stdout": "LS Instructions read  15\nSlices 11\nMade patch computation. Took 0.000734209s.\nTotal volume: 270\nDistillation volume: 150 (55.5556%)\nUnused routing volume: 57 (21.1111%)\nDead volume: 0 (0%)\nOther active volume: 63 (23.3333%)",
+    "temporary_patch_json_retained": false,
+    "binary_sha256": "96c848cf748fa1c7abf568e4408e47a9db8dc6d743f4cbc2139488d022488fd2",
+    "input_sha256": "2f224a050e046fcf46b18ecaafc976e5ac1ec42b61b66ebacaf828b53d47ad91",
+    "geometry_sha256": null,
+    "staggered": false,
+    "native_commit": "82a1cbe64717a64a289dd4b0d02e3dc38cae3890",
+    "floorplanner_commit": "7835a4ef645f7c9faccc4a74c678574285a7c82b",
+    "compiled_qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/input.qasm",
+    "geometry_file": null,
+    "source_sha256": "c3aa446876ebb2c97a75a2f0ef1db94a363bcb831469e71fb464a25289345f15"
   },
   "logical_circuit": {
     "logical_qubits": 2,
@@ -66,22 +75,23 @@
       "Qubit": 7
     },
     "reserved_distillation_tiles": 18,
-    "sliced_lli_nonempty_lines": 10
+    "sliced_lli_nonempty_lines": 10,
+    "tile_slices": 270
   },
   "assumptions": {
     "code_distance": 9,
-    "cycle_time_ns": 1000.0,
-    "physical_qubits_per_tile_factor": 2.0,
+    "cycle_time_ns": 1000,
+    "physical_qubits_per_tile_factor": 2,
     "physical_error_rate": 0.001,
     "target_failure_probability": 0.01,
     "logical_error_proxy": "0.1 * (100 * p_phys)^((d + 1) / 2)"
   },
   "schedule_aware_estimate": {
     "qec_rounds_core": 90,
-    "core_time_ns": 90000.0,
+    "core_time_ns": 90000,
     "core_time_seconds": 9e-05,
-    "layout_physical_qubits": 4374.0,
-    "core_space_time_volume_ns_qubits": 393660000.0,
+    "layout_physical_qubits": 4374,
+    "core_space_time_volume_ns_qubits": 393660000,
     "logical_error_per_round_proxy": 1.0000000000000004e-06,
     "failure_opportunities_proxy": 2430,
     "total_failure_probability_proxy": 0.0024300000000000007,
@@ -96,11 +106,107 @@
     "description": "Repository-compatible core formulas with fixed distance; known unit/model limitations are intentionally not hidden.",
     "core_space_qubits": 2187,
     "core_timesteps": 10,
-    "core_time_ns": 90000.0,
-    "core_space_time_volume_ns_qubits": 196830000.0,
+    "core_time_ns": 90000,
+    "core_space_time_volume_ns_qubits": 196830000,
     "warning": "The upstream time_ms field is not reproduced because it sums nanosecond-labeled quantities without converting units."
   },
   "warnings": [
-    "No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only."
-  ]
+    "No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only.",
+    "Abstract supply cells are not physical factory footprints; compiler output omits execution correction details."
+  ],
+  "layout_resources": {
+    "height": 3,
+    "width": 9,
+    "area": 27,
+    "counts": {
+      "0": 15,
+      "A": 2,
+      "Q": 2,
+      "r": 8
+    },
+    "data_sites": 2,
+    "factory_count": 1,
+    "factories": [
+      {
+        "label": "0",
+        "cells": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            7
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            8
+          ]
+        ],
+        "queue_cells": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ]
+        ]
+      }
+    ],
+    "warnings": []
+  }
 }

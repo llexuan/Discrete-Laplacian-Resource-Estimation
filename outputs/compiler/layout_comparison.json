@@ -1,0 +1,56 @@
+{
+  "source_qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm",
+  "source_sha256": "c3aa446876ebb2c97a75a2f0ef1db94a363bcb831469e71fb464a25289345f15",
+  "normalized_input_sha256": "2f224a050e046fcf46b18ecaafc976e5ac1ec42b61b66ebacaf828b53d47ad91",
+  "native_commit": "82a1cbe64717a64a289dd4b0d02e3dc38cae3890",
+  "floorplanner_commit": "7835a4ef645f7c9faccc4a74c678574285a7c82b",
+  "adapter_sha256": "96c848cf748fa1c7abf568e4408e47a9db8dc6d743f4cbc2139488d022488fd2",
+  "settings": {
+    "pipeline": "wave",
+    "local": true,
+    "disttime": 1,
+    "staggered": false,
+    "router": "graph_search",
+    "graph_search": "djikstra",
+    "cnotcorrections": "never"
+  },
+  "run_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr",
+  "layouts": {
+    "compact": {
+      "status": "success",
+      "area_tiles": 27,
+      "slices": 10,
+      "tile_slices": 270,
+      "physical_qubits": 4374,
+      "core_time_ns": 90000,
+      "abstract_m_sources": 0,
+      "explicit_factory_regions": 1,
+      "resource_json": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/compact_resource_estimate.json",
+      "wall_seconds": 0.3063205408398062
+    },
+    "edpc": {
+      "status": "success",
+      "area_tiles": 49,
+      "slices": 8,
+      "tile_slices": 392,
+      "physical_qubits": 7938,
+      "core_time_ns": 72000,
+      "abstract_m_sources": 12,
+      "explicit_factory_regions": 0,
+      "resource_json": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/slice_resource_estimate.json",
+      "wall_seconds": 0.13269395800307393
+    },
+    "annealed": {
+      "status": "success",
+      "area_tiles": 28,
+      "slices": 8,
+      "tile_slices": 224,
+      "physical_qubits": 4536,
+      "core_time_ns": 72000,
+      "abstract_m_sources": 12,
+      "explicit_factory_regions": 0,
+      "resource_json": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealed_resource_estimate.json",
+      "wall_seconds": 2.778337833005935
+    }
+  }
+}

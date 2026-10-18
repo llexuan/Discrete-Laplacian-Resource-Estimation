@@ -260,6 +260,22 @@ invoked from another working directory.
 
 ## Optional lattice-surgery compiler smoke test
 
+The harness also supports circuit-specific **simulated-annealing floorplanning**
+using the pinned `surface-code-floorplanner` geometry adapter. From this root:
+
+```bash
+.venv/bin/python tools/lattice_surgery/setup_floorplanner.py
+.venv/bin/python tools/lattice_surgery/run_layout_comparison.py
+```
+
+The comparison compiles the same `tools/lattice_surgery/input_circuit.qasm`
+under compact, EDPC and annealed layouts using one pinned compiler and matched
+settings. It writes separate LLI/resource reports and `outputs/compiler/layout_comparison.txt`.
+The optimizer and native dependencies stay in a sibling checkout and separate
+Python environment. This setup does not require the legacy Conda compiler.
+See [the integration guide](tools/lattice_surgery/README.md#simulated-annealing-layout-comparison)
+for input/export options, search controls, replay and limitations.
+
 An isolated integration harness is available under
 `tools/lattice_surgery/`. It compiles a small, manually written OpenQASM 2
 circuit using the optimized C++ `liblsqecc` direct Clifford+T slicer. The

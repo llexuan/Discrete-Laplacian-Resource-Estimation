@@ -5,21 +5,23 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import json
 import math
 import os
+import re
 from pathlib import Path
 import subprocess
 import tempfile
 from typing import Any
 
+from compiler_options import backend_options
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_QASM = Path(__file__).resolve().with_name("input_circuit.qasm")
 OUTPUT_DIR = PROJECT_ROOT / "outputs" / "compiler"
-DEFAULT_SLICER = (
-    PROJECT_ROOT.parent / "liblsqecc" / "build" / "lsqecc_slicer"
-)
+DEFAULT_SLICER = PROJECT_ROOT.parent / "liblsqecc" / "build" / "lsqecc_slicer"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -37,7 +39,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--preset",
-        choices=("direct", "viewer", "edpc", "compact"),
+        choices=("direct", "viewer", "edpc", "compact", "compact_no_clogging"),
         default="direct",
         help=(
             "Historical direct/viewer configurations, or matched edpc/compact "
@@ -45,6 +47,18 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--code-distance", type=int, default=7)
+    parser.add_argument(
+        "--geometry-file",
+        type=Path,
+        help="Adapter geometry; pass its matching mapped QASM.",
+    )
+    parser.add_argument("--staggered", action="store_true")
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=30,
+        help="Wall-clock seconds per compiler call.",
+    )
     parser.add_argument("--cycle-time-ns", type=float, default=1000.0)
     parser.add_argument(
         "--physical-qubits-per-tile-factor",
@@ -95,51 +109,18 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def backend_options(preset: str, disttime: int) -> list[str]:
-    if preset == "direct":
-        return [
-            "-L",
-            "edpc",
-            "--disttime",
-            str(disttime),
-            "--nostagger",
-            "--notwists",
-            "--local",
-            "-P",
-            "wave",
-        ]
-    if preset == "viewer":
-        return ["-L", "compact", "-P", "stream"]
-    return [
-        "-L",
-        preset,
-        "-P",
-        "wave",
-        "--local",
-        "--disttime",
-        str(disttime),
-        "--nostagger",
-        "--cnotcorrections",
-        "never",
-        "-r",
-        "graph_search",
-        "-g",
-        "djikstra",
-    ]
-
-
-def run_checked(command: list[str]) -> str:
+def run_checked(command: list[str], timeout: float = 30) -> str:
     result = subprocess.run(
         command,
         capture_output=True,
         text=True,
         check=False,
+        timeout=timeout,
     )
-    if result.returncode != 0:
+    if result.returncode != 0 or result.stderr.strip():
         details = result.stderr or result.stdout or "unknown error"
         raise RuntimeError(
-            f"Command failed with exit code {result.returncode}:\n"
-            f"{details.strip()}"
+            f"Command failed with exit code {result.returncode}:\n" f"{details.strip()}"
         )
     return result.stdout
 
@@ -214,12 +195,15 @@ def logical_error_per_round(physical_error_rate: float, distance: int) -> float:
     return 0.1 * (100.0 * physical_error_rate) ** ((distance + 1) / 2.0)
 
 
-def estimate(args: argparse.Namespace) -> dict[str, Any]:
+def validate_arguments(args: argparse.Namespace) -> None:
     if args.code_distance <= 0:
         raise ValueError("--code-distance must be positive.")
-    if args.cycle_time_ns <= 0:
+    if not math.isfinite(args.cycle_time_ns) or args.cycle_time_ns <= 0:
         raise ValueError("--cycle-time-ns must be positive.")
-    if args.physical_qubits_per_tile_factor <= 0:
+    if (
+        not math.isfinite(args.physical_qubits_per_tile_factor)
+        or args.physical_qubits_per_tile_factor <= 0
+    ):
         raise ValueError("--physical-qubits-per-tile-factor must be positive.")
     if not 0 < args.physical_error_rate < 1:
         raise ValueError("--physical-error-rate must be between 0 and 1.")
@@ -229,6 +213,21 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
         raise ValueError("--disttime must be positive.")
     if args.num_factories is not None and args.num_factories <= 0:
         raise ValueError("--num-factories must be positive.")
+    if not math.isfinite(args.timeout) or args.timeout <= 0:
+        raise ValueError("--timeout must be positive and finite.")
+    if args.factory_cycle_rounds is not None and (
+        not math.isfinite(args.factory_cycle_rounds) or args.factory_cycle_rounds <= 0
+    ):
+        raise ValueError("--factory-cycle-rounds must be positive and finite.")
+    if args.factory_physical_qubits is not None and (
+        not math.isfinite(args.factory_physical_qubits)
+        or args.factory_physical_qubits < 0
+    ):
+        raise ValueError("--factory-physical-qubits must be nonnegative and finite.")
+
+
+def estimate(args: argparse.Namespace) -> dict[str, Any]:
+    validate_arguments(args)
 
     qasm_path = args.qasm.resolve()
     slicer = args.slicer.resolve()
@@ -238,7 +237,9 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
     if not qasm_text.lstrip().startswith("OPENQASM 2.0;"):
         raise ValueError(f"{qasm_path} is not OpenQASM 2.")
 
-    options = backend_options(args.preset, args.disttime)
+    options = backend_options(
+        args.preset, args.disttime, args.staggered, args.geometry_file
+    )
     prefix = [
         str(slicer),
         "-I",
@@ -257,7 +258,8 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
                 "stats",
                 "--graceful",
                 *options,
-            ]
+            ],
+            args.timeout,
         )
         unsliced_lli = run_checked(
             [
@@ -266,7 +268,8 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
                 "before",
                 "--graceful",
                 *options,
-            ]
+            ],
+            args.timeout,
         )
         sliced_lli = run_checked(
             [
@@ -275,7 +278,8 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
                 "sliced",
                 "--graceful",
                 *options,
-            ]
+            ],
+            args.timeout,
         )
         slices = json.loads(slices_path.read_text(encoding="utf-8"))
 
@@ -283,11 +287,19 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
         raise ValueError("Expected liblsqecc slice output to be a JSON array.")
 
     schedule = layout_metrics(slices)
+    if args.preset != "viewer":
+        match = re.search(r"^Slices\s+(\d+)\s*$", stats_stdout, re.MULTILINE)
+        if not match or int(match[1]) != schedule["num_slices"] + 1:
+            raise ValueError(
+                "Wave counter must equal completed JSON frames plus one; partial schedule rejected."
+            )
     unsliced_counts = instruction_counts(unsliced_lli)
     sliced_counts = instruction_counts(sliced_lli)
-    sliced_nonempty_lines = sum(
-        bool(line.strip()) for line in sliced_lli.splitlines()
-    )
+    sliced_nonempty_lines = sum(bool(line.strip()) for line in sliced_lli.splitlines())
+    if sliced_nonempty_lines != schedule["num_slices"]:
+        raise ValueError(
+            "Sliced LLI and patch JSON disagree on completed schedule length."
+        )
     warnings: list[str] = []
     if args.code_distance % 2 == 0:
         warnings.append(
@@ -299,9 +311,7 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
     core_rounds = schedule["num_slices"] * d
     core_time_ns = core_rounds * args.cycle_time_ns
     layout_physical_qubits = (
-        schedule["layout_tiles"]
-        * args.physical_qubits_per_tile_factor
-        * d**2
+        schedule["layout_tiles"] * args.physical_qubits_per_tile_factor * d**2
     )
     core_volume_ns_qubits = layout_physical_qubits * core_time_ns
 
@@ -395,6 +405,14 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
             "disttime_slices": args.disttime,
             "stats_stdout": stats_stdout.strip(),
             "temporary_patch_json_retained": False,
+            "binary_sha256": hashlib.sha256(slicer.read_bytes()).hexdigest(),
+            "input_sha256": hashlib.sha256(qasm_path.read_bytes()).hexdigest(),
+            "geometry_sha256": (
+                hashlib.sha256(args.geometry_file.read_bytes()).hexdigest()
+                if args.geometry_file
+                else None
+            ),
+            "staggered": args.staggered,
         },
         "logical_circuit": {
             "logical_qubits": logical_qubits_from_qasm(qasm_text),
@@ -410,14 +428,10 @@ def estimate(args: argparse.Namespace) -> dict[str, Any]:
         "assumptions": {
             "code_distance": d,
             "cycle_time_ns": args.cycle_time_ns,
-            "physical_qubits_per_tile_factor": (
-                args.physical_qubits_per_tile_factor
-            ),
+            "physical_qubits_per_tile_factor": (args.physical_qubits_per_tile_factor),
             "physical_error_rate": args.physical_error_rate,
             "target_failure_probability": args.target_failure_probability,
-            "logical_error_proxy": (
-                "0.1 * (100 * p_phys)^((d + 1) / 2)"
-            ),
+            "logical_error_proxy": ("0.1 * (100 * p_phys)^((d + 1) / 2)"),
         },
         "schedule_aware_estimate": {
             "qec_rounds_core": core_rounds,
@@ -480,10 +494,7 @@ def render_report(result: dict[str, Any]) -> str:
         f"core QEC rounds        : {estimate_data['qec_rounds_core']}",
         f"core runtime           : {estimate_data['core_time_ns']:.3f} ns",
         f"core runtime           : {estimate_data['core_time_seconds']:.6e} s",
-        (
-            "layout physical qubits : "
-            f"{estimate_data['layout_physical_qubits']:.3f}"
-        ),
+        ("layout physical qubits : " f"{estimate_data['layout_physical_qubits']:.3f}"),
         (
             "core space-time volume : "
             f"{estimate_data['core_space_time_volume_ns_qubits']:.6e} "
@@ -518,14 +529,27 @@ def render_report(result: dict[str, Any]) -> str:
                     "factory-limited rounds  : "
                     f"{factory['factory_limited_rounds']:.3f}"
                 ),
-                (
-                    "factory bottleneck      : "
-                    f"{factory['is_runtime_bottleneck']}"
-                ),
+                ("factory bottleneck      : " f"{factory['is_runtime_bottleneck']}"),
                 (
                     "final runtime           : "
                     f"{estimate_data['runtime_with_factory_bottleneck_seconds']:.6e} s"
                 ),
+            ]
+        )
+    if "optimization" in result:
+        optimization = result["optimization"]
+        lines.extend(
+            [
+                "",
+                "--- simulated annealing ---",
+                f"seed / request budget  : {optimization['seed']} / {optimization['budget']}",
+                f"baseline tile-slices   : {optimization['baseline_tile_slices']}",
+                f"best tile-slices       : {optimization['best_tile_slices']}",
+                f"M source count         : {optimization['supply_count']}",
+                f"search seconds         : {optimization['search_wall_seconds']:.3f}",
+                f"method total seconds   : {optimization['wall_seconds']:.3f}",
+                f"winner replay verified : {optimization['winner_replay_verified']}",
+                f"layout + mapping bundle: {optimization['bundle']}",
             ]
         )
     if result["warnings"]:

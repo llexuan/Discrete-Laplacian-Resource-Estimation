@@ -9,12 +9,12 @@ import shlex
 import subprocess
 import tempfile
 
+from compiler_options import backend_options
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_QASM = Path(__file__).resolve().with_name("input_circuit.qasm")
 COMPILER_OUTPUT_DIR = PROJECT_ROOT / "outputs" / "compiler"
-DEFAULT_SLICER = (
-    PROJECT_ROOT.parent / "liblsqecc" / "build" / "lsqecc_slicer"
-)
+DEFAULT_SLICER = PROJECT_ROOT.parent / "liblsqecc" / "build" / "lsqecc_slicer"
 DEFAULT_LEGACY_PYTHON = Path(
     os.environ.get(
         "LSQECC_PYTHON",
@@ -38,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--preset",
-        choices=("direct", "viewer", "edpc", "compact"),
+        choices=("direct", "viewer", "edpc", "compact", "compact_no_clogging"),
         default="direct",
         help=(
             "Historical direct/viewer configurations, or matched edpc/compact "
@@ -58,6 +58,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Python interpreter containing the legacy lsqecc package.",
     )
     parser.add_argument("--qasm", type=Path, default=DEFAULT_QASM)
+    parser.add_argument(
+        "--geometry-file",
+        type=Path,
+        help="Adapter geometry; pass its matching mapped QASM.",
+    )
+    parser.add_argument("--disttime", type=int, default=1)
+    parser.add_argument("--staggered", action="store_true")
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=30,
+        help="Wall-clock seconds per compiler call.",
+    )
     parser.add_argument(
         "--report",
         type=Path,
@@ -89,46 +102,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _backend_options(preset: str) -> list[str]:
-    if preset == "direct":
-        return [
-            "-L",
-            "edpc",
-            "--disttime",
-            "1",
-            "--nostagger",
-            "--notwists",
-            "--local",
-            "-P",
-            "wave",
-        ]
-    if preset == "viewer":
-        return ["-L", "compact", "-P", "stream"]
-    return [
-        "-L",
-        preset,
-        "-P",
-        "wave",
-        "--local",
-        "--disttime",
-        "1",
-        "--nostagger",
-        "--cnotcorrections",
-        "never",
-        "-r",
-        "graph_search",
-        "-g",
-        "djikstra",
-    ]
+    return backend_options(preset)
 
 
-def _run_command(command: list[str], output_name: str) -> str:
+def _run_command(command: list[str], output_name: str, timeout: float = 30) -> str:
     result = subprocess.run(
         command,
         capture_output=True,
         text=True,
         check=False,
+        timeout=timeout,
     )
-    if result.returncode != 0:
+    if result.returncode != 0 or result.stderr.strip():
         details = result.stderr or result.stdout or "unknown error"
         raise RuntimeError(
             f"{output_name} generation failed with exit code "
@@ -223,7 +208,9 @@ def _run_fast(
         "-i",
         str(qasm_path),
     ]
-    options = _backend_options(args.preset)
+    options = backend_options(
+        args.preset, args.disttime, args.staggered, args.geometry_file
+    )
     lli_command = [
         *prefix,
         "--printlli",
@@ -240,11 +227,11 @@ def _run_fast(
     ]
 
     lli_path.write_text(
-        _run_command(lli_command, "Unsliced LLI"),
+        _run_command(lli_command, "Unsliced LLI", args.timeout),
         encoding="utf-8",
     )
     sliced_lli_path.write_text(
-        _run_command(sliced_command, "Sliced LLI"),
+        _run_command(sliced_command, "Sliced LLI", args.timeout),
         encoding="utf-8",
     )
 

@@ -1,9 +1,8 @@
 === Pauli rotation and Litinski transformation report ===
 
-Legacy intermediate report failed:
-unknown error
+Legacy Pauli/Litinski report disabled.
 
 === liblsqecc LLI compilation commands ===
 
-Unsliced LLI: /Users/huanglexuan/quantum_research/liblsqecc/build/lsqecc_slicer -I qasm -i /Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm --printlli before --graceful -L edpc -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
-Sliced LLI:   /Users/huanglexuan/quantum_research/liblsqecc/build/lsqecc_slicer -I qasm -i /Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm --printlli sliced --graceful -L edpc -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
+Unsliced LLI: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/surface-code-floorplanner/.deps/adapter/liblsqecc_adapter -I qasm -i /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/input.qasm --printlli before --graceful -L edpc -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
+Sliced LLI:   /Users/huanglexuan/Documents/Codex/2026-10-17/pul/surface-code-floorplanner/.deps/adapter/liblsqecc_adapter -I qasm -i /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/input.qasm --printlli sliced --graceful -L edpc -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra

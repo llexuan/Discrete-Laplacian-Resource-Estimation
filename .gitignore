@@ -11,6 +11,7 @@ dist/
 # External compiler checkouts must remain separate from this repository.
 liblsqecc/
 lattice-surgery-compiler/
+surface-code-floorplanner/
 
 # Isolated lattice-surgery compiler smoke-test artifacts.
 outputs/compiler/*
@@ -25,3 +26,23 @@ outputs/compiler/*
 !outputs/compiler/compact_compiler_report.txt
 !outputs/compiler/compact_resource_estimate.json
 !outputs/compiler/compact_resource_report.txt
+!outputs/compiler/annealed.lli
+!outputs/compiler/annealed_sliced.lli
+!outputs/compiler/annealed_compiler_report.txt
+!outputs/compiler/annealed_resource_estimate.json
+!outputs/compiler/annealed_resource_report.txt
+!outputs/compiler/layout_comparison.json
+!outputs/compiler/layout_comparison.txt
+!outputs/compiler/annealed_layout/
+outputs/compiler/annealed_layout/*
+!outputs/compiler/annealed_layout/layout.txt
+!outputs/compiler/annealed_layout/layout.svg
+!outputs/compiler/annealed_layout/identity.json
+!outputs/compiler/annealed_layout/original-circuit.qasm
+!outputs/compiler/annealed_layout/mapped-circuit.qasm
+!outputs/compiler/annealed_layout/resources.json
+!outputs/compiler/annealed_layout/result.json
+!outputs/compiler/annealed_layout/replay.json
+
+# Optional Qiskit-export metadata; generated alongside the editable input.
+tools/lattice_surgery/*.synthesis.json

@@ -1,8 +1,8 @@
 {
   "scope": "liblsqecc_schedule_aware_physical_resource_estimate",
-  "source_qasm": "/Users/huanglexuan/quantum_research/GTRI/tools/lattice_surgery/input_circuit.qasm",
+  "source_qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm",
   "compiler": {
-    "backend": "liblsqecc/lsqecc_slicer",
+    "backend": "liblsqecc/liblsqecc_adapter",
     "preset": "edpc",
     "options": [
       "-L",
@@ -21,8 +21,17 @@
       "djikstra"
     ],
     "disttime_slices": 1,
-    "stats_stdout": "LS Instructions read  15\nSlices 9\nMade patch computation. Took 0.000842083s.\nTotal volume: 392\nDistillation volume: 94 (23.9796%)\nUnused routing volume: 259 (66.0714%)\nDead volume: 0 (0%)\nOther active volume: 39 (9.94898%)",
-    "temporary_patch_json_retained": false
+    "stats_stdout": "LS Instructions read  15\nSlices 9\nMade patch computation. Took 0.000594167s.\nTotal volume: 392\nDistillation volume: 94 (23.9796%)\nUnused routing volume: 259 (66.0714%)\nDead volume: 0 (0%)\nOther active volume: 39 (9.94898%)",
+    "temporary_patch_json_retained": false,
+    "binary_sha256": "96c848cf748fa1c7abf568e4408e47a9db8dc6d743f4cbc2139488d022488fd2",
+    "input_sha256": "2f224a050e046fcf46b18ecaafc976e5ac1ec42b61b66ebacaf828b53d47ad91",
+    "geometry_sha256": null,
+    "staggered": false,
+    "native_commit": "82a1cbe64717a64a289dd4b0d02e3dc38cae3890",
+    "floorplanner_commit": "7835a4ef645f7c9faccc4a74c678574285a7c82b",
+    "compiled_qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/input.qasm",
+    "geometry_file": null,
+    "source_sha256": "c3aa446876ebb2c97a75a2f0ef1db94a363bcb831469e71fb464a25289345f15"
   },
   "logical_circuit": {
     "logical_qubits": 2,
@@ -65,22 +74,23 @@
       "Qubit": 11
     },
     "reserved_distillation_tiles": 12,
-    "sliced_lli_nonempty_lines": 8
+    "sliced_lli_nonempty_lines": 8,
+    "tile_slices": 392
   },
   "assumptions": {
     "code_distance": 9,
-    "cycle_time_ns": 1000.0,
-    "physical_qubits_per_tile_factor": 2.0,
+    "cycle_time_ns": 1000,
+    "physical_qubits_per_tile_factor": 2,
     "physical_error_rate": 0.001,
     "target_failure_probability": 0.01,
     "logical_error_proxy": "0.1 * (100 * p_phys)^((d + 1) / 2)"
   },
   "schedule_aware_estimate": {
     "qec_rounds_core": 72,
-    "core_time_ns": 72000.0,
+    "core_time_ns": 72000,
     "core_time_seconds": 7.2e-05,
-    "layout_physical_qubits": 7938.0,
-    "core_space_time_volume_ns_qubits": 571536000.0,
+    "layout_physical_qubits": 7938,
+    "core_space_time_volume_ns_qubits": 571536000,
     "logical_error_per_round_proxy": 1.0000000000000004e-06,
     "failure_opportunities_proxy": 3528,
     "total_failure_probability_proxy": 0.003528000000000001,
@@ -95,11 +105,26 @@
     "description": "Repository-compatible core formulas with fixed distance; known unit/model limitations are intentionally not hidden.",
     "core_space_qubits": 3969,
     "core_timesteps": 8,
-    "core_time_ns": 72000.0,
-    "core_space_time_volume_ns_qubits": 285768000.0,
+    "core_time_ns": 72000,
+    "core_space_time_volume_ns_qubits": 285768000,
     "warning": "The upstream time_ms field is not reproduced because it sums nanosecond-labeled quantities without converting units."
   },
   "warnings": [
-    "No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only."
-  ]
+    "No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only.",
+    "Abstract supply cells are not physical factory footprints; compiler output omits execution correction details."
+  ],
+  "layout_resources": {
+    "height": 7,
+    "width": 7,
+    "area": 49,
+    "counts": {
+      "M": 12,
+      "Q": 2,
+      "r": 35
+    },
+    "data_sites": 2,
+    "factory_count": 0,
+    "factories": [],
+    "warnings": []
+  }
 }

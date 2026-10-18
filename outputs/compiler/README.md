@@ -5,6 +5,26 @@ This directory is reserved for the isolated compiler smoke test in
 
 The tracked outputs are:
 
+The matched three-layout workflow is now available with:
+
+```shell
+.venv/bin/python tools/lattice_surgery/setup_floorplanner.py
+.venv/bin/python tools/lattice_surgery/run_layout_comparison.py
+```
+
+It refreshes compact/EDPC results with the same pinned adapter used by simulated
+annealing. `layout_comparison.txt` summarizes tiles, completed slices, tile-slices,
+physical qubits and core time. The annealed result is stored in `annealed.lli`,
+`annealed_sliced.lli`, `annealed_compiler_report.txt`,
+`annealed_resource_estimate.json` and `annealed_resource_report.txt`.
+`annealed_layout/` contains the winning geometry, logical identity mapping and
+matching QASM files needed for replay. Complete search evidence remains locally
+in ignored `annealing_runs/<run-id>/` directories. Failures are explicit in the
+comparison JSON; an older stable file is not evidence of success in a new run.
+See `tools/lattice_surgery/README.md` for inputs, controls, setup and model limits.
+
+Other tracked files:
+
 - `compiler.lli`: layout-independent lattice-surgery instructions.
 - `compiler_sliced.lli`: instructions grouped by scheduled timestep.
 - `compiler_report.txt`: Pauli/Litinski transformations and exact commands.

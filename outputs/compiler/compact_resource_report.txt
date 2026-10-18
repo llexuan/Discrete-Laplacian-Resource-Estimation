@@ -13,8 +13,8 @@ Y-state requests       : 1
 
 --- physical assumptions ---
 code distance          : 9
-cycle time             : 1000.0 ns
-physical qubits/tile   : 2.0 * d^2
+cycle time             : 1000 ns
+physical qubits/tile   : 2 * d^2
 physical error rate    : 1.000e-03
 target failure prob.   : 1.000e-02
 
@@ -34,3 +34,4 @@ core space-time volume : 1.968300e+08 ns*qubits
 
 --- warnings ---
 - No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only.
+- Abstract supply cells are not physical factory footprints; compiler output omits execution correction details.

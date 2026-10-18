@@ -22,6 +22,141 @@ The integration therefore uses a standalone OpenQASM 2 file:
 Nothing in `src/laplacian_qsvt/` imports `lsqecc`, and the manual circuit is
 not generated from the Laplacian resource-estimation code.
 
+## Simulated-annealing layout comparison
+
+This optional path compares compact, EDPC and circuit-specific annealed layouts
+on one input. It uses the supported geometry API from
+[`surface-code-floorplanner`](https://github.com/akataba/surface-code-floorplanner)
+at `7835a4ef645f7c9faccc4a74c678574285a7c82b` and its native adapter at
+liblsqecc `82a1cbe64717a64a289dd4b0d02e3dc38cae3890`.
+The compiler used by the historical smoke-test setup below is a different pin;
+the comparison rebuilds and reruns every selected layout with the new adapter.
+
+### Setup
+
+With the native dependencies listed below installed, run:
+
+```bash
+.venv/bin/python tools/lattice_surgery/setup_floorplanner.py
+```
+
+This creates the sibling `../surface-code-floorplanner/` checkout, installs its
+NumPy-only optimizer in that checkout's `.venv`, builds its pinned native compiler,
+and builds `liblsqecc_adapter` plus `export_layout`. It preserves native runtime
+library paths when linking the adapter and records the resulting binary hashes.
+No Conda or legacy Python compiler is required. Existing checkouts must be clean
+and pinned; setup refuses to reset them. Use `--floorplanner-dir /path/to/checkout`
+and, if needed, `--prefix /path/to/native/dependencies` or `--jobs 4`.
+
+### Run the same circuit through all three methods
+
+Edit `input_circuit.qasm`, then run from the project root:
+
+```bash
+.venv/bin/python tools/lattice_surgery/run_layout_comparison.py
+```
+
+This command automatically invokes the isolated optimizer interpreter. Defaults:
+256 charged search requests, seed 61, fixed initial EDPC M-source count, wave
+scheduling, local compilation, distillation interval 1, no staggering, twist-based
+S gates, no CNOT corrections, graph-search/Dijkstra routing, code distance 9 and
+1000 ns per QEC cycle. All three layouts use the same adapter binary, normalized
+input and physical assumptions. Annealing starts from the exported native EDPC
+layout and minimizes rectangular tiles multiplied by completed slices. The
+winner can equal the starting layout and need not outperform compact.
+
+To select an input and tune the search:
+
+```bash
+.venv/bin/python tools/lattice_surgery/run_layout_comparison.py \
+  --qasm /path/to/circuit.qasm \
+  --layouts compact edpc annealed \
+  --budget 256 --seed 61 --move-supply \
+  --disttime 1 --code-distance 9 --cycle-time-ns 1000
+```
+
+`--layouts annealed` runs just annealing; `compact_no_clogging` is also available.
+`--move-supply` permits relocation while preserving source count.
+`--supply-count N` changes that count for the annealed run only: the resulting
+experiment varies supply resources as well as geometry. Reports retain each
+layout's source/factory-region counts. `--staggered` enables staggering for all
+methods; `--timeout` limits each native subprocess in seconds. The search budget
+includes baseline/calibration, null proposals, failed candidates and cache hits;
+it is not a wall-clock deadline. Native reference calls and winner replay are
+additional. There is no inherited benchmark warm start or RL training.
+
+### Write the circuit in Qiskit instead
+
+The optional editable Python input is `input_circuit.py`; its `build_circuit()`
+must return a `QuantumCircuit`. Export it in the main project environment:
+
+```bash
+.venv/bin/python tools/lattice_surgery/export_qiskit_qasm.py
+.venv/bin/python tools/lattice_surgery/run_layout_comparison.py
+```
+
+The exporter overwrites `input_circuit.qasm`. Use `--input-python /path/input.py`
+and `--output-qasm /path/circuit.qasm` to keep separate inputs. It flattens quantum
+registers, decomposes unitary gates, synthesizes numeric Ry/Rz rotations using
+the project's pyLIQTR routines, and records the synthesis budget, measured error
+bound and dropped global phase in a `.synthesis.json` sidecar. The default total
+budget is `--synthesis-tol 1e-6`. This may expand a small rotation-heavy circuit
+into many gates; the floorplanner budget counts candidate compilations of that
+expanded circuit. It does not automatically export a full Laplacian inverse.
+
+Direct QASM input supports one nonempty register and indexed H, X, Y, Z, S, Sdg,
+T, Tdg, CX and CZ instructions. Comments and barriers are removed; statements are
+normalized to one per line. Arbitrary rotations, custom gate definitions,
+measurements, classical control, resets and multiple QASM registers are rejected
+before search. Use the Qiskit exporter for decomposition/synthesis first.
+
+### Outputs, replay and interpretation
+
+Stable files under `outputs/compiler/` include:
+
+- Existing compact and EDPC LLI/resource filenames, refreshed with matched settings.
+- `annealed.lli`, `annealed_sliced.lli`, `annealed_compiler_report.txt`.
+- `annealed_resource_estimate.json`, `annealed_resource_report.txt`.
+- `layout_comparison.json` and `layout_comparison.txt`, including failures.
+- `annealed_layout/`: winning grid/SVG, logical identity mapping, original and
+  mapped QASM, resources, search history and fresh-replay record.
+
+Every invocation also keeps its complete evidence in a new
+`outputs/compiler/annealing_runs/<run-id>/` directory, ignored by Git. Stable
+files are published only after that method's final compilation succeeds. A failed
+method has no numeric score in the new comparison report and causes a nonzero
+exit; older stable files may still exist and must not be interpreted as the new
+run. `--output-dir /path/to/new-directory` keeps comparisons entirely separate.
+
+The final resource compilation must match the optimized area/slice count.
+Completed slices are counted from patch JSON and checked against both the pinned
+wave counter (which includes an extra initial count) and sliced LLI. Temporary
+patch JSON is deleted after extraction. Input, geometry and binary hashes plus
+both source revisions are recorded.
+
+For portable replay of the saved winner (paths relative to the project root):
+
+```bash
+../surface-code-floorplanner/.deps/adapter/liblsqecc_adapter \
+  -I qasm -i outputs/compiler/annealed_layout/mapped-circuit.qasm \
+  -L edpc --geometry-file outputs/compiler/annealed_layout/layout.txt \
+  -P wave --local --disttime 1 --nostagger --cnotcorrections never \
+  -r graph_search -g djikstra --printlli sliced --graceful
+```
+
+Use the settings saved in the resource report when overriding defaults. Preserve
+the grid, `identity.json` and matching QASM together; do not remap mapped QASM a
+second time. Stock `-l layout.txt` follows different preprocessing and is not
+equivalent to this adapter path.
+
+Physical resources use the existing fixed-distance proxy (tiles × 2d² and slices
+× d × cycle time by default). M sources are abstract supplies, not complete
+physical distillation factories. The optional factory model is separate. The
+pinned compiler omits measurement-dependent correction details and does not
+distinguish T/T-dagger in its printed lowering: replay certifies the resource
+score, not an end-to-end executable quantum protocol. See the floorplanner's
+[correctness limits](https://github.com/akataba/surface-code-floorplanner/blob/7835a4ef645f7c9faccc4a74c678574285a7c82b/docs/correctness.md).
+
 ## Native build dependencies
 
 On macOS, install the compiler toolchain and libraries with:

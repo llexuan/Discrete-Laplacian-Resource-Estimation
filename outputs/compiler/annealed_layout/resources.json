@@ -1,0 +1,14 @@
+{
+  "height": 4,
+  "width": 7,
+  "area": 28,
+  "counts": {
+    "M": 12,
+    "Q": 2,
+    "r": 14
+  },
+  "data_sites": 2,
+  "factory_count": 0,
+  "factories": [],
+  "warnings": []
+}

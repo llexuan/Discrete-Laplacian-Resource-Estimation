@@ -1,0 +1,47 @@
+=== liblsqecc slice-based resource estimate ===
+
+source QASM             : /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm
+preset                 : annealed
+compiler options        : -L edpc --geometry-file /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/layout.txt -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
+logical qubits         : 2
+scheduled slices       : 8
+layout rows x columns  : 4 x 7
+layout tiles           : 28
+max occupied tiles     : 20
+magic-state requests   : 1
+Y-state requests       : 1
+
+--- physical assumptions ---
+code distance          : 9
+cycle time             : 1000 ns
+physical qubits/tile   : 2 * d^2
+physical error rate    : 1.000e-03
+target failure prob.   : 1.000e-02
+
+--- schedule-aware estimate ---
+core QEC rounds        : 72
+core runtime           : 72000.000 ns
+core runtime           : 7.200000e-05 s
+layout physical qubits : 4536.000
+core space-time volume : 3.265920e+08 ns*qubits
+failure proxy          : 2.016000e-03
+
+--- legacy repository-compatible core values ---
+core timesteps         : 8
+core time              : 72000.000 ns
+core space qubits      : 2268
+core space-time volume : 1.632960e+08 ns*qubits
+
+--- simulated annealing ---
+seed / request budget  : 61 / 256
+baseline tile-slices   : 392
+best tile-slices       : 224
+M source count         : 12
+search seconds         : 2.687
+method total seconds   : 2.777
+winner replay verified : True
+layout + mapping bundle: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealed_layout
+
+--- warnings ---
+- No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only.
+- Abstract supply cells are not physical factory footprints; compiler output omits execution correction details.
