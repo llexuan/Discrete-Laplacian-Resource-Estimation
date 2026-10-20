@@ -1,0 +1,1225 @@
+{
+  "schema_version": 1,
+  "scope": "full_inverse_component_architecture_inputs",
+  "logical_metrics_source": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/metrics/laplacian_inversion_resource_metrics.json",
+  "logical_metrics_sha256": "6bde0bcbadd47f94cf15bbb0c0f081281c5c8e1b1d05bd15b663ce66e9fb09cd",
+  "phases_source": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/phases/phases_inversion.json",
+  "phases_sha256": "ec9f2461b89a15b15c39059d047907982a7a77e8bb581375ad26cf016794a251",
+  "dimensions": 2,
+  "target_n": 20,
+  "logical_qubits": 45,
+  "num_w_applications": 117,
+  "num_projector_rotations": 118,
+  "logical_gate_counts": {
+    "cx": 2052466,
+    "t": 1380052,
+    "tdg": 1336753,
+    "h": 1322468,
+    "x": 534847,
+    "sdg": 1908,
+    "s": 7884,
+    "z": 36
+  },
+  "algorithm": {
+    "target_function": "matrix_inversion_1_over_x",
+    "kappa": 2.5,
+    "epsilon": 0.49,
+    "error_summary": {
+      "polynomial_error": 0.018456296589117238,
+      "phase_numerical_error": 4.9960036108132044e-15,
+      "synthesis_tolerance": 1e-08,
+      "measured_synthesis_error_bound": 7.519663122064034e-09,
+      "conservative_total_error_bound": 0.018456306589122236
+    }
+  },
+  "minimum_kappa_for_full_nonzero_spectrum": 222807639110.22232,
+  "components": [
+    {
+      "id": "W",
+      "occurrences": 117,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/W.qasm",
+      "qasm_sha256": "e20b0418498126c233fb7f00ee780da5744c11f2d816fed2dd52d173347ff603",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "cx": 17490,
+        "t": 11660,
+        "tdg": 11397,
+        "h": 11174,
+        "x": 4563,
+        "sdg": 16,
+        "s": 16
+      },
+      "t_count": 23057,
+      "dropped_global_phase": 0.0,
+      "kind": "walk"
+    },
+    {
+      "id": "R_000",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_000.qasm",
+      "qasm_sha256": "95a4534e9d37339b42cde3eb84457b37b9dc4e4aec68e9fb062ef915c92cc422",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 144,
+        "h": 139,
+        "s": 60,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 172,
+      "dropped_global_phase": 5.497787143782138,
+      "kind": "projector",
+      "phi": 1.2571240125335595e-08
+    },
+    {
+      "id": "R_001",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_001.qasm",
+      "qasm_sha256": "cad2db7c98af062401d915f83e0eed03f360debd91531f24c7800bbad7ccd892",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 144,
+        "h": 137,
+        "cx": 52,
+        "s": 52,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 172,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": -4.791435652114725e-08
+    },
+    {
+      "id": "R_002",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_002.qasm",
+      "qasm_sha256": "840f007d2478472e3c9c5bda57b35fd6593724dd785cc1bbad0d3594277dfec4",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 142,
+        "h": 135,
+        "s": 57,
+        "cx": 52,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 170,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": 1.184117107782576e-07
+    },
+    {
+      "id": "R_003",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_003.qasm",
+      "qasm_sha256": "91d691e6fd6080a0b9260614ed2e9ddd708ca1b5c8ecb1580a9e784c55887f78",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 138,
+        "h": 133,
+        "s": 53,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 166,
+      "dropped_global_phase": 3.141592653589793,
+      "kind": "projector",
+      "phi": -2.4206872500214297e-07
+    },
+    {
+      "id": "R_004",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_004.qasm",
+      "qasm_sha256": "be58e3e75b7e9bd4f0b7bdf4d95c9a2c1f01f1c106243a192adedd03e8ae361a",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "s": 54,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 164,
+      "dropped_global_phase": 1.2437543276884663e-16,
+      "kind": "projector",
+      "phi": 4.4872280219684263e-07
+    },
+    {
+      "id": "R_005",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_005.qasm",
+      "qasm_sha256": "cc0ecc95f807270ac746b06c8dbfa0d0cbec5692141d8d18429f68429e4cf0eb",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 126,
+        "s": 56,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 0.7853981633974485,
+      "kind": "projector",
+      "phi": -7.900141844390714e-07
+    },
+    {
+      "id": "R_006",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_006.qasm",
+      "qasm_sha256": "ccc428227fd49dadce623f7e13f9d1be94f5073afd06ebf43800541a729f8dba",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "cx": 52,
+        "s": 42,
+        "tdg": 28,
+        "x": 8,
+        "z": 1
+      },
+      "t_count": 164,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": 1.3533684347550114e-06
+    },
+    {
+      "id": "R_007",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_007.qasm",
+      "qasm_sha256": "093869ab47c9a9ff16a0dcf191b972a9bdbbb2a1949b20a3deb069c2b57925fb",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 125,
+        "s": 62,
+        "cx": 52,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 1.5707963267948968,
+      "kind": "projector",
+      "phi": -2.2799260568872412e-06
+    },
+    {
+      "id": "R_008",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_008.qasm",
+      "qasm_sha256": "98ab566971aa30a2517144d8bca0462c80bd8af9ff5c88ad3a03d8fd8058a060",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 129,
+        "cx": 52,
+        "s": 50,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.926990816987241,
+      "kind": "projector",
+      "phi": 3.786164233681583e-06
+    },
+    {
+      "id": "R_009",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_009.qasm",
+      "qasm_sha256": "63b9c46d81bc7673f24c1fea4626041dfd75e36316c6533c71f0e438719cd94f",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 129,
+        "s": 55,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 2
+      },
+      "t_count": 162,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": -6.18884943243913e-06
+    },
+    {
+      "id": "R_010",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_010.qasm",
+      "qasm_sha256": "1c849bfd00c2b94518d9d8914c3a0c661847342401802606480cc9614cee921e",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 127,
+        "cx": 52,
+        "s": 47,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.141592653589793,
+      "kind": "projector",
+      "phi": 9.932772423252493e-06
+    },
+    {
+      "id": "R_011",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_011.qasm",
+      "qasm_sha256": "76009f71303f3aa6403aa43235cf26c2df75563ed499f420e1eb7e2139669b7f",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 130,
+        "cx": 52,
+        "s": 49,
+        "tdg": 28,
+        "x": 9
+      },
+      "t_count": 164,
+      "dropped_global_phase": 3.9269908169872414,
+      "kind": "projector",
+      "phi": -1.562019997900516e-05
+    },
+    {
+      "id": "R_012",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_012.qasm",
+      "qasm_sha256": "8316bdce7024f6647e47f71d95d7b4d1a2f4542bbe32fad67eeaba487efd4ced",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 127,
+        "cx": 52,
+        "s": 46,
+        "tdg": 28,
+        "x": 8,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 5.887387201408678e-17,
+      "kind": "projector",
+      "phi": 2.403989822750201e-05
+    },
+    {
+      "id": "R_013",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_013.qasm",
+      "qasm_sha256": "9d4ec8e3e128a00a02a7fb9b2d268ac219b60c60940382a6a38704159ccef286",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 127,
+        "s": 64,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": -3.6191861605687e-05
+    },
+    {
+      "id": "R_014",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_014.qasm",
+      "qasm_sha256": "8da76b0d32a192c654ecbd0b99a7e60ab04c238bf6af2b9f1acc82f2090e1f4e",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 126,
+        "cx": 52,
+        "s": 44,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 2.356194490192345,
+      "kind": "projector",
+      "phi": 5.330171476428983e-05
+    },
+    {
+      "id": "R_015",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_015.qasm",
+      "qasm_sha256": "d18245a09d9f75be8f55363d1016bbe96ac7186a22d61cafd8a2403bc5a4da09",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "cx": 52,
+        "s": 49,
+        "tdg": 28,
+        "x": 9
+      },
+      "t_count": 164,
+      "dropped_global_phase": 2.3561944901923453,
+      "kind": "projector",
+      "phi": -7.681667269258133e-05
+    },
+    {
+      "id": "R_016",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_016.qasm",
+      "qasm_sha256": "dce8f66af649c2c5aa9f58feb3e32e9b0e1227fe36761a84abc35939dd8f0618",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "s": 53,
+        "cx": 52,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.141592653589793,
+      "kind": "projector",
+      "phi": 0.00010837375937194663
+    },
+    {
+      "id": "R_017",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_017.qasm",
+      "qasm_sha256": "99f352e8b48a059c786b08ff8b046dd3ece4e7c0f784d98f21f783cd075ebffe",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "cx": 52,
+        "s": 51,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 164,
+      "dropped_global_phase": 5.497787143782138,
+      "kind": "projector",
+      "phi": -0.000149731615124997
+    },
+    {
+      "id": "R_018",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_018.qasm",
+      "qasm_sha256": "75e13171c84a258e53fb791620d02c459ba62e51ec690d57b768589dbf2e58c9",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "s": 55,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 162,
+      "dropped_global_phase": 1.5707963267948972,
+      "kind": "projector",
+      "phi": 0.00020266041099434515
+    },
+    {
+      "id": "R_019",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_019.qasm",
+      "qasm_sha256": "d34018c54a4cb520420c9cc2be87a9abbece494144a7c50184deb8023a42df92",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 130,
+        "h": 123,
+        "cx": 52,
+        "s": 48,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 158,
+      "dropped_global_phase": 3.926990816987242,
+      "kind": "projector",
+      "phi": -0.0002687903881462369
+    },
+    {
+      "id": "R_020",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_020.qasm",
+      "qasm_sha256": "dfe50a9727dc6d2eba9a17a982b374c8c1b9c6bb11a8c27eba922cb936582ab2",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 126,
+        "cx": 52,
+        "s": 44,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 160,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": 0.0003494278557694386
+    },
+    {
+      "id": "R_021",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_021.qasm",
+      "qasm_sha256": "236ca40b4f03e6294a9dc6c42f29f4f4cfc2461f8e4fa7a9bd677b4235b17232",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 129,
+        "cx": 52,
+        "s": 49,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 162,
+      "dropped_global_phase": 1.5707963267948963,
+      "kind": "projector",
+      "phi": -0.00044535676616029737
+    },
+    {
+      "id": "R_022",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_022.qasm",
+      "qasm_sha256": "979078699a13748e9a4c647e1378fc4266f1f3fc78f41d705a7bafcf6d39d7c4",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "cx": 52,
+        "s": 50,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 162,
+      "dropped_global_phase": 5.497787143782138,
+      "kind": "projector",
+      "phi": 0.0005566521737951083
+    },
+    {
+      "id": "R_023",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_023.qasm",
+      "qasm_sha256": "e7b902b4ecd70dc00008a5bfc5cabf213c1ec75e92eb77502537182c73fcecb8",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 127,
+        "s": 58,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 5.497787143782138,
+      "kind": "projector",
+      "phi": -0.0006825365688207922
+    },
+    {
+      "id": "R_024",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_024.qasm",
+      "qasm_sha256": "9c267ee13fea0e617048c117afccfc13780bcdc15516e726f48815150f5f63d7",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "s": 54,
+        "cx": 52,
+        "tdg": 28,
+        "x": 9
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.9269908169872414,
+      "kind": "projector",
+      "phi": 0.0008213090833703466
+    },
+    {
+      "id": "R_025",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_025.qasm",
+      "qasm_sha256": "51eb5d61317249f27bedb9d23965b3305cf1d9c255ef9678ed5e46dcf3eee4d0",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "s": 57,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.141592653589793,
+      "kind": "projector",
+      "phi": -0.0009703696109473485
+    },
+    {
+      "id": "R_026",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_026.qasm",
+      "qasm_sha256": "423e7550bef8cf3230d67c66f2ce13c09f92db453ad64d5e60ce47d1f1fc5afc",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "s": 53,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.1415926535897927,
+      "kind": "projector",
+      "phi": 0.00112634507615888
+    },
+    {
+      "id": "R_027",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_027.qasm",
+      "qasm_sha256": "25d3a4611c320d04fa103379713810ab4f85d491c461b76ddb521ae1b1a4f6e1",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 126,
+        "cx": 52,
+        "s": 48,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": -0.001285305206006581
+    },
+    {
+      "id": "R_028",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_028.qasm",
+      "qasm_sha256": "6701bb3ab73d15a741844904d81656d73caf1f31f5e5c20ab40b3e5400f6ce19",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 126,
+        "s": 54,
+        "cx": 52,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 0.0,
+      "kind": "projector",
+      "phi": 0.0014430333745362259
+    },
+    {
+      "id": "R_029",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_029.qasm",
+      "qasm_sha256": "5674e466656751cdff629095ed7bc5b1392db851dfdc5bbff49c8fec7cb0a55f",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 130,
+        "h": 125,
+        "cx": 52,
+        "s": 44,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 158,
+      "dropped_global_phase": 4.712388980384691,
+      "kind": "projector",
+      "phi": -0.0006047389039893476
+    },
+    {
+      "id": "R_030",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_030.qasm",
+      "qasm_sha256": "88c98627aa9f6c9b453b06dddd90d805bfd96583bf06387fde29526670525b7b",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "cx": 52,
+        "s": 45,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 164,
+      "dropped_global_phase": 0.7853981633974482,
+      "kind": "projector",
+      "phi": -0.0011181387398961483
+    },
+    {
+      "id": "R_031",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_031.qasm",
+      "qasm_sha256": "a4f602fe8ad715d6faa92405412ea70da18041417f051500bd079c3d47003e2b",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 128,
+        "h": 123,
+        "cx": 52,
+        "s": 46,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 156,
+      "dropped_global_phase": 0.0,
+      "kind": "projector",
+      "phi": 0.003136521687398098
+    },
+    {
+      "id": "R_032",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_032.qasm",
+      "qasm_sha256": "dd726039820866ebadd82daf86024a0c4bb87e15f05687ec5167eeafad8cb8b5",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 125,
+        "cx": 52,
+        "s": 48,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 0.7853981633974487,
+      "kind": "projector",
+      "phi": -0.004605927392320717
+    },
+    {
+      "id": "R_033",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_033.qasm",
+      "qasm_sha256": "e1ff5fc19843b68e507f1da6ce50318283922f7879f94e137b5e1d8a4f367330",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 130,
+        "h": 124,
+        "s": 55,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 158,
+      "dropped_global_phase": 3.9269908169872414,
+      "kind": "projector",
+      "phi": 0.004751165552463159
+    },
+    {
+      "id": "R_034",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_034.qasm",
+      "qasm_sha256": "431a4fb94740770e872c458dab8780f93df10750223dfeb07162ac039180aa64",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 127,
+        "cx": 52,
+        "s": 52,
+        "tdg": 28,
+        "x": 8,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 1.5707963267948963,
+      "kind": "projector",
+      "phi": -0.003200986842154233
+    },
+    {
+      "id": "R_035",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_035.qasm",
+      "qasm_sha256": "cab4df9a8e79b0132b2f309e2dbcf10b2e2083e3d3686414072942d4f3947381",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 127,
+        "cx": 52,
+        "s": 40,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 162,
+      "dropped_global_phase": 5.497787143782137,
+      "kind": "projector",
+      "phi": 0.00021656373261275534
+    },
+    {
+      "id": "R_036",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_036.qasm",
+      "qasm_sha256": "6daeea4f2ca411fdae54361c320fd750cadd74ff6d3db40ed628e9acc8dde25a",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "s": 54,
+        "cx": 52,
+        "tdg": 28,
+        "x": 9
+      },
+      "t_count": 164,
+      "dropped_global_phase": 1.5707963267948968,
+      "kind": "projector",
+      "phi": 0.0032987132411022306
+    },
+    {
+      "id": "R_037",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_037.qasm",
+      "qasm_sha256": "846b61bd163ba172bc9a044df1397db88fd275513736be17acbca0c3ced60751",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 131,
+        "s": 55,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 164,
+      "dropped_global_phase": 2.3561944901923444,
+      "kind": "projector",
+      "phi": -0.006048530132452948
+    },
+    {
+      "id": "R_038",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_038.qasm",
+      "qasm_sha256": "e5654bcd70bf3c0797aa8260fb8b205da5cbb9fe1b4d7b24dd5e293381df77df",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "cx": 52,
+        "s": 47,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 164,
+      "dropped_global_phase": 2.356194490192345,
+      "kind": "projector",
+      "phi": 0.006796306298341149
+    },
+    {
+      "id": "R_039",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_039.qasm",
+      "qasm_sha256": "da4c4fa864b89c2772b93258a88c66337252924b936659f261db3ddcad740421",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 127,
+        "cx": 52,
+        "s": 48,
+        "tdg": 28,
+        "x": 8,
+        "z": 1
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.9269908169872414,
+      "kind": "projector",
+      "phi": -0.004875598051596686
+    },
+    {
+      "id": "R_040",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_040.qasm",
+      "qasm_sha256": "a7f94a1e28a179520e53be74a02e71613818df9c499aaeeaf425e7f0670e87a9",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "s": 55,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 164,
+      "dropped_global_phase": 2.356194490192345,
+      "kind": "projector",
+      "phi": 0.000564426950924604
+    },
+    {
+      "id": "R_041",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_041.qasm",
+      "qasm_sha256": "53df7923972af69d259ec278e8e9760c2844ee739331f28dce2590938d323d43",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 127,
+        "cx": 52,
+        "s": 41,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 3.1415926535897927,
+      "kind": "projector",
+      "phi": 0.004848926963751996
+    },
+    {
+      "id": "R_042",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_042.qasm",
+      "qasm_sha256": "bd48d9eeadeec1bf7aa68323de6507bf1360c68c99dcf87c8bf85f3091eb3902",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 138,
+        "h": 131,
+        "cx": 52,
+        "s": 48,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 166,
+      "dropped_global_phase": 3.926990816987241,
+      "kind": "projector",
+      "phi": -0.00938775690796865
+    },
+    {
+      "id": "R_043",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_043.qasm",
+      "qasm_sha256": "89f1527cc0666bf047463aaf7809d5cdc8bfd1fb84c7029bef2eff3898ca65b3",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 126,
+        "cx": 52,
+        "s": 50,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 0.7853981633974487,
+      "kind": "projector",
+      "phi": 0.011039278619721241
+    },
+    {
+      "id": "R_044",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_044.qasm",
+      "qasm_sha256": "5bdfdc227f02323fba7eda46b289fb4eab62723c5e12e14dfe20edd4b21c7215",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 130,
+        "h": 125,
+        "cx": 52,
+        "s": 51,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 158,
+      "dropped_global_phase": 1.570796326794897,
+      "kind": "projector",
+      "phi": -0.008544470894472743
+    },
+    {
+      "id": "R_045",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_045.qasm",
+      "qasm_sha256": "6cec19b054e3cbee5552735ab1af083026350208b9b950a061b41b95b781cab1",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 127,
+        "cx": 52,
+        "s": 47,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1,
+        "z": 1
+      },
+      "t_count": 160,
+      "dropped_global_phase": 3.141592653589793,
+      "kind": "projector",
+      "phi": 0.002043746371369721
+    },
+    {
+      "id": "R_046",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_046.qasm",
+      "qasm_sha256": "ead8c1bea96923c3b9a569fa195125583266a0b1fe81e5f19ebbadf2fd57367b",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "cx": 52,
+        "s": 52,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 162,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": 0.006695907151598404
+    },
+    {
+      "id": "R_047",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_047.qasm",
+      "qasm_sha256": "4130524e0838d657cf0439d3996cdb9bcfbd0a86282555f850e67e0e5c6378ad",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 129,
+        "s": 54,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 2
+      },
+      "t_count": 162,
+      "dropped_global_phase": 5.497787143782138,
+      "kind": "projector",
+      "phi": -0.014629612517645642
+    },
+    {
+      "id": "R_048",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_048.qasm",
+      "qasm_sha256": "e924f71f28970d3fb9efaf4e82b9d95cd51ec7e1bc45862f8cf68aa6c39bc54d",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 127,
+        "s": 54,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8,
+        "z": 1
+      },
+      "t_count": 162,
+      "dropped_global_phase": 2.3561944901923453,
+      "kind": "projector",
+      "phi": 0.018334554112266716
+    },
+    {
+      "id": "R_049",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_049.qasm",
+      "qasm_sha256": "2d5897beaa5af23bd944f26b16460733149e87bfdaca78ad38fab7f64f3e5e42",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "cx": 52,
+        "s": 46,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 164,
+      "dropped_global_phase": 3.141592653589793,
+      "kind": "projector",
+      "phi": -0.015242530079930774
+    },
+    {
+      "id": "R_050",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_050.qasm",
+      "qasm_sha256": "e411c13d9d2555568d496d282e88b75f4202a47d8ab80b44dcd859c5d3da3979",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 138,
+        "h": 131,
+        "cx": 52,
+        "s": 52,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 166,
+      "dropped_global_phase": 0.7853981633974483,
+      "kind": "projector",
+      "phi": 0.004822455777066047
+    },
+    {
+      "id": "R_051",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_051.qasm",
+      "qasm_sha256": "a17c5814abeb26a24d5dee22eb923b76ffd349a75d5a4cad6bcb822d8c72b2ba",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 129,
+        "s": 53,
+        "cx": 52,
+        "tdg": 28,
+        "x": 9,
+        "z": 1
+      },
+      "t_count": 164,
+      "dropped_global_phase": 3.926990816987242,
+      "kind": "projector",
+      "phi": 0.010713864109868612
+    },
+    {
+      "id": "R_052",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_052.qasm",
+      "qasm_sha256": "d6c7290da5281f81f47b3c5c3b8e824f53f0a5dd28c614227f12e025960642b2",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 130,
+        "h": 125,
+        "cx": 52,
+        "s": 47,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 158,
+      "dropped_global_phase": 1.5707963267948966,
+      "kind": "projector",
+      "phi": -0.026472821974926158
+    },
+    {
+      "id": "R_053",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_053.qasm",
+      "qasm_sha256": "d285d7cb6f8b00ad6ff24056cec7e4086967d2e38b4b9c2648967a771cd5c057",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 128,
+        "cx": 52,
+        "s": 48,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 162,
+      "dropped_global_phase": 4.71238898038469,
+      "kind": "projector",
+      "phi": 0.03578587616163595
+    },
+    {
+      "id": "R_054",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_054.qasm",
+      "qasm_sha256": "735bfe80070f7de8599833a34db317f1d95e9c0e38a849e6d331b1e097e0fba6",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 127,
+        "cx": 52,
+        "s": 52,
+        "tdg": 28,
+        "x": 9
+      },
+      "t_count": 162,
+      "dropped_global_phase": 0.7853981633974482,
+      "kind": "projector",
+      "phi": -0.03183822248634891
+    },
+    {
+      "id": "R_055",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_055.qasm",
+      "qasm_sha256": "0de9f23a6d9dc23962e9332280c94d8741710590b4c637f2bd59e0b998389c62",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 132,
+        "h": 126,
+        "s": 58,
+        "cx": 52,
+        "tdg": 28,
+        "x": 8
+      },
+      "t_count": 160,
+      "dropped_global_phase": 3.1415926535897927,
+      "kind": "projector",
+      "phi": 0.009586062323684998
+    },
+    {
+      "id": "R_056",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_056.qasm",
+      "qasm_sha256": "18d8e26b306c1261c58824b439123be3badba7465e8f2faf87ea963102387ecf",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 127,
+        "cx": 52,
+        "s": 49,
+        "tdg": 28,
+        "x": 9
+      },
+      "t_count": 162,
+      "dropped_global_phase": 4.161128592571974e-16,
+      "kind": "projector",
+      "phi": 0.03270436123758847
+    },
+    {
+      "id": "R_057",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_057.qasm",
+      "qasm_sha256": "b0d6ab1c77bb7606b678aa413db36c364bad5ae69298c3b62d339471ae88f750",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 136,
+        "h": 130,
+        "cx": 52,
+        "s": 50,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 164,
+      "dropped_global_phase": 5.497787143782138,
+      "kind": "projector",
+      "phi": -0.09245569827657088
+    },
+    {
+      "id": "R_058",
+      "occurrences": 2,
+      "qasm": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/inputs/R_058.qasm",
+      "qasm_sha256": "31fee94be145b7c9052d532ff2cfead7322ec02b887eba63c863b5f5261f56bb",
+      "logical_qubits": 45,
+      "gate_counts": {
+        "t": 134,
+        "h": 127,
+        "cx": 52,
+        "s": 51,
+        "tdg": 28,
+        "x": 8,
+        "sdg": 1
+      },
+      "t_count": 162,
+      "dropped_global_phase": 3.9269908169872414,
+      "kind": "projector",
+      "phi": 0.16149112393782272
+    }
+  ],
+  "registers": {
+    "phase_flag": 44,
+    "projector_local_to_global": [
+      0,
+      1,
+      2,
+      3,
+      44,
+      4,
+      5
+    ]
+  },
+  "accounting": "One W and each unique phase rotation, weighted by occurrences; all components retain the full resident register."
+}

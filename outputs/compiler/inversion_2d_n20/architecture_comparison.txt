@@ -1,0 +1,8 @@
+Full inverse: component-sum architectural projection
+layout | tiles | projected slices | physical qubits | projected time (s)
+compact | 168 | 11388899 | 177744 | 261.944677
+edpc | 289 | 6817637 | 305762 | 156.805651
+annealed | 196 | 7574765 | 207368 | 174.219595
+
+One common resident layout per method. Boundary reset/supply carryover costs are omitted.
+Annealing searches one W + representative projector; full totals weight each angle's measured cost.

@@ -1,0 +1,47 @@
+=== 2D periodic Laplacian walk: logical resource report ===
+
+Computation           : W = U_R . X_q . U' (one complete walk)
+Resource model        : logical Clifford+T gates, before physical layout/QEC mapping
+Spatial dimensions    : 2
+Qubits per dimension  : 20
+Grid points per axis  : 1,048,576
+Verification n        : 2 (small dense check only)
+
+--- logical resource counts at target n ---
+Logical qubits        : 44
+Clifford gate count   : 33,259
+T-count (T + T-dagger): 23,057
+Total gate count      : 56,316
+Total depth           : 22,713
+T-depth               : 8,894
+
+--- registers and walk structure ---
+System qubits         : 40
+Qubitization control  : 1
+Block-encoding ancillas: 2
+Selector qubits       : 1
+Pre-decomposition qubits: 44
+Controlled shifts     : 8
+
+--- emitted logical gate counts ---
+cx                    : 17,490
+h                     : 11,174
+s                     : 16
+sdg                   : 16
+t                     : 11,660
+tdg                   : 11,397
+x                     : 4,563
+
+--- selector rotation synthesis ---
+2D selector preparation uses exact Clifford gates; no arbitrary rotation synthesis.
+
+--- reflection U_R contribution ---
+T-count (T + T-dagger): 15
+Clifford gate count   : 30
+Total depth           : 26
+
+--- dense correctness checks at verification n ---
+reflection_err        : 4.440892e-16
+u_prime_err           : 1.527086e-14
+unitarity_err         : 6.350476e-14
+signal_block_err      : 1.576639e-14

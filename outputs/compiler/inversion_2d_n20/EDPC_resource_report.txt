@@ -1,0 +1,107 @@
+=== Full Laplacian inverse architecture: edpc ===
+
+Accounting: one W and each unique projector compiled once, multiplied by occurrences.
+This is a component-sum projection, not compilation of the complete long circuit.
+Dimensions / n per axis: 2 / 20
+Resident logical qubits: 45
+W applications: 117
+Projector rotations / unique angles: 118 / 59
+Full-sequence logical Clifford / T count: 3,919,609 / 2,716,805
+Layout dimensions: 17 x 17
+Layout tiles (allocated once): 289
+Layout preparation: Native EDPC
+
+--- projected entire sequence ---
+Walk contribution, slices: 6,690,879
+Projector contribution, slices: 126,758
+Total component-sum slices: 6,817,637
+Tile-slices: 1,970,297,093
+QEC rounds: 156,805,651
+Resident layout physical qubits: 305,762
+Total physical qubits (allocated once): 305,762
+Projected core time: 156.805651 s
+Projected time with optional factory bound: 156.805651 s
+Space-time cost: 4.794520946e+16 ns*qubits
+Magic-state requests: 2,716,805
+Heuristic failure probability proxy: 4.531683e-03
+Minimum odd distance under this proxy: 23
+
+--- assumptions ---
+Code distance: 23
+QEC cycle time: 1000 ns
+Physical qubits/tile: 2 * d^2
+Physical error rate: 1.000000e-03
+Supply interval / staggering: 1 slices / False
+Pipeline: wave, local decomposition; compiler pin: 82a1cbe64717a64a289dd4b0d02e3dc38cae3890
+
+--- component measurements ---
+Component      Occurrences     Slices each    Weighted slices   T requests each
+W                      117          57,187          6,690,879            23,057
+R_000                    2           1,167              2,334               172
+R_001                    2           1,141              2,282               172
+R_002                    2           1,137              2,274               170
+R_003                    2           1,109              2,218               166
+R_004                    2           1,089              2,178               164
+R_005                    2           1,071              2,142               160
+R_006                    2           1,065              2,130               164
+R_007                    2           1,077              2,154               160
+R_008                    2           1,075              2,150               162
+R_009                    2           1,089              2,178               162
+R_010                    2           1,061              2,122               162
+R_011                    2           1,083              2,166               164
+R_012                    2           1,053              2,106               160
+R_013                    2           1,089              2,178               160
+R_014                    2           1,047              2,094               160
+R_015                    2           1,079              2,158               164
+R_016                    2           1,077              2,154               162
+R_017                    2           1,083              2,166               164
+R_018                    2           1,081              2,162               162
+R_019                    2           1,035              2,070               158
+R_020                    2           1,045              2,090               160
+R_021                    2           1,073              2,146               162
+R_022                    2           1,071              2,142               162
+R_023                    2           1,079              2,158               160
+R_024                    2           1,079              2,158               162
+R_025                    2           1,085              2,170               162
+R_026                    2           1,077              2,154               162
+R_027                    2           1,053              2,106               160
+R_028                    2           1,065              2,130               160
+R_029                    2           1,037              2,074               158
+R_030                    2           1,071              2,142               164
+R_031                    2           1,025              2,050               156
+R_032                    2           1,051              2,102               160
+R_033                    2           1,055              2,110               158
+R_034                    2           1,065              2,130               160
+R_035                    2           1,047              2,094               162
+R_036                    2           1,089              2,178               164
+R_037                    2           1,099              2,198               164
+R_038                    2           1,075              2,150               164
+R_039                    2           1,063              2,126               162
+R_040                    2           1,091              2,182               164
+R_041                    2           1,045              2,090               160
+R_042                    2           1,091              2,182               166
+R_043                    2           1,059              2,118               160
+R_044                    2           1,049              2,098               158
+R_045                    2           1,057              2,114               160
+R_046                    2           1,077              2,154               162
+R_047                    2           1,087              2,174               162
+R_048                    2           1,075              2,150               162
+R_049                    2           1,073              2,146               164
+R_050                    2           1,099              2,198               166
+R_051                    2           1,087              2,174               164
+R_052                    2           1,041              2,082               158
+R_053                    2           1,069              2,138               162
+R_054                    2           1,071              2,142               162
+R_055                    2           1,073              2,146               160
+R_056                    2           1,065              2,130               162
+R_057                    2           1,087              2,174               164
+R_058                    2           1,071              2,142               162
+
+--- model limits and warnings ---
+- Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.
+- One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
+- Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.
+- No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.
+- The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain.
+
+Complete evidence: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0

@@ -322,6 +322,67 @@ def estimate_w_resources(n: int, dims: int, prep_tol: float) -> dict:
     return out
 
 
+def render_resource_report(metrics: dict) -> str:
+    """Render the saved walk metrics as a readable logical-resource report."""
+    dims = metrics["dims"]
+    n = metrics["target_n"]
+    summary = metrics["fault_tolerant_summary"]
+    lines = [
+        f"=== {dims}D periodic Laplacian walk: logical resource report ===",
+        "",
+        f"Computation           : {metrics['definition']} (one complete walk)",
+        "Resource model        : logical Clifford+T gates, before physical layout/QEC mapping",
+        f"Spatial dimensions    : {dims}",
+        f"Qubits per dimension  : {n}",
+        f"Grid points per axis  : {2**n:,}",
+        f"Verification n        : {metrics['verify_n']} (small dense check only)",
+        "",
+        "--- logical resource counts at target n ---",
+        f"Logical qubits        : {summary['logical_qubits']:,}",
+        f"Clifford gate count   : {summary['clifford_gate_count']:,}",
+        f"T-count (T + T-dagger): {summary['t_count']:,}",
+        f"Total gate count      : {summary['clifford_gate_count'] + summary['t_count']:,}",
+        f"Total depth           : {summary['total_depth']:,}",
+        f"T-depth               : {summary['t_depth']:,}",
+        "",
+        "--- registers and walk structure ---",
+        f"System qubits         : {dims * n}",
+        "Qubitization control  : 1",
+        "Block-encoding ancillas: 2",
+        f"Selector qubits       : {metrics['selector_qubits']}",
+        f"Pre-decomposition qubits: {metrics['logical_qubits_pre_decomp']}",
+        f"Controlled shifts     : {metrics['controlled_shifts']}",
+        "",
+        "--- emitted logical gate counts ---",
+    ]
+    lines.extend(f"{gate:<22}: {count:,}" for gate, count in sorted(metrics["gate_counts"].items()))
+    synthesis = metrics["rotation_synthesis"]
+    lines.extend(["", "--- selector rotation synthesis ---"])
+    if synthesis is None:
+        lines.append("2D selector preparation uses exact Clifford gates; no arbitrary rotation synthesis.")
+    else:
+        lines.extend([
+            f"Backend               : {synthesis['backend']} {synthesis['backend_version']}",
+            f"Synthesized rotations : {synthesis['n_rotations']}",
+            f"Walk synthesis tolerance: {synthesis['prep_tol']:.6e}",
+            f"Tolerance per rotation: {synthesis['eps_per_rotation']:.6e}",
+            f"Measured error/rotation: {synthesis['projective_error_per_rotation']:.6e}",
+            f"Summed synthesis bound: {synthesis['n_rotations'] * synthesis['projective_error_per_rotation']:.6e}",
+            f"T gates from synthesis: {synthesis['synthesized_t']:,}",
+        ])
+    reflection = metrics["reflection_counts"]
+    reflection_t = reflection["gate_counts"].get("t", 0) + reflection["gate_counts"].get("tdg", 0)
+    lines.extend([
+        "", "--- reflection U_R contribution ---",
+        f"T-count (T + T-dagger): {reflection_t:,}",
+        f"Clifford gate count   : {reflection['total_gates'] - reflection_t:,}",
+        f"Total depth           : {reflection['depth']:,}",
+        "", "--- dense correctness checks at verification n ---",
+    ])
+    lines.extend(f"{name:<22}: {error:.6e}" for name, error in metrics["verification"].items())
+    return "\n".join(lines) + "\n"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Qubitization walk operator W = U_R X_q U' for the periodic "
@@ -337,6 +398,8 @@ def main() -> None:
                         help="3D selector-preparation synthesis tolerance.")
     parser.add_argument("--output-metrics", type=Path, default=None,
                         help="Where to write metrics JSON.")
+    parser.add_argument("--output-report", type=Path, default=None,
+                        help="Readable text report (default: alongside metrics JSON, with _report.txt suffix).")
     args = parser.parse_args()
 
     if args.verify_n < 1 or args.target_n < 1:
@@ -350,6 +413,11 @@ def main() -> None:
     out_path = args.output_metrics or (
         METRICS_DIR / f"laplacian_{dims}d_w_resource_metrics.json"
     )
+    report_path = args.output_report or out_path.with_name(
+        out_path.stem.removesuffix("_metrics") + "_report.txt"
+    )
+    if report_path.resolve() == out_path.resolve():
+        raise ValueError("Metrics JSON and text report must use different output paths.")
 
     print(f"=== {dims}D periodic Laplacian qubitization walk operator W ===")
     print("definition       : W = U_R . X_q . U'")
@@ -454,6 +522,7 @@ def main() -> None:
         "gate_counts": est["gate_counts"],
     }
     ensure_parent(out_path).write_text(json.dumps(metrics, indent=2) + "\n", "utf-8")
+    ensure_parent(report_path).write_text(render_resource_report(metrics), encoding="utf-8")
 
     # Draw the same circuit size used for resource estimation. Dense
     # verification remains at verify_n because it only scales to small n.
@@ -495,7 +564,9 @@ def main() -> None:
     )
     ensure_parent(draw_path).write_text(draw_text, encoding="utf-8")
 
-    print("\nSaved:", out_path, "and", draw_path)
+    print("\nSaved metrics JSON:", out_path)
+    print("Saved resource report:", report_path)
+    print("Saved circuit drawing:", draw_path)
 
 
 if __name__ == "__main__":

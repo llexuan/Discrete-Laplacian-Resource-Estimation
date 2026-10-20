@@ -469,6 +469,106 @@ def extract_block(full_qsp: QuantumCircuit, m: int, n_sys: int) -> np.ndarray:
     return left @ U @ right
 
 
+def render_resource_report(metrics: dict) -> str:
+    """Render the complete inverse-sequence logical estimate from its JSON data."""
+    logical = metrics["logical_resources"]
+    walks = logical["walk_contribution"]
+    one_walk = walks["per_w"]
+    projectors = logical["projector_rotation_contribution"]
+    errors = metrics["error_summary"]
+    verification = metrics["verification"]
+    lines = [
+        "=== Full Laplacian inverse sequence: logical resource report ===",
+        "",
+        f"Sequence              : {logical['composition']}",
+        "Accounting            : compiled Clifford+T component costs composed across the full sequence",
+        "Scope                 : logical gates before physical layout/QEC mapping; no full target-size QASM export",
+        f"Spatial dimensions    : {logical['dimensions']}",
+        f"Qubits per dimension  : {logical['target_n']}",
+        f"Grid points per axis  : {logical['grid_points_per_dimension']:,}",
+        f"Polynomial degree     : {metrics['polynomial_degree']}",
+        f"Effective degree      : {metrics['effective_degree']}",
+        f"W applications        : {logical['num_w_applications']:,}",
+        f"Projector rotations   : {logical['num_projector_rotations']:,}",
+        f"Unique phase angles   : {projectors['num_unique_phase_angles']:,}",
+        "",
+        "--- entire sequence: logical resource counts ---",
+        f"Logical qubits        : {logical['logical_qubits']:,}",
+        f"Clifford gate count   : {logical['clifford_gate_count']:,}",
+        f"T-count (T + T-dagger): {logical['t_count']:,}",
+        f"Total gate count      : {logical['clifford_gate_count'] + logical['t_count']:,}",
+        f"Total depth upper bound: {logical['total_depth']:,}",
+        f"T-depth upper bound   : {logical['t_depth']:,}",
+        f"Depth accounting      : {logical['depth_accounting']}",
+        "",
+        "--- contribution breakdown ---",
+        f"{'Component':<23} {'Clifford gates':>16} {'T/T-dagger':>14} {'Depth bound':>15} {'T-depth bound':>15}",
+    ]
+    for label, component in (
+        ("One W", one_walk),
+        ("All W applications", walks),
+        ("All projector rotations", projectors),
+        ("Entire sequence", logical),
+    ):
+        lines.append(
+            f"{label:<23} {component['clifford_gate_count']:>16,} {component['t_count']:>14,} "
+            f"{component['total_depth']:>15,} {component['t_depth']:>15,}"
+        )
+    lines.extend(
+        [
+            "",
+            f"Logical qubits per W  : {one_walk['logical_qubits']}",
+            f"Additional phase flag : {logical['phase_flag_qubits']}",
+            f"Borrowed system qubits: {projectors['borrowed_dirty_system_qubits']} (already included; not additional qubits)",
+            "",
+            "--- full-sequence logical gate counts ---",
+        ]
+    )
+    lines.extend(
+        f"{gate:<22}: {count:,}"
+        for gate, count in sorted(logical["gate_counts"].items())
+    )
+    lines.extend(
+        [
+            "",
+            "--- approximation and synthesis errors ---",
+            f"Polynomial error      : {errors['polynomial_error']:.6e}",
+            f"Phase numerical error : {errors['phase_numerical_error']:.6e}",
+            f"Synthesis tolerance   : {errors['synthesis_tolerance']:.6e}",
+            f"Measured synthesis bound: {errors['measured_synthesis_error_bound']:.6e}",
+            f"Conservative total bound: {errors['conservative_total_error_bound']:.6e}",
+            f"Synthesized rotations : {logical['num_approximated_rotations']:,}",
+            f"Selector rotations in walks: {logical['num_w_selector_rotations']:,}",
+            f"Tolerance per rotation: {logical['eps_per_rotation']:.6e}",
+            "",
+            "--- inversion domain and spectral coverage ---",
+            f"Kappa                 : {metrics['kappa']:g}",
+            f"Polynomial epsilon    : {metrics['epsilon']:g}",
+            f"Declared domain       : 1/kappa <= |lambda| <= 1 (|lambda| >= {1.0 / metrics['kappa']:.6e})",
+            "Zero mode             : excluded from inversion",
+            f"Target spectral gap   : {logical['target_spectral_gap']:.6e}",
+            f"Kappa for all nonzero modes: {logical['minimum_kappa_for_full_nonzero_spectrum']:.6e}",
+        ]
+    )
+    if metrics["kappa"] < logical["minimum_kappa_for_full_nonzero_spectrum"]:
+        lines.append(
+            "WARNING: supplied kappa does not cover all nonzero target-grid modes; inversion is estimated only on the declared domain."
+        )
+    lines.extend(
+        [
+            "",
+            "--- dense correctness checks at small verification size ---",
+            f"Verification n        : {verification['verify_n']} (not the target resource size)",
+            f"Block encoding error  : {verification['block_encoding_check_error']:.6e}",
+            f"QSP block max-entry error: {verification['qsp_block_max_entry_error']:.6e}",
+            f"QSP block spectral error: {verification['qsp_block_spectral_error']:.6e}",
+            "",
+            f"Recorded phase source : {metrics['source_json']}",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Verify and estimate QSVT matrix inversion resources for "
@@ -528,7 +628,19 @@ def main() -> None:
         default=METRICS_DIR / "laplacian_inversion_resource_metrics.json",
         help="Where to write the final logical QSP resource estimate.",
     )
+    parser.add_argument(
+        "--output-resource-report", "--output-report",
+        type=Path,
+        default=None,
+        help="Readable full-sequence text report (default: alongside resource JSON, with _report.txt suffix).",
+    )
     args = parser.parse_args()
+
+    report_path = args.output_resource_report or args.output_resource_metrics.with_name(
+        args.output_resource_metrics.stem.removesuffix("_metrics") + "_report.txt"
+    )
+    if report_path.resolve() == args.output_resource_metrics.resolve():
+        raise ValueError("Resource JSON and text report must use different output paths.")
 
     phases_json = args.phases_json
     verify_n = int(args.verify_n)
@@ -703,38 +815,38 @@ def main() -> None:
         + "\n",
         encoding="utf-8",
     )
+    resource_metrics = {
+        "scope": "full_qsp_logical_resource_estimate",
+        "source_json": str(phases_json),
+        "target_function": target_function,
+        "epsilon": epsilon,
+        "kappa": kappa,
+        "polynomial_degree": degree,
+        "effective_degree": effective_degree,
+        "parity": parity,
+        "error_summary": {
+            "polynomial_error": polynomial_error,
+            "phase_numerical_error": phase_numerical_error,
+            "synthesis_tolerance": synthesis_tol,
+            "measured_synthesis_error_bound": resource_estimate[
+                "measured_synthesis_error_bound"
+            ],
+            "conservative_total_error_bound": conservative_total_error,
+        },
+        "verification": {
+            "verify_n": verify_n,
+            "block_encoding_check_error": be_err,
+            "qsp_block_max_entry_error": block_err_max_entry,
+            "qsp_block_spectral_error": block_err_spectral,
+        },
+        "logical_resources": resource_estimate,
+    }
     ensure_parent(args.output_resource_metrics).write_text(
-        json.dumps(
-            {
-                "scope": "full_qsp_logical_resource_estimate",
-                "source_json": str(phases_json),
-                "target_function": target_function,
-                "epsilon": epsilon,
-                "kappa": kappa,
-                "polynomial_degree": degree,
-                "effective_degree": effective_degree,
-                "parity": parity,
-                "error_summary": {
-                    "polynomial_error": polynomial_error,
-                    "phase_numerical_error": phase_numerical_error,
-                    "synthesis_tolerance": synthesis_tol,
-                    "measured_synthesis_error_bound": resource_estimate[
-                        "measured_synthesis_error_bound"
-                    ],
-                    "conservative_total_error_bound": conservative_total_error,
-                },
-                "verification": {
-                    "verify_n": verify_n,
-                    "block_encoding_check_error": be_err,
-                    "qsp_block_max_entry_error": block_err_max_entry,
-                    "qsp_block_spectral_error": block_err_spectral,
-                },
-                "logical_resources": resource_estimate,
-            },
-            indent=2,
-        )
-        + "\n",
+        json.dumps(resource_metrics, indent=2) + "\n",
         encoding="utf-8",
+    )
+    ensure_parent(report_path).write_text(
+        render_resource_report(resource_metrics), encoding="utf-8"
     )
 
     u_l_path = CIRCUITS_DIR / f"laplacian_{args.save_prefix}_U_L.txt"
@@ -808,7 +920,7 @@ def main() -> None:
     print("\nCircuit drawings written to text files.")
     print(
         f"Saved: {u_l_path}, {w_path}, {qsp_path}, "
-        f"{args.output_block_metrics}, and {args.output_resource_metrics}"
+        f"{args.output_block_metrics}, {args.output_resource_metrics}, and {report_path}"
     )
 
 

@@ -9,3 +9,4 @@ def build_circuit() -> QuantumCircuit:
     circuit.cx(0, 1)
     circuit.t(0)
     return circuit
+  

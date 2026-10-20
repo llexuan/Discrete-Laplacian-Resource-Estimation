@@ -1,8 +1,0 @@
-=== Pauli rotation and Litinski transformation report ===
-
-Legacy Pauli/Litinski report disabled.
-
-=== liblsqecc LLI compilation commands ===
-
-Unsliced LLI: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/surface-code-floorplanner/.deps/adapter/liblsqecc_adapter -I qasm -i /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/mapped-circuit.qasm --printlli before --graceful -L edpc --geometry-file /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/layout.txt -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
-Sliced LLI:   /Users/huanglexuan/Documents/Codex/2026-10-17/pul/surface-code-floorplanner/.deps/adapter/liblsqecc_adapter -I qasm -i /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/mapped-circuit.qasm --printlli sliced --graceful -L edpc --geometry-file /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/layout.txt -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra

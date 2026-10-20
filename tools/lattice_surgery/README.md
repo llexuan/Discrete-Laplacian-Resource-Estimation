@@ -115,7 +115,7 @@ before search. Use the Qiskit exporter for decomposition/synthesis first.
 Stable files under `outputs/compiler/` include:
 
 - Existing compact and EDPC LLI/resource filenames, refreshed with matched settings.
-- `annealed.lli`, `annealed_sliced.lli`, `annealed_compiler_report.txt`.
+- `annealed.lli` and `annealed_sliced.lli`.
 - `annealed_resource_estimate.json`, `annealed_resource_report.txt`.
 - `layout_comparison.json` and `layout_comparison.txt`, including failures.
 - `annealed_layout/`: winning grid/SVG, logical identity mapping, original and
@@ -156,6 +156,107 @@ pinned compiler omits measurement-dependent correction details and does not
 distinguish T/T-dagger in its printed lowering: replay certifies the resource
 score, not an end-to-end executable quantum protocol. See the floorplanner's
 [correctness limits](https://github.com/akataba/surface-code-floorplanner/blob/7835a4ef645f7c9faccc4a74c678574285a7c82b/docs/correctness.md).
+
+## Full inverse component architecture
+
+`run_inversion_architecture.py` connects the full logical inversion estimate to
+the existing native adapter and annealer without materializing the long target
+sequence. Run `setup_floorplanner.py` once as described above, then:
+
+```bash
+PYTHONPATH=src .venv/bin/python tools/lattice_surgery/run_inversion_architecture.py \
+  --logical-metrics outputs/metrics/laplacian_inversion_resource_metrics.json \
+  --phases-json outputs/phases/phases_inversion.json \
+  --budget 32 --seed 61 --auto-code-distance
+```
+
+The default logical/phase paths are those shown. Target dimensions, n, synthesis
+tolerance and phase multiplicities come from the logical JSON; generate that JSON
+first to change the algorithm. A different environment/decomposition that changes
+component gate counts is rejected; rerun the logical estimator first. Component
+exports are reused only when logical JSON, phase and QASM hashes match.
+`--rebuild-components` forces export. Phase order does not affect this
+component-sum model when multiplicities are unchanged.
+
+`export_inversion_components.py` uses the same Clifford+T basis and decomposition
+as the logical counters. It exports W and each unique synthesized projector,
+preserving inverse gates and synthesis tolerances. Projector predicates map to
+the walk's ancillas, the clean flag maps to the additional resident qubit, and
+dirty workspace maps to existing system qubits. Every QASM retains the full
+resident register. Component counts and weighted totals must match the logical
+estimate before architectural compilation.
+
+Each method keeps one common grid/identity mapping for W and every projector.
+Native EDPC uses its exported grid. Compact first tries its native grid, then
+(only on the known too-short Bell-CNOT route failure) inserts routing columns
+with spacing 2/3 while preserving Q/A cells and the contiguous factory region.
+Failures are retained. `--compact-spacing 1`, `2` or `3` prescribes the geometry;
+`0` means native-then-spacing. A spaced compact result is labeled and is not
+represented as a successful native compact baseline.
+
+Annealing uses the pinned SA API with one W followed by the largest-T projector
+as the search circuit. It minimizes that template's area × slices, ensuring
+phase-flag interactions participate. This is not optimization over all angles or
+the full sequence. The verified winning grid/identity mapping is then reused to
+measure W and every distinct phase separately. Each final measurement must
+complete; a failed phase prevents a numerical estimate for that method.
+`--supply-count` changes annealing's abstract M count only and is reported.
+
+For r walk applications and m_j occurrences of phase j:
+
+```text
+S_total = r * S_W + sum_j(m_j * S_Rj)
+tile-slices = shared layout area * S_total
+QEC rounds = S_total * code distance
+time = QEC rounds * QEC cycle time
+resident physical qubits = shared area * tile factor * code distance^2
+```
+
+Qubits are allocated once, including idle flag/system qubits. There are no free
+permutations or geometry changes between component types. However, each compiler
+invocation starts from default patch orientations and supply availability.
+Boundary orientation resets, replenishment carryover and reconciliation costs
+are omitted. The result is a component-sum projection, not a scheduled full
+circuit or a certified runtime upper bound.
+
+Native evaluation uses summary-only wave counts corrected for the initial extra
+count, avoiding large patch-JSON allocations. Unsliced LLI is streamed to disk
+and counted for state requests; sliced LLI is streamed and its line count checked
+against completed frames. `--skip-lli` omits sliced LLI files; unsliced counts
+remain available. No compiler report is generated. `--timeout` limits each native
+subprocess; the default annealing `--budget 32` counts score requests, not seconds.
+
+`--auto-code-distance` selects a common odd distance meeting every successful
+method's layout-error proxy at `--target-failure-probability` (default 0.01),
+with `--code-distance` as a lower bound (default 9). The proxy is
+`min(1, area * S_total * d * 0.1 * (100*p_phys)^((d+1)/2))`.
+Selection rescales physical estimates without changing measured logical slices.
+It excludes magic-state infidelity, decoder behavior and full physical execution
+semantics. Without auto selection, distance stays fixed and unmet targets produce
+warnings. The full sequence can require a much larger distance than the mini case.
+
+Other physical parameters use the same units as the mini workflow. Supply
+intervals are deterministic slices. Optional `--factory-cycle-rounds` requires
+explicit `--num-factories`; `--factory-physical-qubits` adds external factory space
+once, in addition to abstract in-grid regions. Do not assign the same hardware to
+both. This global throughput bound does not reconstruct supply stalls, and the
+layout-error proxy excludes factory output errors. Polynomial/synthesis errors
+and spectral limitations remain separate in the logical input metadata.
+
+Outputs default to `outputs/compiler/inversion_<D>d_n<n>/` (override with
+`--output-dir`), using `EDPC`, `compact` and `annealed` method prefixes:
+
+- `*_resource_report.txt` and `*_resource_estimate.json`: full projections with
+  per-W and per-angle measurements, multiplicities and assumptions.
+- `architecture_comparison.txt` and `.json`: all methods, including failures.
+- `manifest.json`: source/QASM hashes, register map and logical multiplicities.
+- `inputs/`, snapshots and `runs/<id>/`: local QASM, grids/identity mappings,
+  annealing history/replay and component LLI.
+
+Small reports/manifests are allowed by Git; detailed inputs/runs are ignored.
+Component evidence directories retain exact commands, input/geometry hashes,
+stdout and stderr. Keep the complete local bundle for replay. The same compiler
+semantic limitations documented above still apply.
 
 ## Native build dependencies
 
@@ -259,13 +360,8 @@ The fast direct backend is the default and can run from the main environment:
 
 This writes:
 
-- `outputs/compiler/compiler_report.txt`
-- `outputs/compiler/compiler.lli`
-- `outputs/compiler/compiler_sliced.lli`
-
-`compiler_report.txt` combines the legacy Python compiler's Pauli-rotation and
-Litinski-transformation views with the exact fast-slicer LLI commands. Pass
-`--no-intermediate-report` to skip the legacy section.
+- `outputs/compiler/EDPC.lli`
+- `outputs/compiler/EDPC_sliced.lli`
 
 By default, the runner uses the upgraded direct-compilation configuration from
 the liblsqecc resource-estimation workflow:
@@ -276,8 +372,8 @@ the liblsqecc resource-estimation workflow:
 - Distillation time 1 with unstaggered factories
 - Catalytic S-gate implementation disabled through `--notwists`
 
-`compiler.lli` contains the layout-independent instructions before routing.
-`compiler_sliced.lli` contains the scheduled instructions, with operations on
+`EDPC.lli` contains the layout-independent instructions before routing.
+`EDPC_sliced.lli` contains the scheduled instructions, with operations on
 the same line executing in the same timestep.
 
 ## Estimate scheduled physical resources
@@ -295,8 +391,8 @@ It reruns the same `liblsqecc` preset into a temporary patch JSON, extracts
 the exact schedule and layout dimensions, counts state requests from LLI, and
 deletes the temporary JSON. It writes:
 
-- `outputs/compiler/slice_resource_estimate.json`
-- `outputs/compiler/slice_resource_report.txt`
+- `outputs/compiler/EDPC_resource_estimate.json`
+- `outputs/compiler/EDPC_resource_report.txt`
 
 The transparent core model is:
 
@@ -357,7 +453,7 @@ Print layout-independent LLI:
   -P stream \
   --graceful \
   --printlli before \
-  > outputs/compiler/compiler.lli
+  > outputs/compiler/EDPC.lli
 ```
 
 Print LLI sliced with the resource-estimation preset:
@@ -374,7 +470,7 @@ Print LLI sliced with the resource-estimation preset:
   -P wave \
   --graceful \
   --printlli sliced \
-  > outputs/compiler/compiler_sliced.lli
+  > outputs/compiler/EDPC_sliced.lli
 ```
 
 Important options:

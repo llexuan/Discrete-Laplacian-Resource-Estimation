@@ -1,0 +1,53 @@
+=== 3D periodic Laplacian walk: logical resource report ===
+
+Computation           : W = U_R . X_q . U' (one complete walk)
+Resource model        : logical Clifford+T gates, before physical layout/QEC mapping
+Spatial dimensions    : 3
+Qubits per dimension  : 2
+Grid points per axis  : 4
+Verification n        : 1 (small dense check only)
+
+--- logical resource counts at target n ---
+Logical qubits        : 11
+Clifford gate count   : 2,183
+T-count (T + T-dagger): 1,431
+Total gate count      : 3,614
+Total depth           : 2,852
+T-depth               : 1,110
+
+--- registers and walk structure ---
+System qubits         : 6
+Qubitization control  : 1
+Block-encoding ancillas: 2
+Selector qubits       : 2
+Pre-decomposition qubits: 11
+Controlled shifts     : 12
+
+--- emitted logical gate counts ---
+cx                    : 778
+h                     : 918
+s                     : 150
+sdg                   : 150
+t                     : 736
+tdg                   : 695
+x                     : 187
+
+--- selector rotation synthesis ---
+Backend               : pyLIQTR 1.4.2
+Synthesized rotations : 4
+Walk synthesis tolerance: 1.000000e-08
+Tolerance per rotation: 2.500000e-09
+Measured error/rotation: 2.322704e-09
+Summed synthesis bound: 9.290815e-09
+T gates from synthesis: 432
+
+--- reflection U_R contribution ---
+T-count (T + T-dagger): 23
+Clifford gate count   : 44
+Total depth           : 44
+
+--- dense correctness checks at verification n ---
+reflection_err        : 3.553025e-15
+u_prime_err           : 3.086448e-14
+unitarity_err         : 8.726353e-14
+signal_block_err      : 2.126135e-14

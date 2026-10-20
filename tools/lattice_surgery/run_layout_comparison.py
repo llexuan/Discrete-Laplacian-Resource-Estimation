@@ -8,6 +8,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -18,6 +19,7 @@ import time
 
 import estimate_sliced_resources as resources
 import run_lattice_surgery_compiler as compiler
+from compiler_options import output_prefix
 from setup_floorplanner import DEFAULT_CHECKOUT, FLOORPLANNER_PIN
 
 NATIVE_PIN = "82a1cbe64717a64a289dd4b0d02e3dc38cae3890"
@@ -172,24 +174,12 @@ def check_installation(checkout: Path) -> tuple[Path, Path]:
 
 
 def output_paths(output: Path, name: str) -> dict[str, Path]:
-    prefix = "compiler" if name == "edpc" else name
+    prefix = output_prefix(name)
     return {
         "lli": output / f"{prefix}.lli",
         "sliced": output / f"{prefix}_sliced.lli",
-        "compiler_report": output
-        / ("compiler_report.txt" if name == "edpc" else f"{name}_compiler_report.txt"),
-        "json": output
-        / (
-            "slice_resource_estimate.json"
-            if name == "edpc"
-            else f"{name}_resource_estimate.json"
-        ),
-        "report": output
-        / (
-            "slice_resource_report.txt"
-            if name == "edpc"
-            else f"{name}_resource_report.txt"
-        ),
+        "json": output / f"{prefix}_resource_estimate.json",
+        "report": output / f"{prefix}_resource_report.txt",
     }
 
 
@@ -209,10 +199,7 @@ def compile_result(
     compilation.disttime = args.disttime
     compilation.staggered = args.staggered
     compilation.timeout = args.timeout
-    compilation.no_intermediate_report = True
-    compiler._run_fast(
-        compilation, qasm, paths["compiler_report"], paths["lli"], paths["sliced"]
-    )
+    compiler._run_fast(compilation, qasm, paths["lli"], paths["sliced"])
     estimation = resources.build_parser().parse_args([])
     for key in (
         "code_distance",
@@ -457,7 +444,10 @@ def main() -> None:
             )
         raise SystemExit(
             subprocess.call(
-                [str(python), str(Path(__file__).resolve()), *sys.argv[1:], "--worker"]
+                [str(python), str(Path(__file__).resolve()), *sys.argv[1:], "--worker"],
+                env=dict(
+                    os.environ, PYTHONPATH=str(args.floorplanner_dir.resolve() / "src")
+                ),
             )
         )
     try:

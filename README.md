@@ -145,9 +145,20 @@ estimator transpiles large multi-controlled shift circuits.
 
 ## Final resource report
 
-The complete report is:
+The complete inverse-sequence logical estimate is saved in both formats:
 
-`outputs/metrics/laplacian_inversion_resource_metrics.json`
+- `outputs/metrics/laplacian_inversion_resource_metrics.json`
+- `outputs/metrics/laplacian_inversion_resource_report.txt`
+
+The text report shows the entire sequence's totals, one-walk and repeated-walk
+costs, projector-rotation contributions, error estimates, spectral coverage and
+small-size verification results. These are logical Clifford+T component costs
+composed across the sequence; this output does not imply a full target-size QASM
+export or physical-layout compilation.
+
+Every `laplacian-inversion-resource` run writes both files. Use
+`--output-resource-report` (or `--output-report`) to override the text path.
+By default it follows `--output-resource-metrics` in the same directory.
 
 Its main sections are:
 
@@ -173,6 +184,52 @@ Depth and T-depth are conservative serial component-sum upper bounds.
 The dense verification report is written separately to:
 
 `outputs/metrics/block_metrics_laplacian.json`
+
+## Component-based fault-tolerant architecture for the entire inverse
+
+After generating the full logical inverse estimate, run from this root:
+
+```bash
+PYTHONPATH=src .venv/bin/python tools/lattice_surgery/run_inversion_architecture.py \
+  --auto-code-distance
+```
+
+This reuses the installed floorplanner/adapter setup. It exports the same
+Clifford+T W and every distinct projector phase used by the logical estimate,
+requires their gate counts to match, measures each component once per layout,
+and multiplies its cost by its occurrence count. The saved example has 117 W
+applications and 118 rotations at 59 distinct angles. A single arbitrary
+rotation is not substituted for all angles.
+
+Reports for each method are written under
+`outputs/compiler/inversion_<D>d_n<n>/`: `EDPC_resource_report.txt`,
+`compact_resource_report.txt` and `annealed_resource_report.txt`, with matching
+`*_resource_estimate.json` files and `architecture_comparison.txt`/`.json`.
+`manifest.json` records logical input/phase hashes and component multiplicities.
+Detailed component QASM, LLI, layouts and search records are retained locally in
+that directory's inputs and run bundles, and are ignored by Git.
+
+One common geometry and logical-qubit mapping is used for all components within
+each method. The full resident register includes the phase flag even during W.
+Time, state requests and space-time cost are multiplied; physical qubits are
+allocated once. These are component-sum projections: continuous component-boundary
+orientation/supply state, resets, factory carryover and transition costs are not
+simulated, so projected runtime is not a fully scheduled-circuit upper bound.
+
+Native compact can fail local Bell-CNOT decomposition because of short routes.
+The default workflow records that failure and retries with routing spacing 2/3,
+without changing the compact factory region. The report explicitly identifies a
+spaced compact result. `--compact-spacing 1` requires the native grid and reports
+failure if it cannot compile. Annealing optimizes one W followed by the largest-T
+projector, then remeasures all distinct projectors on that one winning layout.
+
+`--auto-code-distance` chooses a common odd distance, at least `--code-distance`
+(default 9), meeting the layout-failure **proxy** for every successful method.
+It does not certify a complete hardware error budget. Omitting it keeps the fixed
+distance and emits a warning if the full sequence exceeds the target. Magic-state
+supplies remain abstract; physical factories require explicit throughput and
+footprint assumptions. See [the architecture workflow](tools/lattice_surgery/README.md#full-inverse-component-architecture)
+for controls, replay data and model limits.
 
 ## Spectral-gap and kappa warning
 
@@ -216,6 +273,20 @@ Estimate one qubitization walk:
 laplacian-w-resource --dims 2 --verify-n 2 --target-n 4
 laplacian-w-resource --dims 3 --verify-n 1 --target-n 2 --prep-tol 1e-8
 ```
+
+Each walk command saves both JSON metrics and a readable text resource report:
+
+- `outputs/metrics/laplacian_2d_w_resource_metrics.json` and
+  `outputs/metrics/laplacian_2d_w_resource_report.txt` for 2D.
+- `outputs/metrics/laplacian_3d_w_resource_metrics.json` and
+  `outputs/metrics/laplacian_3d_w_resource_report.txt` for 3D.
+
+The text report includes logical qubits, Clifford/T counts, depths, gate
+breakdowns, synthesis details and small-size verification results.
+`--output-report` overrides the text-report path; by default it follows
+`--output-metrics` in the same directory. Files under `outputs/circuits/` are
+circuit drawings. These walk reports count logical resources before physical
+layout and QEC mapping.
 
 Run the small `(I + X)/2` reference block-encoding demonstration:
 
@@ -296,8 +367,8 @@ bash tools/lattice_surgery/setup_compiler.sh
 Write the circuit in `tools/lattice_surgery/input_circuit.qasm`. See
 `tools/lattice_surgery/README.md` for syntax, environment overrides, generated
 files, and current scope limitations. Layout-independent and scheduled lattice
-instructions are written to `outputs/compiler/compiler.lli` and
-`outputs/compiler/compiler_sliced.lli`.
+instructions are written to `outputs/compiler/EDPC.lli` and
+`outputs/compiler/EDPC_sliced.lli`.
 
 Estimate schedule-aware timing and physical space with:
 

@@ -15,7 +15,7 @@ import subprocess
 import tempfile
 from typing import Any
 
-from compiler_options import backend_options
+from compiler_options import backend_options, output_prefix
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -99,12 +99,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-json",
         type=Path,
-        default=OUTPUT_DIR / "slice_resource_estimate.json",
+        help="Default: outputs/compiler/<layout>_resource_estimate.json.",
     )
     parser.add_argument(
         "--output-report",
         type=Path,
-        default=OUTPUT_DIR / "slice_resource_report.txt",
+        help="Default: outputs/compiler/<layout>_resource_report.txt.",
     )
     return parser
 
@@ -561,8 +561,13 @@ def render_report(result: dict[str, Any]) -> str:
 def main() -> None:
     args = build_parser().parse_args()
     result = estimate(args)
-    output_json = args.output_json.resolve()
-    output_report = args.output_report.resolve()
+    prefix = output_prefix(args.preset)
+    output_json = (
+        args.output_json or OUTPUT_DIR / f"{prefix}_resource_estimate.json"
+    ).resolve()
+    output_report = (
+        args.output_report or OUTPUT_DIR / f"{prefix}_resource_report.txt"
+    ).resolve()
     output_json.parent.mkdir(parents=True, exist_ok=True)
     output_report.parent.mkdir(parents=True, exist_ok=True)
     output_json.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

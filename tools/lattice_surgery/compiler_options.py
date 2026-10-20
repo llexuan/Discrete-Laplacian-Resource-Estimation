@@ -3,6 +3,10 @@
 from pathlib import Path
 
 
+def output_prefix(preset: str) -> str:
+    return {"edpc": "EDPC", "direct": "EDPC", "viewer": "compact"}.get(preset, preset)
+
+
 def backend_options(
     preset: str,
     disttime: int = 1,

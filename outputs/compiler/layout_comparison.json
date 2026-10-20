@@ -37,7 +37,7 @@
       "core_time_ns": 72000,
       "abstract_m_sources": 12,
       "explicit_factory_regions": 0,
-      "resource_json": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/slice_resource_estimate.json",
+      "resource_json": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/EDPC_resource_estimate.json",
       "wall_seconds": 0.13269395800307393
     },
     "annealed": {

@@ -103,12 +103,13 @@ class NativeLayoutTests(unittest.TestCase):
                 timeout=120,
             )
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertFalse(list(output.rglob("*compiler_report.txt")))
             summary = json.loads((output / "layout_comparison.json").read_text())
             reports = [
                 json.loads((output / filename).read_text())
                 for filename in (
                     "compact_resource_estimate.json",
-                    "slice_resource_estimate.json",
+                    "EDPC_resource_estimate.json",
                     "annealed_resource_estimate.json",
                 )
             ]
