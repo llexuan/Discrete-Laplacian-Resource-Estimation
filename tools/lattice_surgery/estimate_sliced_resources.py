@@ -20,7 +20,7 @@ from compiler_options import backend_options, output_prefix
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_QASM = Path(__file__).resolve().with_name("input_circuit.qasm")
-OUTPUT_DIR = PROJECT_ROOT / "outputs" / "compiler"
+OUTPUT_DIR = PROJECT_ROOT / "outputs" / "mini_circuit"
 DEFAULT_SLICER = PROJECT_ROOT.parent / "liblsqecc" / "build" / "lsqecc_slicer"
 
 
@@ -99,12 +99,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-json",
         type=Path,
-        help="Default: outputs/compiler/<layout>_resource_estimate.json.",
+        help="Default: outputs/mini_circuit/data/<layout>_resource_estimate.json.",
     )
     parser.add_argument(
         "--output-report",
         type=Path,
-        help="Default: outputs/compiler/<layout>_resource_report.txt.",
+        help="Default: outputs/mini_circuit/<layout>_resource_report.txt.",
     )
     return parser
 
@@ -462,6 +462,7 @@ def render_report(result: dict[str, Any]) -> str:
     legacy = result["legacy_repository_comparison"]
     lines = [
         "=== liblsqecc slice-based resource estimate ===",
+        f"Run                    : {result.get('run_id', 'standalone compilation')}",
         "",
         f"source QASM             : {result['source_qasm']}",
         f"preset                 : {result['compiler']['preset']}",
@@ -563,7 +564,7 @@ def main() -> None:
     result = estimate(args)
     prefix = output_prefix(args.preset)
     output_json = (
-        args.output_json or OUTPUT_DIR / f"{prefix}_resource_estimate.json"
+        args.output_json or OUTPUT_DIR / "data" / f"{prefix}_resource_estimate.json"
     ).resolve()
     output_report = (
         args.output_report or OUTPUT_DIR / f"{prefix}_resource_report.txt"

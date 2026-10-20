@@ -17,7 +17,7 @@ The integration therefore uses a standalone OpenQASM 2 file:
 
 1. You write a small circuit in `input_circuit.qasm`.
 2. `liblsqecc` performs direct Clifford+T compilation and slicing.
-3. Generated compiler files remain under `outputs/compiler/`.
+3. Generated compiler files remain under `outputs/mini_circuit/`.
 
 Nothing in `src/laplacian_qsvt/` imports `lsqecc`, and the manual circuit is
 not generated from the Laplacian resource-estimation code.
@@ -112,21 +112,19 @@ before search. Use the Qiskit exporter for decomposition/synthesis first.
 
 ### Outputs, replay and interpretation
 
-Stable files under `outputs/compiler/` include:
+Stable files under `outputs/mini_circuit/` include:
 
-- Existing compact and EDPC LLI/resource filenames, refreshed with matched settings.
-- `annealed.lli` and `annealed_sliced.lli`.
-- `annealed_resource_estimate.json`, `annealed_resource_report.txt`.
-- `layout_comparison.json` and `layout_comparison.txt`, including failures.
-- `annealed_layout/`: winning grid/SVG, logical identity mapping, original and
-  mapped QASM, resources, search history and fresh-replay record.
+- `comparison_report.txt`: matched three-method results, including failures.
+- `annealed_resource_report.txt`, `compact_resource_report.txt`, `EDPC_resource_report.txt`.
+- `data/`: matching JSON estimates and `comparison.json`.
+- `artifacts/`: unsliced/sliced LLI and `annealed_layout/` for the winning
+  grid/SVG, logical identity mapping, original/mapped QASM and replay record.
 
 Every invocation also keeps its complete evidence in a new
-`outputs/compiler/annealing_runs/<run-id>/` directory, ignored by Git. Stable
-files are published only after that method's final compilation succeeds. A failed
-method has no numeric score in the new comparison report and causes a nonzero
-exit; older stable files may still exist and must not be interpreted as the new
-run. `--output-dir /path/to/new-directory` keeps comparisons entirely separate.
+`outputs/mini_circuit/runs/<run-id>/` directory, ignored by Git. Failed methods
+have no numeric score in the current report and cause a nonzero exit.
+`--output-dir /path/to/new-directory` keeps comparisons entirely separate.
+Full inverse results live in `outputs/laplacian_inversion/<D>d_n<n>/`.
 
 The final resource compilation must match the optimized area/slice count.
 Completed slices are counted from patch JSON and checked against both the pinned
@@ -138,8 +136,8 @@ For portable replay of the saved winner (paths relative to the project root):
 
 ```bash
 ../surface-code-floorplanner/.deps/adapter/liblsqecc_adapter \
-  -I qasm -i outputs/compiler/annealed_layout/mapped-circuit.qasm \
-  -L edpc --geometry-file outputs/compiler/annealed_layout/layout.txt \
+  -I qasm -i outputs/mini_circuit/artifacts/annealed_layout/mapped-circuit.qasm \
+  -L edpc --geometry-file outputs/mini_circuit/artifacts/annealed_layout/layout.txt \
   -P wave --local --disttime 1 --nostagger --cnotcorrections never \
   -r graph_search -g djikstra --printlli sliced --graceful
 ```
@@ -226,14 +224,26 @@ against completed frames. `--skip-lli` omits sliced LLI files; unsliced counts
 remain available. No compiler report is generated. `--timeout` limits each native
 subprocess; the default annealing `--budget 32` counts score requests, not seconds.
 
-`--auto-code-distance` selects a common odd distance meeting every successful
-method's layout-error proxy at `--target-failure-probability` (default 0.01),
-with `--code-distance` as a lower bound (default 9). The proxy is
+Distance selection is automatic by default. For each method, independently,
+choose the smallest odd distance in 3..101 satisfying the same
+`--target-failure-probability` budget (default 0.01). The proxy is
 `min(1, area * S_total * d * 0.1 * (100*p_phys)^((d+1)/2))`.
-Selection rescales physical estimates without changing measured logical slices.
-It excludes magic-state infidelity, decoder behavior and full physical execution
-semantics. Without auto selection, distance stays fixed and unmet targets produce
-warnings. The full sequence can require a much larger distance than the mini case.
+`--auto-code-distance` explicitly selects this policy. `--code-distance` sets a
+lower bound (default 3); even lower bounds round up to the next odd distance.
+A method with no qualifying distance is reported as failed without a numeric
+resource estimate. The comparison table lists the selected distance, shared
+failure budget, achieved proxy and pass/fail status.
+
+Qubits, QEC rounds, runtime and space-time cost are calculated separately at each
+method's selected distance; no maximum across methods is imposed. Selection
+rescales physical estimates without changing measured logical slices.
+Use `--fixed-code-distance --code-distance 9` to retain a specified distance;
+unmet budgets produce a warning and are marked as unmet in the table.
+
+The proxy excludes magic-state infidelity, decoder behavior and full physical
+execution semantics. Exact failure probabilities generally differ because code
+distance changes in discrete steps. The full sequence can require a much larger
+distance than the mini case.
 
 Other physical parameters use the same units as the mini workflow. Supply
 intervals are deterministic slices. Optional `--factory-cycle-rounds` requires
@@ -243,20 +253,33 @@ both. This global throughput bound does not reconstruct supply stalls, and the
 layout-error proxy excludes factory output errors. Polynomial/synthesis errors
 and spectral limitations remain separate in the logical input metadata.
 
-Outputs default to `outputs/compiler/inversion_<D>d_n<n>/` (override with
+Outputs default to `outputs/laplacian_inversion/<D>d_n<n>/` (override with
 `--output-dir`), using `EDPC`, `compact` and `annealed` method prefixes:
 
-- `*_resource_report.txt` and `*_resource_estimate.json`: full projections with
-  per-W and per-angle measurements, multiplicities and assumptions.
-- `architecture_comparison.txt` and `.json`: all methods, including failures.
-- `manifest.json`: source/QASM hashes, register map and logical multiplicities.
-- `inputs/`, snapshots and `runs/<id>/`: local QASM, grids/identity mappings,
-  annealing history/replay and component LLI.
+- `comparison_report.txt`: case definition, common assumptions, side-by-side
+  costs, percentage differences and method-specific limitations. Read this first.
+- `*_resource_report.txt`: full projections; component tables are in the appendix.
+- `data/*_resource_estimate.json` and `data/comparison.json`: matching JSON.
+- `logical/inversion_resource_metrics.json` and `logical/inversion_resource_report.txt`:
+  exact logical baseline used for this case, available in both formats.
+- `inputs/manifest.json` and `inputs/phases.json`: hashes, register map,
+  component multiplicities and phases.
+- `inputs/components/`: generated W and distinct-angle QASM, ignored by Git.
+- `runs/<id>/`: local grids/mappings, annealing history/replay, component LLI
+  and a snapshot of the published comparison.
 
-Small reports/manifests are allowed by Git; detailed inputs/runs are ignored.
-Component evidence directories retain exact commands, input/geometry hashes,
-stdout and stderr. Keep the complete local bundle for replay. The same compiler
-semantic limitations documented above still apply.
+All four visible reports carry the same run ID. Failed or unselected methods
+replace earlier visible results with explicit failure/not-run reports. Small
+reports, logical baseline, phases and manifest are tracked; detailed component
+QASM and run bundles are ignored. Component evidence retains exact commands,
+input/geometry hashes, stdout and stderr. Historical records moved from the old
+`outputs/compiler/` tree retain their original command paths; see `runs/README.md`
+for relocation notes. Keep complete local bundles for replay.
+
+The per-case README gives a command using that case's saved logical baseline and
+phases. To estimate newly generated logical resources, run the default command
+above, which reads `outputs/metrics/laplacian_inversion_resource_metrics.json`.
+The same compiler semantic limitations documented above still apply.
 
 ## Native build dependencies
 
@@ -360,8 +383,8 @@ The fast direct backend is the default and can run from the main environment:
 
 This writes:
 
-- `outputs/compiler/EDPC.lli`
-- `outputs/compiler/EDPC_sliced.lli`
+- `outputs/mini_circuit/artifacts/EDPC.lli`
+- `outputs/mini_circuit/artifacts/EDPC_sliced.lli`
 
 By default, the runner uses the upgraded direct-compilation configuration from
 the liblsqecc resource-estimation workflow:
@@ -391,8 +414,8 @@ It reruns the same `liblsqecc` preset into a temporary patch JSON, extracts
 the exact schedule and layout dimensions, counts state requests from LLI, and
 deletes the temporary JSON. It writes:
 
-- `outputs/compiler/EDPC_resource_estimate.json`
-- `outputs/compiler/EDPC_resource_report.txt`
+- `outputs/mini_circuit/data/EDPC_resource_estimate.json`
+- `outputs/mini_circuit/EDPC_resource_report.txt`
 
 The transparent core model is:
 
@@ -453,7 +476,7 @@ Print layout-independent LLI:
   -P stream \
   --graceful \
   --printlli before \
-  > outputs/compiler/EDPC.lli
+  > outputs/mini_circuit/artifacts/EDPC.lli
 ```
 
 Print LLI sliced with the resource-estimation preset:
@@ -470,7 +493,7 @@ Print LLI sliced with the resource-estimation preset:
   -P wave \
   --graceful \
   --printlli sliced \
-  > outputs/compiler/EDPC_sliced.lli
+  > outputs/mini_circuit/artifacts/EDPC_sliced.lli
 ```
 
 Important options:

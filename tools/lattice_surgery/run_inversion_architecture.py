@@ -18,8 +18,8 @@ import time
 
 import estimate_sliced_resources as resources
 from compiler_options import backend_options, output_prefix
-from export_inversion_components import export_components
-from inversion_architecture import aggregate_components, render_report, space_compact
+from export_inversion_components import export_components, snapshot_logical_inputs
+from inversion_architecture import aggregate_components, publish_results, space_compact
 from run_layout_comparison import check_installation, NATIVE_PIN
 from setup_floorplanner import DEFAULT_CHECKOUT, FLOORPLANNER_PIN
 
@@ -71,12 +71,21 @@ def build_parser():
     )
     parser.add_argument("--disttime", type=int, default=1)
     parser.add_argument("--staggered", action="store_true")
-    parser.add_argument("--code-distance", type=int, default=9)
     parser.add_argument(
-        "--auto-code-distance",
-        action="store_true",
-        help="Select a common odd distance meeting every successful method's layout-failure proxy; --code-distance sets the minimum.",
+        "--code-distance", type=int, default=3,
+        help="Minimum allowed distance in automatic mode (default 3); actual distance with --fixed-code-distance.",
     )
+    distance_mode = parser.add_mutually_exclusive_group()
+    distance_mode.add_argument(
+        "--auto-code-distance",
+        dest="auto_code_distance", action="store_true",
+        help="Select each method's smallest odd distance meeting the same failure budget (default).",
+    )
+    distance_mode.add_argument(
+        "--fixed-code-distance", dest="auto_code_distance", action="store_false",
+        help="Use the supplied --code-distance for every method without automatic selection.",
+    )
+    parser.set_defaults(auto_code_distance=True)
     parser.add_argument("--cycle-time-ns", type=float, default=1000)
     parser.add_argument("--physical-qubits-per-tile-factor", type=float, default=2)
     parser.add_argument("--physical-error-rate", type=float, default=1e-3)
@@ -187,7 +196,7 @@ def run_worker(args):
     from lattice_floorplan.tempering import TemperingConfig
 
     output = args.output_dir.resolve()
-    manifest = json.loads((output / "manifest.json").read_text())
+    manifest = json.loads((output / "inputs" / "manifest.json").read_text())
     texts = {}
     for component in manifest["components"]:
         path = Path(component["qasm"])
@@ -217,7 +226,6 @@ def run_worker(args):
     # Inputs are normalized with exactly three header/declaration lines.
     pair = texts["W"] + "\n".join(texts[representative["id"]].splitlines()[3:]) + "\n"
     results = {}
-    measurements = {}
     for method in dict.fromkeys(args.layouts):
         print(f"\n=== Full inverse components: {method} ===", flush=True)
         started = time.monotonic()
@@ -325,7 +333,6 @@ def run_worker(args):
             result = aggregate_components(
                 manifest, records, layout_resources["area"], args
             )
-            measurements[method] = records
             result.update(
                 method=method,
                 layout_resources=layout_resources,
@@ -348,6 +355,12 @@ def run_worker(args):
                 result["warnings"].append(
                     "Native compact failed local decomposition. The reported compact estimate uses explicitly spaced compact geometry, not the original native grid."
                 )
+            print(
+                f"  Selected code distance {result['assumptions']['code_distance']}; "
+                f"failure proxy {result['physical_projection']['failure_probability_proxy']:.6e} "
+                f"(budget {args.target_failure_probability:.6e}).",
+                flush=True,
+            )
             if args.supply_count and method == "annealed":
                 result["warnings"].append(
                     "Annealing uses an overridden M-source count; supply resources differ from native baselines."
@@ -367,88 +380,17 @@ def run_worker(args):
                 "evidence_directory": str(method_dir),
             }
             print(f"  FAILED: {error}", flush=True)
-        prefix = output_prefix(method)
-        (output / f"{prefix}_resource_estimate.json").write_text(
-            json.dumps(result, indent=2) + "\n"
-        )
-        (output / f"{prefix}_resource_report.txt").write_text(render_report(result))
         results[method] = result
-    if args.auto_code_distance and any(
-        r["status"] == "success" for r in results.values()
-    ):
-        distances = [
-            r["physical_projection"]["minimum_odd_code_distance_proxy"]
-            for r in results.values()
-            if r["status"] == "success"
-        ]
-        if any(distance is None for distance in distances):
-            raise ValueError(
-                "No odd code distance <=101 satisfies the requested failure proxy"
-            )
-        requested = args.code_distance
-        selected = max(requested, *distances)
-        selected += selected % 2 == 0
-        args.code_distance = selected
-        for method, records in measurements.items():
-            result = results[method]
-            if result["status"] != "success":
-                continue
-            additional = [
-                warning
-                for warning in result["warnings"]
-                if warning.startswith(("Native compact", "Annealing uses"))
-            ]
-            result.update(
-                aggregate_components(
-                    manifest,
-                    records,
-                    result["schedule_projection"]["layout_tiles"],
-                    args,
-                )
-            )
-            result["warnings"].extend(additional)
-            result["assumptions"].update(
-                requested_minimum_code_distance=requested,
-                distance_selection="Common odd distance satisfying every successful method's layout-failure proxy; physical factory errors are not included.",
-            )
-            prefix = output_prefix(method)
-            (output / f"{prefix}_resource_estimate.json").write_text(
-                json.dumps(result, indent=2) + "\n"
-            )
-            (output / f"{prefix}_resource_report.txt").write_text(render_report(result))
-        print(
-            f"Selected common code distance {selected} under the layout-failure proxy (minimum {requested}).",
-            flush=True,
-        )
     comparison = {
         "scope": "full_inverse_component_sum_comparison",
-        "manifest": str(output / "manifest.json"),
+        "manifest": str(output / "inputs" / "manifest.json"),
         "run_directory": str(run),
         "methods": results,
     }
-    (output / "architecture_comparison.json").write_text(
-        json.dumps(comparison, indent=2) + "\n"
-    )
-    lines = [
-        "Full inverse: component-sum architectural projection",
-        "layout | tiles | projected slices | physical qubits | projected time (s)",
-    ]
-    for method, result in results.items():
-        if result["status"] == "success":
-            lines.append(
-                f"{method} | {result['schedule_projection']['layout_tiles']} | {result['schedule_projection']['slices']} | {result['physical_projection']['physical_qubits']:g} | {result['physical_projection']['runtime_seconds']:.9g}"
-            )
-        else:
-            lines.append(f"{method} | FAILED: {result['reason']}")
-    lines += [
-        "",
-        "One common resident layout per method. Boundary reset/supply carryover costs are omitted.",
-        "Annealing searches one W + representative projector; full totals weight each angle's measured cost.",
-    ]
-    text = "\n".join(lines) + "\n"
-    (output / "architecture_comparison.txt").write_text(text)
+    success = all(r["status"] == "success" for r in results.values())
+    text = publish_results(output, comparison)
     print("\n" + text, flush=True)
-    return all(r["status"] == "success" for r in results.values())
+    return success
 
 
 def main():
@@ -468,7 +410,7 @@ def main():
             logical = json.loads(args.logical_metrics.read_text())["logical_resources"]
             args.output_dir = (
                 ROOT
-                / f"outputs/compiler/inversion_{logical['dimensions']}d_n{logical['target_n']}"
+                / f"outputs/laplacian_inversion/{logical['dimensions']}d_n{logical['target_n']}"
             )
         args.output_dir = args.output_dir.resolve()
         if args.worker:
@@ -476,7 +418,7 @@ def main():
         python = args.floorplanner_dir.resolve() / ".venv/bin/python"
         if not python.is_file():
             raise ValueError("Run tools/lattice_surgery/setup_floorplanner.py first")
-        manifest_path = args.output_dir / "manifest.json"
+        manifest_path = args.output_dir / "inputs" / "manifest.json"
         reuse = False
         if manifest_path.is_file() and not args.rebuild_components:
             manifest = json.loads(manifest_path.read_text())
@@ -485,13 +427,15 @@ def main():
                 and manifest["logical_metrics_sha256"] == digest(args.logical_metrics)
                 and manifest["phases_sha256"] == digest(args.phases_json)
                 and all(
-                    digest(Path(c["qasm"])) == c["qasm_sha256"]
+                    Path(c["qasm"]).is_file()
+                    and digest(Path(c["qasm"])) == c["qasm_sha256"]
                     for c in manifest["components"]
                 )
             )
         if not reuse:
             export_components(args.logical_metrics, args.phases_json, args.output_dir)
         else:
+            snapshot_logical_inputs(args.logical_metrics, args.phases_json, args.output_dir)
             print(
                 "Reusing component exports matched to the logical metrics and phase hashes.",
                 flush=True,

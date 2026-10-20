@@ -13,43 +13,29 @@ liblsqecc/
 lattice-surgery-compiler/
 surface-code-floorplanner/
 
-# Isolated lattice-surgery compiler smoke-test artifacts.
-outputs/compiler/*
-!outputs/compiler/README.md
-!outputs/compiler/EDPC.lli
-!outputs/compiler/EDPC_sliced.lli
-!outputs/compiler/EDPC_resource_estimate.json
-!outputs/compiler/EDPC_resource_report.txt
-!outputs/compiler/compact.lli
-!outputs/compiler/compact_sliced.lli
-!outputs/compiler/compact_resource_estimate.json
-!outputs/compiler/compact_resource_report.txt
-!outputs/compiler/annealed.lli
-!outputs/compiler/annealed_sliced.lli
-!outputs/compiler/annealed_resource_estimate.json
-!outputs/compiler/annealed_resource_report.txt
-!outputs/compiler/layout_comparison.json
-!outputs/compiler/layout_comparison.txt
-!outputs/compiler/annealed_layout/
-outputs/compiler/annealed_layout/*
-!outputs/compiler/annealed_layout/layout.txt
-!outputs/compiler/annealed_layout/layout.svg
-!outputs/compiler/annealed_layout/identity.json
-!outputs/compiler/annealed_layout/original-circuit.qasm
-!outputs/compiler/annealed_layout/mapped-circuit.qasm
-!outputs/compiler/annealed_layout/resources.json
-!outputs/compiler/annealed_layout/result.json
-!outputs/compiler/annealed_layout/replay.json
-
-# Full-inverse component projections: keep small reports and manifests in Git.
-# Component QASM, LLI, layouts and native search evidence remain available locally.
-!outputs/compiler/inversion_*/
-outputs/compiler/inversion_*/*
-!outputs/compiler/inversion_*/*_resource_estimate.json
-!outputs/compiler/inversion_*/*_resource_report.txt
-!outputs/compiler/inversion_*/architecture_comparison.json
-!outputs/compiler/inversion_*/architecture_comparison.txt
-!outputs/compiler/inversion_*/manifest.json
+# Generated results: keep readable summaries and small reproducibility inputs.
+# Large compilation/search bundles remain local.
+outputs/compiler/
+outputs/laplacian_inversion/*/runs/
+outputs/laplacian_inversion/*/inputs/components/
+outputs/mini_circuit/runs/
+outputs/mini_circuit/artifacts/*
+!outputs/mini_circuit/artifacts/EDPC.lli
+!outputs/mini_circuit/artifacts/EDPC_sliced.lli
+!outputs/mini_circuit/artifacts/compact.lli
+!outputs/mini_circuit/artifacts/compact_sliced.lli
+!outputs/mini_circuit/artifacts/annealed.lli
+!outputs/mini_circuit/artifacts/annealed_sliced.lli
+!outputs/mini_circuit/artifacts/annealed_layout/
+outputs/mini_circuit/artifacts/annealed_layout/*
+!outputs/mini_circuit/artifacts/annealed_layout/layout.txt
+!outputs/mini_circuit/artifacts/annealed_layout/layout.svg
+!outputs/mini_circuit/artifacts/annealed_layout/identity.json
+!outputs/mini_circuit/artifacts/annealed_layout/original-circuit.qasm
+!outputs/mini_circuit/artifacts/annealed_layout/mapped-circuit.qasm
+!outputs/mini_circuit/artifacts/annealed_layout/resources.json
+!outputs/mini_circuit/artifacts/annealed_layout/result.json
+!outputs/mini_circuit/artifacts/annealed_layout/replay.json
 
 # Optional Qiskit-export metadata; generated alongside the editable input.
 tools/lattice_surgery/*.synthesis.json

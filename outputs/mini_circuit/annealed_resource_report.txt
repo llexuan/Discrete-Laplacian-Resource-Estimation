@@ -1,8 +1,9 @@
 === liblsqecc slice-based resource estimate ===
+Run                    : 20261017T075545-6av_aayr
 
 source QASM             : /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm
 preset                 : annealed
-compiler options        : -L edpc --geometry-file /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/layout.txt -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
+compiler options        : -L edpc --geometry-file /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/mini_circuit/runs/20261017T075545-6av_aayr/annealed_layout/layout.txt -P wave --local --disttime 1 --nostagger --cnotcorrections never -r graph_search -g djikstra
 logical qubits         : 2
 scheduled slices       : 8
 layout rows x columns  : 4 x 7
@@ -40,7 +41,7 @@ M source count         : 12
 search seconds         : 2.687
 method total seconds   : 2.777
 winner replay verified : True
-layout + mapping bundle: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealed_layout
+layout + mapping bundle: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/mini_circuit/artifacts/annealed_layout
 
 --- warnings ---
 - No physical magic-state factory cadence was supplied; runtime uses the scheduler's --disttime assumption only.

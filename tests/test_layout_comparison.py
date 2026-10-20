@@ -104,9 +104,9 @@ class NativeLayoutTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertFalse(list(output.rglob("*compiler_report.txt")))
-            summary = json.loads((output / "layout_comparison.json").read_text())
+            summary = json.loads((output / "data" / "comparison.json").read_text())
             reports = [
-                json.loads((output / filename).read_text())
+                json.loads((output / "data" / filename).read_text())
                 for filename in (
                     "compact_resource_estimate.json",
                     "EDPC_resource_estimate.json",
@@ -144,7 +144,7 @@ class NativeLayoutTests(unittest.TestCase):
                 original,
             )
             # Independently check the mapped QASM under its recorded wire permutation.
-            bundle = output / "annealed_layout"
+            bundle = output / "artifacts" / "annealed_layout"
             identity = json.loads((bundle / "identity.json").read_text())[
                 "logical_to_compiler_index"
             ]
@@ -177,7 +177,7 @@ class NativeLayoutTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("Unsupported statement", result.stderr)
             self.assertFalse(
-                (path / "outputs/annealed_resource_estimate.json").exists()
+                (path / "outputs/data/annealed_resource_estimate.json").exists()
             )
 
 

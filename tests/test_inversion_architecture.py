@@ -19,7 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools/lattice_surgery"))
 
 from export_inversion_components import export_components
-from inversion_architecture import aggregate_components, space_compact
+from inversion_architecture import (
+    aggregate_components, minimum_distance_proxy, publish_results, space_compact,
+)
+from estimate_sliced_resources import logical_error_per_round
 from run_inversion_architecture import build_parser
 from setup_floorplanner import DEFAULT_CHECKOUT
 from laplacian_qsvt.laplacian.laplacian_inversion_encode import (
@@ -84,8 +87,23 @@ class InverseExportTests(unittest.TestCase):
 
 
 class CompositionTests(unittest.TestCase):
+    def test_failed_or_unselected_methods_replace_previous_visible_results(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp)
+            (output / "EDPC_resource_report.txt").write_text("Old successful score: 123")
+            comparison = {
+                "run_directory": str(output / "runs" / "failed-run"),
+                "methods": {"compact": {"method": "compact", "status": "failed", "reason": "Routing failed"}},
+            }
+            text = publish_results(output, comparison)
+            self.assertIn("INCOMPLETE / FAILED METHODS", text)
+            self.assertIn("Routing failed", text)
+            self.assertIn("Status: NOT_RUN", (output / "EDPC_resource_report.txt").read_text())
+            self.assertNotIn("123", (output / "EDPC_resource_report.txt").read_text())
+            self.assertEqual(json.loads((output / "data/comparison.json").read_text())["run_id"], "failed-run")
+
     def fixture(self):
-        args = build_parser().parse_args([])
+        args = build_parser().parse_args(["--fixed-code-distance", "--code-distance", "9"])
         components = [
             {"id": "W", "kind": "walk", "occurrences": 2, "t_count": 10},
             {"id": "R_0", "kind": "projector", "occurrences": 2, "t_count": 2},
@@ -139,6 +157,48 @@ class CompositionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "multiplicities"):
             aggregate_components(manifest, records, 30, args)
 
+    def test_each_method_selects_its_own_minimum_distance_and_rescales_resources(self):
+        args, manifest, records = self.fixture()
+        args.auto_code_distance = True
+        args.code_distance = 3
+        distances = []
+        for area in (3, 30, 300):
+            for record in records:
+                record["resources"]["area"] = area
+            result = aggregate_components(manifest, records, area, args)
+            physical = result["physical_projection"]
+            d = result["assumptions"]["code_distance"]
+            distances.append(d)
+            self.assertLessEqual(physical["failure_probability_proxy"], 0.01)
+            for smaller in range(3, d, 2):
+                self.assertGreater(area * 35 * smaller * logical_error_per_round(0.001, smaller), 0.01)
+            self.assertEqual(physical["physical_qubits"], 2 * area * d**2)
+            self.assertEqual(physical["runtime_ns"], 35 * d * 1000)
+            self.assertTrue(physical["meets_target_failure_probability"])
+        self.assertEqual(distances, [7, 9, 13])
+        self.assertEqual(args.code_distance, 3)
+
+    def test_distance_search_handles_bounds_and_unreachable_budgets(self):
+        self.assertEqual(minimum_distance_proxy(1050, 0.001, 0.01), 9)
+        self.assertEqual(minimum_distance_proxy(1050, 0.001, 0.01, minimum=10), 11)
+        self.assertIsNone(minimum_distance_proxy(1050, 0.01, 0.01))
+        args, manifest, records = self.fixture()
+        args.auto_code_distance = True
+        args.physical_error_rate = 0.01
+        with self.assertRaisesRegex(ValueError, "No admissible odd code distance"):
+            aggregate_components(manifest, records, 30, args)
+
+    def test_default_distance_policy_is_independent_with_optional_fixed_override(self):
+        args = build_parser().parse_args([])
+        self.assertTrue(args.auto_code_distance)
+        self.assertEqual(args.code_distance, 3)
+        args, manifest, records = self.fixture()
+        args.code_distance = 3
+        result = aggregate_components(manifest, records, 30, args)
+        self.assertEqual(result["assumptions"]["distance_selection_mode"], "fixed")
+        self.assertEqual(result["assumptions"]["code_distance"], 3)
+        self.assertFalse(result["physical_projection"]["meets_target_failure_probability"])
+
     def test_factory_footprint_is_added_once_with_explicit_factory_count(self):
         args, manifest, records = self.fixture()
         args.factory_cycle_rounds = 30
@@ -188,16 +248,25 @@ class NativeInverseTests(unittest.TestCase):
                 timeout=120,
             )
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            comparison = json.loads((output / "data/comparison.json").read_text())
+            text = (output / "comparison_report.txt").read_text()
+            for label in ("EXAMPLE", "SHARED ASSUMPTIONS", "RESULTS", "INTERPRETATION", "METHOD DETAILS AND LIMITS"):
+                self.assertIn(label, text)
+            self.assertTrue((output / "logical/inversion_resource_report.txt").is_file())
+            self.assertEqual((output / "logical/inversion_resource_metrics.json").read_bytes(), source.read_bytes())
+            manifest = json.loads((output / "inputs/manifest.json").read_text())
+            self.assertTrue(all(Path(c["qasm"]).is_file() for c in manifest["components"]))
+            self.assertFalse((output / "manifest.json").exists())
             reports = [
-                json.loads((output / f"{prefix}_resource_estimate.json").read_text())
+                json.loads((output / "data" / f"{prefix}_resource_estimate.json").read_text())
                 for prefix in ("compact", "EDPC", "annealed")
             ]
             self.assertTrue(all(r["status"] == "success" for r in reports))
             self.assertEqual(len({r["compiler"]["binary_sha256"] for r in reports}), 1)
-            self.assertEqual(
-                len({r["assumptions"]["code_distance"] for r in reports}), 1
-            )
             for report in reports:
+                self.assertEqual(report["assumptions"]["distance_selection_mode"], "per_method_minimum")
+                self.assertEqual(report["assumptions"]["code_distance"], report["physical_projection"]["minimum_odd_code_distance_proxy"])
+                self.assertEqual(report["run_id"], comparison["run_id"])
                 self.assertEqual(report["num_w_applications"], 2)
                 self.assertEqual(report["num_projector_rotations"], 3)
                 self.assertEqual(report["unique_projectors"], 2)

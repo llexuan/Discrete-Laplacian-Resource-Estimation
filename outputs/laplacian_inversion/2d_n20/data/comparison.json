@@ -1,7 +1,7 @@
 {
   "scope": "full_inverse_component_sum_comparison",
-  "manifest": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/manifest.json",
-  "run_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53",
+  "manifest": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/inputs/manifest.json",
+  "run_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T025002-distance-_cj9de2x",
   "methods": {
     "compact": {
       "scope": "full_inverse_component_sum_surface_code_projection",
@@ -55,10 +55,14 @@
         "failure_opportunities_proxy": 44006705736,
         "failure_probability_proxy": 0.004400670573600003,
         "minimum_odd_code_distance_proxy": 23,
+        "meets_target_failure_probability": true,
         "factory_model": null
       },
       "assumptions": {
         "code_distance": 23,
+        "distance_selection_mode": "per_method_minimum",
+        "requested_minimum_code_distance": 3,
+        "distance_selection": "Smallest odd distance for this method satisfying the shared layout-failure budget and requested minimum; physical factory errors are excluded.",
         "cycle_time_ns": 1000,
         "physical_qubits_per_tile_factor": 2,
         "physical_error_rate": 0.001,
@@ -66,9 +70,7 @@
         "disttime_slices": 1,
         "staggered": false,
         "component_boundary_costs_included": false,
-        "layout_transitions_required": false,
-        "requested_minimum_code_distance": 9,
-        "distance_selection": "Common odd distance satisfying every successful method's layout-failure proxy; physical factory errors are not included."
+        "layout_transitions_required": false
       },
       "weighted_instruction_counts": {
         "BellBasedCNOT": 4769271,
@@ -91,7 +93,7 @@
           "weighted_slices": 11242413,
           "one_component_magic_states": 23057,
           "logical_t_count": 23057,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/W",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/W",
           "input_sha256": "e20b0418498126c233fb7f00ee780da5744c11f2d816fed2dd52d173347ff603"
         },
         {
@@ -103,7 +105,7 @@
           "weighted_slices": 2684,
           "one_component_magic_states": 172,
           "logical_t_count": 172,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_000",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_000",
           "input_sha256": "95a4534e9d37339b42cde3eb84457b37b9dc4e4aec68e9fb062ef915c92cc422"
         },
         {
@@ -115,7 +117,7 @@
           "weighted_slices": 2636,
           "one_component_magic_states": 172,
           "logical_t_count": 172,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_001",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_001",
           "input_sha256": "cad2db7c98af062401d915f83e0eed03f360debd91531f24c7800bbad7ccd892"
         },
         {
@@ -127,7 +129,7 @@
           "weighted_slices": 2622,
           "one_component_magic_states": 170,
           "logical_t_count": 170,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_002",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_002",
           "input_sha256": "840f007d2478472e3c9c5bda57b35fd6593724dd785cc1bbad0d3594277dfec4"
         },
         {
@@ -139,7 +141,7 @@
           "weighted_slices": 2550,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_003",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_003",
           "input_sha256": "91d691e6fd6080a0b9260614ed2e9ddd708ca1b5c8ecb1580a9e784c55887f78"
         },
         {
@@ -151,7 +153,7 @@
           "weighted_slices": 2522,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_004",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_004",
           "input_sha256": "be58e3e75b7e9bd4f0b7bdf4d95c9a2c1f01f1c106243a192adedd03e8ae361a"
         },
         {
@@ -163,7 +165,7 @@
           "weighted_slices": 2476,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_005",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_005",
           "input_sha256": "cc0ecc95f807270ac746b06c8dbfa0d0cbec5692141d8d18429f68429e4cf0eb"
         },
         {
@@ -175,7 +177,7 @@
           "weighted_slices": 2472,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_006",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_006",
           "input_sha256": "ccc428227fd49dadce623f7e13f9d1be94f5073afd06ebf43800541a729f8dba"
         },
         {
@@ -187,7 +189,7 @@
           "weighted_slices": 2488,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_007",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_007",
           "input_sha256": "093869ab47c9a9ff16a0dcf191b972a9bdbbb2a1949b20a3deb069c2b57925fb"
         },
         {
@@ -199,7 +201,7 @@
           "weighted_slices": 2488,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_008",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_008",
           "input_sha256": "98ab566971aa30a2517144d8bca0462c80bd8af9ff5c88ad3a03d8fd8058a060"
         },
         {
@@ -211,7 +213,7 @@
           "weighted_slices": 2514,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_009",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_009",
           "input_sha256": "63b9c46d81bc7673f24c1fea4626041dfd75e36316c6533c71f0e438719cd94f"
         },
         {
@@ -223,7 +225,7 @@
           "weighted_slices": 2460,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_010",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_010",
           "input_sha256": "1c849bfd00c2b94518d9d8914c3a0c661847342401802606480cc9614cee921e"
         },
         {
@@ -235,7 +237,7 @@
           "weighted_slices": 2502,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_011",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_011",
           "input_sha256": "76009f71303f3aa6403aa43235cf26c2df75563ed499f420e1eb7e2139669b7f"
         },
         {
@@ -247,7 +249,7 @@
           "weighted_slices": 2444,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_012",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_012",
           "input_sha256": "8316bdce7024f6647e47f71d95d7b4d1a2f4542bbe32fad67eeaba487efd4ced"
         },
         {
@@ -259,7 +261,7 @@
           "weighted_slices": 2512,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_013",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_013",
           "input_sha256": "9d4ec8e3e128a00a02a7fb9b2d268ac219b60c60940382a6a38704159ccef286"
         },
         {
@@ -271,7 +273,7 @@
           "weighted_slices": 2424,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_014",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_014",
           "input_sha256": "8da76b0d32a192c654ecbd0b99a7e60ab04c238bf6af2b9f1acc82f2090e1f4e"
         },
         {
@@ -283,7 +285,7 @@
           "weighted_slices": 2502,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_015",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_015",
           "input_sha256": "d18245a09d9f75be8f55363d1016bbe96ac7186a22d61cafd8a2403bc5a4da09"
         },
         {
@@ -295,7 +297,7 @@
           "weighted_slices": 2476,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_016",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_016",
           "input_sha256": "dce8f66af649c2c5aa9f58feb3e32e9b0e1227fe36761a84abc35939dd8f0618"
         },
         {
@@ -307,7 +309,7 @@
           "weighted_slices": 2504,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_017",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_017",
           "input_sha256": "99f352e8b48a059c786b08ff8b046dd3ece4e7c0f784d98f21f783cd075ebffe"
         },
         {
@@ -319,7 +321,7 @@
           "weighted_slices": 2486,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_018",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_018",
           "input_sha256": "75e13171c84a258e53fb791620d02c459ba62e51ec690d57b768589dbf2e58c9"
         },
         {
@@ -331,7 +333,7 @@
           "weighted_slices": 2396,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_019",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_019",
           "input_sha256": "d34018c54a4cb520420c9cc2be87a9abbece494144a7c50184deb8023a42df92"
         },
         {
@@ -343,7 +345,7 @@
           "weighted_slices": 2420,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_020",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_020",
           "input_sha256": "dfe50a9727dc6d2eba9a17a982b374c8c1b9c6bb11a8c27eba922cb936582ab2"
         },
         {
@@ -355,7 +357,7 @@
           "weighted_slices": 2474,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_021",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_021",
           "input_sha256": "236ca40b4f03e6294a9dc6c42f29f4f4cfc2461f8e4fa7a9bd677b4235b17232"
         },
         {
@@ -367,7 +369,7 @@
           "weighted_slices": 2468,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_022",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_022",
           "input_sha256": "979078699a13748e9a4c647e1378fc4266f1f3fc78f41d705a7bafcf6d39d7c4"
         },
         {
@@ -379,7 +381,7 @@
           "weighted_slices": 2484,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_023",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_023",
           "input_sha256": "e7b902b4ecd70dc00008a5bfc5cabf213c1ec75e92eb77502537182c73fcecb8"
         },
         {
@@ -391,7 +393,7 @@
           "weighted_slices": 2486,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_024",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_024",
           "input_sha256": "9c267ee13fea0e617048c117afccfc13780bcdc15516e726f48815150f5f63d7"
         },
         {
@@ -403,7 +405,7 @@
           "weighted_slices": 2510,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_025",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_025",
           "input_sha256": "51eb5d61317249f27bedb9d23965b3305cf1d9c255ef9678ed5e46dcf3eee4d0"
         },
         {
@@ -415,7 +417,7 @@
           "weighted_slices": 2484,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_026",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_026",
           "input_sha256": "423e7550bef8cf3230d67c66f2ce13c09f92db453ad64d5e60ce47d1f1fc5afc"
         },
         {
@@ -427,7 +429,7 @@
           "weighted_slices": 2426,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_027",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_027",
           "input_sha256": "25d3a4611c320d04fa103379713810ab4f85d491c461b76ddb521ae1b1a4f6e1"
         },
         {
@@ -439,7 +441,7 @@
           "weighted_slices": 2468,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_028",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_028",
           "input_sha256": "6701bb3ab73d15a741844904d81656d73caf1f31f5e5c20ab40b3e5400f6ce19"
         },
         {
@@ -451,7 +453,7 @@
           "weighted_slices": 2402,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_029",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_029",
           "input_sha256": "5674e466656751cdff629095ed7bc5b1392db851dfdc5bbff49c8fec7cb0a55f"
         },
         {
@@ -463,7 +465,7 @@
           "weighted_slices": 2474,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_030",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_030",
           "input_sha256": "88c98627aa9f6c9b453b06dddd90d805bfd96583bf06387fde29526670525b7b"
         },
         {
@@ -475,7 +477,7 @@
           "weighted_slices": 2376,
           "one_component_magic_states": 156,
           "logical_t_count": 156,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_031",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_031",
           "input_sha256": "a4f602fe8ad715d6faa92405412ea70da18041417f051500bd079c3d47003e2b"
         },
         {
@@ -487,7 +489,7 @@
           "weighted_slices": 2438,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_032",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_032",
           "input_sha256": "dd726039820866ebadd82daf86024a0c4bb87e15f05687ec5167eeafad8cb8b5"
         },
         {
@@ -499,7 +501,7 @@
           "weighted_slices": 2442,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_033",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_033",
           "input_sha256": "e1ff5fc19843b68e507f1da6ce50318283922f7879f94e137b5e1d8a4f367330"
         },
         {
@@ -511,7 +513,7 @@
           "weighted_slices": 2438,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_034",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_034",
           "input_sha256": "431a4fb94740770e872c458dab8780f93df10750223dfeb07162ac039180aa64"
         },
         {
@@ -523,7 +525,7 @@
           "weighted_slices": 2428,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_035",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_035",
           "input_sha256": "cab4df9a8e79b0132b2f309e2dbcf10b2e2083e3d3686414072942d4f3947381"
         },
         {
@@ -535,7 +537,7 @@
           "weighted_slices": 2514,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_036",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_036",
           "input_sha256": "6daeea4f2ca411fdae54361c320fd750cadd74ff6d3db40ed628e9acc8dde25a"
         },
         {
@@ -547,7 +549,7 @@
           "weighted_slices": 2528,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_037",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_037",
           "input_sha256": "846b61bd163ba172bc9a044df1397db88fd275513736be17acbca0c3ced60751"
         },
         {
@@ -559,7 +561,7 @@
           "weighted_slices": 2492,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_038",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_038",
           "input_sha256": "e5654bcd70bf3c0797aa8260fb8b205da5cbb9fe1b4d7b24dd5e293381df77df"
         },
         {
@@ -571,7 +573,7 @@
           "weighted_slices": 2460,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_039",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_039",
           "input_sha256": "da4c4fa864b89c2772b93258a88c66337252924b936659f261db3ddcad740421"
         },
         {
@@ -583,7 +585,7 @@
           "weighted_slices": 2518,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_040",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_040",
           "input_sha256": "a7f94a1e28a179520e53be74a02e71613818df9c499aaeeaf425e7f0670e87a9"
         },
         {
@@ -595,7 +597,7 @@
           "weighted_slices": 2422,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_041",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_041",
           "input_sha256": "53df7923972af69d259ec278e8e9760c2844ee739331f28dce2590938d323d43"
         },
         {
@@ -607,7 +609,7 @@
           "weighted_slices": 2522,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_042",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_042",
           "input_sha256": "bd48d9eeadeec1bf7aa68323de6507bf1360c68c99dcf87c8bf85f3091eb3902"
         },
         {
@@ -619,7 +621,7 @@
           "weighted_slices": 2452,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_043",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_043",
           "input_sha256": "89f1527cc0666bf047463aaf7809d5cdc8bfd1fb84c7029bef2eff3898ca65b3"
         },
         {
@@ -631,7 +633,7 @@
           "weighted_slices": 2428,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_044",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_044",
           "input_sha256": "5bdfdc227f02323fba7eda46b289fb4eab62723c5e12e14dfe20edd4b21c7215"
         },
         {
@@ -643,7 +645,7 @@
           "weighted_slices": 2438,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_045",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_045",
           "input_sha256": "6cec19b054e3cbee5552735ab1af083026350208b9b950a061b41b95b781cab1"
         },
         {
@@ -655,7 +657,7 @@
           "weighted_slices": 2492,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_046",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_046",
           "input_sha256": "ead8c1bea96923c3b9a569fa195125583266a0b1fe81e5f19ebbadf2fd57367b"
         },
         {
@@ -667,7 +669,7 @@
           "weighted_slices": 2512,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_047",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_047",
           "input_sha256": "4130524e0838d657cf0439d3996cdb9bcfbd0a86282555f850e67e0e5c6378ad"
         },
         {
@@ -679,7 +681,7 @@
           "weighted_slices": 2492,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_048",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_048",
           "input_sha256": "e924f71f28970d3fb9efaf4e82b9d95cd51ec7e1bc45862f8cf68aa6c39bc54d"
         },
         {
@@ -691,7 +693,7 @@
           "weighted_slices": 2490,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_049",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_049",
           "input_sha256": "2d5897beaa5af23bd944f26b16460733149e87bfdaca78ad38fab7f64f3e5e42"
         },
         {
@@ -703,7 +705,7 @@
           "weighted_slices": 2538,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_050",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_050",
           "input_sha256": "e411c13d9d2555568d496d282e88b75f4202a47d8ab80b44dcd859c5d3da3979"
         },
         {
@@ -715,7 +717,7 @@
           "weighted_slices": 2520,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_051",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_051",
           "input_sha256": "a17c5814abeb26a24d5dee22eb923b76ffd349a75d5a4cad6bcb822d8c72b2ba"
         },
         {
@@ -727,7 +729,7 @@
           "weighted_slices": 2400,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_052",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_052",
           "input_sha256": "d6c7290da5281f81f47b3c5c3b8e824f53f0a5dd28c614227f12e025960642b2"
         },
         {
@@ -739,7 +741,7 @@
           "weighted_slices": 2468,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_053",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_053",
           "input_sha256": "d285d7cb6f8b00ad6ff24056cec7e4086967d2e38b4b9c2648967a771cd5c057"
         },
         {
@@ -751,7 +753,7 @@
           "weighted_slices": 2480,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_054",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_054",
           "input_sha256": "735bfe80070f7de8599833a34db317f1d95e9c0e38a849e6d331b1e097e0fba6"
         },
         {
@@ -763,7 +765,7 @@
           "weighted_slices": 2482,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_055",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_055",
           "input_sha256": "0de9f23a6d9dc23962e9332280c94d8741710590b4c637f2bd59e0b998389c62"
         },
         {
@@ -775,7 +777,7 @@
           "weighted_slices": 2464,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_056",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_056",
           "input_sha256": "18d8e26b306c1261c58824b439123be3badba7465e8f2faf87ea963102387ecf"
         },
         {
@@ -787,7 +789,7 @@
           "weighted_slices": 2516,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_057",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_057",
           "input_sha256": "b0d6ab1c77bb7606b678aa413db36c364bad5ae69298c3b62d339471ae88f750"
         },
         {
@@ -799,7 +801,7 @@
           "weighted_slices": 2482,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_058",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1/components/R_058",
           "input_sha256": "31fee94be145b7c9052d532ff2cfead7322ec02b887eba63c863b5f5261f56bb"
         }
       ],
@@ -919,7 +921,7 @@
           "status": "success"
         }
       ],
-      "evidence_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1",
+      "evidence_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1",
       "wall_seconds": 9.98156970902346,
       "compiler": {
         "native_commit": "82a1cbe64717a64a289dd4b0d02e3dc38cae3890",
@@ -936,7 +938,9 @@
         }
       },
       "logical_metrics_sha256": "6bde0bcbadd47f94cf15bbb0c0f081281c5c8e1b1d05bd15b663ce66e9fb09cd",
-      "phases_sha256": "ec9f2461b89a15b15c39059d047907982a7a77e8bb581375ad26cf016794a251"
+      "phases_sha256": "ec9f2461b89a15b15c39059d047907982a7a77e8bb581375ad26cf016794a251",
+      "run_id": "20261020T025002-distance-_cj9de2x",
+      "schedule_source_run_id": "20261020T000118-2eqyyx53"
     },
     "edpc": {
       "scope": "full_inverse_component_sum_surface_code_projection",
@@ -990,10 +994,14 @@
         "failure_opportunities_proxy": 45316833139,
         "failure_probability_proxy": 0.004531683313900003,
         "minimum_odd_code_distance_proxy": 23,
+        "meets_target_failure_probability": true,
         "factory_model": null
       },
       "assumptions": {
         "code_distance": 23,
+        "distance_selection_mode": "per_method_minimum",
+        "requested_minimum_code_distance": 3,
+        "distance_selection": "Smallest odd distance for this method satisfying the shared layout-failure budget and requested minimum; physical factory errors are excluded.",
         "cycle_time_ns": 1000,
         "physical_qubits_per_tile_factor": 2,
         "physical_error_rate": 0.001,
@@ -1001,9 +1009,7 @@
         "disttime_slices": 1,
         "staggered": false,
         "component_boundary_costs_included": false,
-        "layout_transitions_required": false,
-        "requested_minimum_code_distance": 9,
-        "distance_selection": "Common odd distance satisfying every successful method's layout-failure proxy; physical factory errors are not included."
+        "layout_transitions_required": false
       },
       "weighted_instruction_counts": {
         "BellBasedCNOT": 4769271,
@@ -1026,7 +1032,7 @@
           "weighted_slices": 6690879,
           "one_component_magic_states": 23057,
           "logical_t_count": 23057,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/W",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/W",
           "input_sha256": "e20b0418498126c233fb7f00ee780da5744c11f2d816fed2dd52d173347ff603"
         },
         {
@@ -1038,7 +1044,7 @@
           "weighted_slices": 2334,
           "one_component_magic_states": 172,
           "logical_t_count": 172,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_000",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_000",
           "input_sha256": "95a4534e9d37339b42cde3eb84457b37b9dc4e4aec68e9fb062ef915c92cc422"
         },
         {
@@ -1050,7 +1056,7 @@
           "weighted_slices": 2282,
           "one_component_magic_states": 172,
           "logical_t_count": 172,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_001",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_001",
           "input_sha256": "cad2db7c98af062401d915f83e0eed03f360debd91531f24c7800bbad7ccd892"
         },
         {
@@ -1062,7 +1068,7 @@
           "weighted_slices": 2274,
           "one_component_magic_states": 170,
           "logical_t_count": 170,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_002",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_002",
           "input_sha256": "840f007d2478472e3c9c5bda57b35fd6593724dd785cc1bbad0d3594277dfec4"
         },
         {
@@ -1074,7 +1080,7 @@
           "weighted_slices": 2218,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_003",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_003",
           "input_sha256": "91d691e6fd6080a0b9260614ed2e9ddd708ca1b5c8ecb1580a9e784c55887f78"
         },
         {
@@ -1086,7 +1092,7 @@
           "weighted_slices": 2178,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_004",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_004",
           "input_sha256": "be58e3e75b7e9bd4f0b7bdf4d95c9a2c1f01f1c106243a192adedd03e8ae361a"
         },
         {
@@ -1098,7 +1104,7 @@
           "weighted_slices": 2142,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_005",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_005",
           "input_sha256": "cc0ecc95f807270ac746b06c8dbfa0d0cbec5692141d8d18429f68429e4cf0eb"
         },
         {
@@ -1110,7 +1116,7 @@
           "weighted_slices": 2130,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_006",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_006",
           "input_sha256": "ccc428227fd49dadce623f7e13f9d1be94f5073afd06ebf43800541a729f8dba"
         },
         {
@@ -1122,7 +1128,7 @@
           "weighted_slices": 2154,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_007",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_007",
           "input_sha256": "093869ab47c9a9ff16a0dcf191b972a9bdbbb2a1949b20a3deb069c2b57925fb"
         },
         {
@@ -1134,7 +1140,7 @@
           "weighted_slices": 2150,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_008",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_008",
           "input_sha256": "98ab566971aa30a2517144d8bca0462c80bd8af9ff5c88ad3a03d8fd8058a060"
         },
         {
@@ -1146,7 +1152,7 @@
           "weighted_slices": 2178,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_009",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_009",
           "input_sha256": "63b9c46d81bc7673f24c1fea4626041dfd75e36316c6533c71f0e438719cd94f"
         },
         {
@@ -1158,7 +1164,7 @@
           "weighted_slices": 2122,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_010",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_010",
           "input_sha256": "1c849bfd00c2b94518d9d8914c3a0c661847342401802606480cc9614cee921e"
         },
         {
@@ -1170,7 +1176,7 @@
           "weighted_slices": 2166,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_011",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_011",
           "input_sha256": "76009f71303f3aa6403aa43235cf26c2df75563ed499f420e1eb7e2139669b7f"
         },
         {
@@ -1182,7 +1188,7 @@
           "weighted_slices": 2106,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_012",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_012",
           "input_sha256": "8316bdce7024f6647e47f71d95d7b4d1a2f4542bbe32fad67eeaba487efd4ced"
         },
         {
@@ -1194,7 +1200,7 @@
           "weighted_slices": 2178,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_013",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_013",
           "input_sha256": "9d4ec8e3e128a00a02a7fb9b2d268ac219b60c60940382a6a38704159ccef286"
         },
         {
@@ -1206,7 +1212,7 @@
           "weighted_slices": 2094,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_014",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_014",
           "input_sha256": "8da76b0d32a192c654ecbd0b99a7e60ab04c238bf6af2b9f1acc82f2090e1f4e"
         },
         {
@@ -1218,7 +1224,7 @@
           "weighted_slices": 2158,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_015",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_015",
           "input_sha256": "d18245a09d9f75be8f55363d1016bbe96ac7186a22d61cafd8a2403bc5a4da09"
         },
         {
@@ -1230,7 +1236,7 @@
           "weighted_slices": 2154,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_016",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_016",
           "input_sha256": "dce8f66af649c2c5aa9f58feb3e32e9b0e1227fe36761a84abc35939dd8f0618"
         },
         {
@@ -1242,7 +1248,7 @@
           "weighted_slices": 2166,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_017",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_017",
           "input_sha256": "99f352e8b48a059c786b08ff8b046dd3ece4e7c0f784d98f21f783cd075ebffe"
         },
         {
@@ -1254,7 +1260,7 @@
           "weighted_slices": 2162,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_018",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_018",
           "input_sha256": "75e13171c84a258e53fb791620d02c459ba62e51ec690d57b768589dbf2e58c9"
         },
         {
@@ -1266,7 +1272,7 @@
           "weighted_slices": 2070,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_019",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_019",
           "input_sha256": "d34018c54a4cb520420c9cc2be87a9abbece494144a7c50184deb8023a42df92"
         },
         {
@@ -1278,7 +1284,7 @@
           "weighted_slices": 2090,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_020",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_020",
           "input_sha256": "dfe50a9727dc6d2eba9a17a982b374c8c1b9c6bb11a8c27eba922cb936582ab2"
         },
         {
@@ -1290,7 +1296,7 @@
           "weighted_slices": 2146,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_021",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_021",
           "input_sha256": "236ca40b4f03e6294a9dc6c42f29f4f4cfc2461f8e4fa7a9bd677b4235b17232"
         },
         {
@@ -1302,7 +1308,7 @@
           "weighted_slices": 2142,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_022",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_022",
           "input_sha256": "979078699a13748e9a4c647e1378fc4266f1f3fc78f41d705a7bafcf6d39d7c4"
         },
         {
@@ -1314,7 +1320,7 @@
           "weighted_slices": 2158,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_023",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_023",
           "input_sha256": "e7b902b4ecd70dc00008a5bfc5cabf213c1ec75e92eb77502537182c73fcecb8"
         },
         {
@@ -1326,7 +1332,7 @@
           "weighted_slices": 2158,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_024",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_024",
           "input_sha256": "9c267ee13fea0e617048c117afccfc13780bcdc15516e726f48815150f5f63d7"
         },
         {
@@ -1338,7 +1344,7 @@
           "weighted_slices": 2170,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_025",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_025",
           "input_sha256": "51eb5d61317249f27bedb9d23965b3305cf1d9c255ef9678ed5e46dcf3eee4d0"
         },
         {
@@ -1350,7 +1356,7 @@
           "weighted_slices": 2154,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_026",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_026",
           "input_sha256": "423e7550bef8cf3230d67c66f2ce13c09f92db453ad64d5e60ce47d1f1fc5afc"
         },
         {
@@ -1362,7 +1368,7 @@
           "weighted_slices": 2106,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_027",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_027",
           "input_sha256": "25d3a4611c320d04fa103379713810ab4f85d491c461b76ddb521ae1b1a4f6e1"
         },
         {
@@ -1374,7 +1380,7 @@
           "weighted_slices": 2130,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_028",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_028",
           "input_sha256": "6701bb3ab73d15a741844904d81656d73caf1f31f5e5c20ab40b3e5400f6ce19"
         },
         {
@@ -1386,7 +1392,7 @@
           "weighted_slices": 2074,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_029",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_029",
           "input_sha256": "5674e466656751cdff629095ed7bc5b1392db851dfdc5bbff49c8fec7cb0a55f"
         },
         {
@@ -1398,7 +1404,7 @@
           "weighted_slices": 2142,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_030",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_030",
           "input_sha256": "88c98627aa9f6c9b453b06dddd90d805bfd96583bf06387fde29526670525b7b"
         },
         {
@@ -1410,7 +1416,7 @@
           "weighted_slices": 2050,
           "one_component_magic_states": 156,
           "logical_t_count": 156,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_031",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_031",
           "input_sha256": "a4f602fe8ad715d6faa92405412ea70da18041417f051500bd079c3d47003e2b"
         },
         {
@@ -1422,7 +1428,7 @@
           "weighted_slices": 2102,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_032",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_032",
           "input_sha256": "dd726039820866ebadd82daf86024a0c4bb87e15f05687ec5167eeafad8cb8b5"
         },
         {
@@ -1434,7 +1440,7 @@
           "weighted_slices": 2110,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_033",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_033",
           "input_sha256": "e1ff5fc19843b68e507f1da6ce50318283922f7879f94e137b5e1d8a4f367330"
         },
         {
@@ -1446,7 +1452,7 @@
           "weighted_slices": 2130,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_034",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_034",
           "input_sha256": "431a4fb94740770e872c458dab8780f93df10750223dfeb07162ac039180aa64"
         },
         {
@@ -1458,7 +1464,7 @@
           "weighted_slices": 2094,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_035",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_035",
           "input_sha256": "cab4df9a8e79b0132b2f309e2dbcf10b2e2083e3d3686414072942d4f3947381"
         },
         {
@@ -1470,7 +1476,7 @@
           "weighted_slices": 2178,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_036",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_036",
           "input_sha256": "6daeea4f2ca411fdae54361c320fd750cadd74ff6d3db40ed628e9acc8dde25a"
         },
         {
@@ -1482,7 +1488,7 @@
           "weighted_slices": 2198,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_037",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_037",
           "input_sha256": "846b61bd163ba172bc9a044df1397db88fd275513736be17acbca0c3ced60751"
         },
         {
@@ -1494,7 +1500,7 @@
           "weighted_slices": 2150,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_038",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_038",
           "input_sha256": "e5654bcd70bf3c0797aa8260fb8b205da5cbb9fe1b4d7b24dd5e293381df77df"
         },
         {
@@ -1506,7 +1512,7 @@
           "weighted_slices": 2126,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_039",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_039",
           "input_sha256": "da4c4fa864b89c2772b93258a88c66337252924b936659f261db3ddcad740421"
         },
         {
@@ -1518,7 +1524,7 @@
           "weighted_slices": 2182,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_040",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_040",
           "input_sha256": "a7f94a1e28a179520e53be74a02e71613818df9c499aaeeaf425e7f0670e87a9"
         },
         {
@@ -1530,7 +1536,7 @@
           "weighted_slices": 2090,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_041",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_041",
           "input_sha256": "53df7923972af69d259ec278e8e9760c2844ee739331f28dce2590938d323d43"
         },
         {
@@ -1542,7 +1548,7 @@
           "weighted_slices": 2182,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_042",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_042",
           "input_sha256": "bd48d9eeadeec1bf7aa68323de6507bf1360c68c99dcf87c8bf85f3091eb3902"
         },
         {
@@ -1554,7 +1560,7 @@
           "weighted_slices": 2118,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_043",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_043",
           "input_sha256": "89f1527cc0666bf047463aaf7809d5cdc8bfd1fb84c7029bef2eff3898ca65b3"
         },
         {
@@ -1566,7 +1572,7 @@
           "weighted_slices": 2098,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_044",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_044",
           "input_sha256": "5bdfdc227f02323fba7eda46b289fb4eab62723c5e12e14dfe20edd4b21c7215"
         },
         {
@@ -1578,7 +1584,7 @@
           "weighted_slices": 2114,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_045",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_045",
           "input_sha256": "6cec19b054e3cbee5552735ab1af083026350208b9b950a061b41b95b781cab1"
         },
         {
@@ -1590,7 +1596,7 @@
           "weighted_slices": 2154,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_046",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_046",
           "input_sha256": "ead8c1bea96923c3b9a569fa195125583266a0b1fe81e5f19ebbadf2fd57367b"
         },
         {
@@ -1602,7 +1608,7 @@
           "weighted_slices": 2174,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_047",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_047",
           "input_sha256": "4130524e0838d657cf0439d3996cdb9bcfbd0a86282555f850e67e0e5c6378ad"
         },
         {
@@ -1614,7 +1620,7 @@
           "weighted_slices": 2150,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_048",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_048",
           "input_sha256": "e924f71f28970d3fb9efaf4e82b9d95cd51ec7e1bc45862f8cf68aa6c39bc54d"
         },
         {
@@ -1626,7 +1632,7 @@
           "weighted_slices": 2146,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_049",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_049",
           "input_sha256": "2d5897beaa5af23bd944f26b16460733149e87bfdaca78ad38fab7f64f3e5e42"
         },
         {
@@ -1638,7 +1644,7 @@
           "weighted_slices": 2198,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_050",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_050",
           "input_sha256": "e411c13d9d2555568d496d282e88b75f4202a47d8ab80b44dcd859c5d3da3979"
         },
         {
@@ -1650,7 +1656,7 @@
           "weighted_slices": 2174,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_051",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_051",
           "input_sha256": "a17c5814abeb26a24d5dee22eb923b76ffd349a75d5a4cad6bcb822d8c72b2ba"
         },
         {
@@ -1662,7 +1668,7 @@
           "weighted_slices": 2082,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_052",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_052",
           "input_sha256": "d6c7290da5281f81f47b3c5c3b8e824f53f0a5dd28c614227f12e025960642b2"
         },
         {
@@ -1674,7 +1680,7 @@
           "weighted_slices": 2138,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_053",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_053",
           "input_sha256": "d285d7cb6f8b00ad6ff24056cec7e4086967d2e38b4b9c2648967a771cd5c057"
         },
         {
@@ -1686,7 +1692,7 @@
           "weighted_slices": 2142,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_054",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_054",
           "input_sha256": "735bfe80070f7de8599833a34db317f1d95e9c0e38a849e6d331b1e097e0fba6"
         },
         {
@@ -1698,7 +1704,7 @@
           "weighted_slices": 2146,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_055",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_055",
           "input_sha256": "0de9f23a6d9dc23962e9332280c94d8741710590b4c637f2bd59e0b998389c62"
         },
         {
@@ -1710,7 +1716,7 @@
           "weighted_slices": 2130,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_056",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_056",
           "input_sha256": "18d8e26b306c1261c58824b439123be3badba7465e8f2faf87ea963102387ecf"
         },
         {
@@ -1722,7 +1728,7 @@
           "weighted_slices": 2174,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_057",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_057",
           "input_sha256": "b0d6ab1c77bb7606b678aa413db36c364bad5ae69298c3b62d339471ae88f750"
         },
         {
@@ -1734,7 +1740,7 @@
           "weighted_slices": 2142,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_058",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0/components/R_058",
           "input_sha256": "31fee94be145b7c9052d532ff2cfead7322ec02b887eba63c863b5f5261f56bb"
         }
       ],
@@ -1767,7 +1773,7 @@
           "status": "success"
         }
       ],
-      "evidence_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0",
+      "evidence_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/EDPC/layout_0",
       "wall_seconds": 6.9112826669588685,
       "compiler": {
         "native_commit": "82a1cbe64717a64a289dd4b0d02e3dc38cae3890",
@@ -1784,7 +1790,9 @@
         }
       },
       "logical_metrics_sha256": "6bde0bcbadd47f94cf15bbb0c0f081281c5c8e1b1d05bd15b663ce66e9fb09cd",
-      "phases_sha256": "ec9f2461b89a15b15c39059d047907982a7a77e8bb581375ad26cf016794a251"
+      "phases_sha256": "ec9f2461b89a15b15c39059d047907982a7a77e8bb581375ad26cf016794a251",
+      "run_id": "20261020T025002-distance-_cj9de2x",
+      "schedule_source_run_id": "20261020T000118-2eqyyx53"
     },
     "annealed": {
       "scope": "full_inverse_component_sum_surface_code_projection",
@@ -1838,10 +1846,14 @@
         "failure_opportunities_proxy": 34147040620,
         "failure_probability_proxy": 0.003414704062000002,
         "minimum_odd_code_distance_proxy": 23,
+        "meets_target_failure_probability": true,
         "factory_model": null
       },
       "assumptions": {
         "code_distance": 23,
+        "distance_selection_mode": "per_method_minimum",
+        "requested_minimum_code_distance": 3,
+        "distance_selection": "Smallest odd distance for this method satisfying the shared layout-failure budget and requested minimum; physical factory errors are excluded.",
         "cycle_time_ns": 1000,
         "physical_qubits_per_tile_factor": 2,
         "physical_error_rate": 0.001,
@@ -1849,9 +1861,7 @@
         "disttime_slices": 1,
         "staggered": false,
         "component_boundary_costs_included": false,
-        "layout_transitions_required": false,
-        "requested_minimum_code_distance": 9,
-        "distance_selection": "Common odd distance satisfying every successful method's layout-failure proxy; physical factory errors are not included."
+        "layout_transitions_required": false
       },
       "weighted_instruction_counts": {
         "BellBasedCNOT": 4769271,
@@ -1874,7 +1884,7 @@
           "weighted_slices": 7434063,
           "one_component_magic_states": 23057,
           "logical_t_count": 23057,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/W",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/W",
           "input_sha256": "e20b0418498126c233fb7f00ee780da5744c11f2d816fed2dd52d173347ff603"
         },
         {
@@ -1886,7 +1896,7 @@
           "weighted_slices": 2590,
           "one_component_magic_states": 172,
           "logical_t_count": 172,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_000",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_000",
           "input_sha256": "95a4534e9d37339b42cde3eb84457b37b9dc4e4aec68e9fb062ef915c92cc422"
         },
         {
@@ -1898,7 +1908,7 @@
           "weighted_slices": 2538,
           "one_component_magic_states": 172,
           "logical_t_count": 172,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_001",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_001",
           "input_sha256": "cad2db7c98af062401d915f83e0eed03f360debd91531f24c7800bbad7ccd892"
         },
         {
@@ -1910,7 +1920,7 @@
           "weighted_slices": 2526,
           "one_component_magic_states": 170,
           "logical_t_count": 170,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_002",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_002",
           "input_sha256": "840f007d2478472e3c9c5bda57b35fd6593724dd785cc1bbad0d3594277dfec4"
         },
         {
@@ -1922,7 +1932,7 @@
           "weighted_slices": 2462,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_003",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_003",
           "input_sha256": "91d691e6fd6080a0b9260614ed2e9ddd708ca1b5c8ecb1580a9e784c55887f78"
         },
         {
@@ -1934,7 +1944,7 @@
           "weighted_slices": 2418,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_004",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_004",
           "input_sha256": "be58e3e75b7e9bd4f0b7bdf4d95c9a2c1f01f1c106243a192adedd03e8ae361a"
         },
         {
@@ -1946,7 +1956,7 @@
           "weighted_slices": 2374,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_005",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_005",
           "input_sha256": "cc0ecc95f807270ac746b06c8dbfa0d0cbec5692141d8d18429f68429e4cf0eb"
         },
         {
@@ -1958,7 +1968,7 @@
           "weighted_slices": 2370,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_006",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_006",
           "input_sha256": "ccc428227fd49dadce623f7e13f9d1be94f5073afd06ebf43800541a729f8dba"
         },
         {
@@ -1970,7 +1980,7 @@
           "weighted_slices": 2386,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_007",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_007",
           "input_sha256": "093869ab47c9a9ff16a0dcf191b972a9bdbbb2a1949b20a3deb069c2b57925fb"
         },
         {
@@ -1982,7 +1992,7 @@
           "weighted_slices": 2386,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_008",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_008",
           "input_sha256": "98ab566971aa30a2517144d8bca0462c80bd8af9ff5c88ad3a03d8fd8058a060"
         },
         {
@@ -1994,7 +2004,7 @@
           "weighted_slices": 2414,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_009",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_009",
           "input_sha256": "63b9c46d81bc7673f24c1fea4626041dfd75e36316c6533c71f0e438719cd94f"
         },
         {
@@ -2006,7 +2016,7 @@
           "weighted_slices": 2358,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_010",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_010",
           "input_sha256": "1c849bfd00c2b94518d9d8914c3a0c661847342401802606480cc9614cee921e"
         },
         {
@@ -2018,7 +2028,7 @@
           "weighted_slices": 2406,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_011",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_011",
           "input_sha256": "76009f71303f3aa6403aa43235cf26c2df75563ed499f420e1eb7e2139669b7f"
         },
         {
@@ -2030,7 +2040,7 @@
           "weighted_slices": 2338,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_012",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_012",
           "input_sha256": "8316bdce7024f6647e47f71d95d7b4d1a2f4542bbe32fad67eeaba487efd4ced"
         },
         {
@@ -2042,7 +2052,7 @@
           "weighted_slices": 2410,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_013",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_013",
           "input_sha256": "9d4ec8e3e128a00a02a7fb9b2d268ac219b60c60940382a6a38704159ccef286"
         },
         {
@@ -2054,7 +2064,7 @@
           "weighted_slices": 2326,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_014",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_014",
           "input_sha256": "8da76b0d32a192c654ecbd0b99a7e60ab04c238bf6af2b9f1acc82f2090e1f4e"
         },
         {
@@ -2066,7 +2076,7 @@
           "weighted_slices": 2398,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_015",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_015",
           "input_sha256": "d18245a09d9f75be8f55363d1016bbe96ac7186a22d61cafd8a2403bc5a4da09"
         },
         {
@@ -2078,7 +2088,7 @@
           "weighted_slices": 2390,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_016",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_016",
           "input_sha256": "dce8f66af649c2c5aa9f58feb3e32e9b0e1227fe36761a84abc35939dd8f0618"
         },
         {
@@ -2090,7 +2100,7 @@
           "weighted_slices": 2406,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_017",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_017",
           "input_sha256": "99f352e8b48a059c786b08ff8b046dd3ece4e7c0f784d98f21f783cd075ebffe"
         },
         {
@@ -2102,7 +2112,7 @@
           "weighted_slices": 2398,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_018",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_018",
           "input_sha256": "75e13171c84a258e53fb791620d02c459ba62e51ec690d57b768589dbf2e58c9"
         },
         {
@@ -2114,7 +2124,7 @@
           "weighted_slices": 2298,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_019",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_019",
           "input_sha256": "d34018c54a4cb520420c9cc2be87a9abbece494144a7c50184deb8023a42df92"
         },
         {
@@ -2126,7 +2136,7 @@
           "weighted_slices": 2322,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_020",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_020",
           "input_sha256": "dfe50a9727dc6d2eba9a17a982b374c8c1b9c6bb11a8c27eba922cb936582ab2"
         },
         {
@@ -2138,7 +2148,7 @@
           "weighted_slices": 2382,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_021",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_021",
           "input_sha256": "236ca40b4f03e6294a9dc6c42f29f4f4cfc2461f8e4fa7a9bd677b4235b17232"
         },
         {
@@ -2150,7 +2160,7 @@
           "weighted_slices": 2378,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_022",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_022",
           "input_sha256": "979078699a13748e9a4c647e1378fc4266f1f3fc78f41d705a7bafcf6d39d7c4"
         },
         {
@@ -2162,7 +2172,7 @@
           "weighted_slices": 2390,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_023",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_023",
           "input_sha256": "e7b902b4ecd70dc00008a5bfc5cabf213c1ec75e92eb77502537182c73fcecb8"
         },
         {
@@ -2174,7 +2184,7 @@
           "weighted_slices": 2394,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_024",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_024",
           "input_sha256": "9c267ee13fea0e617048c117afccfc13780bcdc15516e726f48815150f5f63d7"
         },
         {
@@ -2186,7 +2196,7 @@
           "weighted_slices": 2406,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_025",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_025",
           "input_sha256": "51eb5d61317249f27bedb9d23965b3305cf1d9c255ef9678ed5e46dcf3eee4d0"
         },
         {
@@ -2198,7 +2208,7 @@
           "weighted_slices": 2390,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_026",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_026",
           "input_sha256": "423e7550bef8cf3230d67c66f2ce13c09f92db453ad64d5e60ce47d1f1fc5afc"
         },
         {
@@ -2210,7 +2220,7 @@
           "weighted_slices": 2338,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_027",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_027",
           "input_sha256": "25d3a4611c320d04fa103379713810ab4f85d491c461b76ddb521ae1b1a4f6e1"
         },
         {
@@ -2222,7 +2232,7 @@
           "weighted_slices": 2362,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_028",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_028",
           "input_sha256": "6701bb3ab73d15a741844904d81656d73caf1f31f5e5c20ab40b3e5400f6ce19"
         },
         {
@@ -2234,7 +2244,7 @@
           "weighted_slices": 2302,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_029",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_029",
           "input_sha256": "5674e466656751cdff629095ed7bc5b1392db851dfdc5bbff49c8fec7cb0a55f"
         },
         {
@@ -2246,7 +2256,7 @@
           "weighted_slices": 2382,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_030",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_030",
           "input_sha256": "88c98627aa9f6c9b453b06dddd90d805bfd96583bf06387fde29526670525b7b"
         },
         {
@@ -2258,7 +2268,7 @@
           "weighted_slices": 2274,
           "one_component_magic_states": 156,
           "logical_t_count": 156,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_031",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_031",
           "input_sha256": "a4f602fe8ad715d6faa92405412ea70da18041417f051500bd079c3d47003e2b"
         },
         {
@@ -2270,7 +2280,7 @@
           "weighted_slices": 2334,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_032",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_032",
           "input_sha256": "dd726039820866ebadd82daf86024a0c4bb87e15f05687ec5167eeafad8cb8b5"
         },
         {
@@ -2282,7 +2292,7 @@
           "weighted_slices": 2338,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_033",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_033",
           "input_sha256": "e1ff5fc19843b68e507f1da6ce50318283922f7879f94e137b5e1d8a4f367330"
         },
         {
@@ -2294,7 +2304,7 @@
           "weighted_slices": 2362,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_034",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_034",
           "input_sha256": "431a4fb94740770e872c458dab8780f93df10750223dfeb07162ac039180aa64"
         },
         {
@@ -2306,7 +2316,7 @@
           "weighted_slices": 2330,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_035",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_035",
           "input_sha256": "cab4df9a8e79b0132b2f309e2dbcf10b2e2083e3d3686414072942d4f3947381"
         },
         {
@@ -2318,7 +2328,7 @@
           "weighted_slices": 2418,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_036",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_036",
           "input_sha256": "6daeea4f2ca411fdae54361c320fd750cadd74ff6d3db40ed628e9acc8dde25a"
         },
         {
@@ -2330,7 +2340,7 @@
           "weighted_slices": 2438,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_037",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_037",
           "input_sha256": "846b61bd163ba172bc9a044df1397db88fd275513736be17acbca0c3ced60751"
         },
         {
@@ -2342,7 +2352,7 @@
           "weighted_slices": 2390,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_038",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_038",
           "input_sha256": "e5654bcd70bf3c0797aa8260fb8b205da5cbb9fe1b4d7b24dd5e293381df77df"
         },
         {
@@ -2354,7 +2364,7 @@
           "weighted_slices": 2362,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_039",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_039",
           "input_sha256": "da4c4fa864b89c2772b93258a88c66337252924b936659f261db3ddcad740421"
         },
         {
@@ -2366,7 +2376,7 @@
           "weighted_slices": 2422,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_040",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_040",
           "input_sha256": "a7f94a1e28a179520e53be74a02e71613818df9c499aaeeaf425e7f0670e87a9"
         },
         {
@@ -2378,7 +2388,7 @@
           "weighted_slices": 2322,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_041",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_041",
           "input_sha256": "53df7923972af69d259ec278e8e9760c2844ee739331f28dce2590938d323d43"
         },
         {
@@ -2390,7 +2400,7 @@
           "weighted_slices": 2426,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_042",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_042",
           "input_sha256": "bd48d9eeadeec1bf7aa68323de6507bf1360c68c99dcf87c8bf85f3091eb3902"
         },
         {
@@ -2402,7 +2412,7 @@
           "weighted_slices": 2350,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_043",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_043",
           "input_sha256": "89f1527cc0666bf047463aaf7809d5cdc8bfd1fb84c7029bef2eff3898ca65b3"
         },
         {
@@ -2414,7 +2424,7 @@
           "weighted_slices": 2326,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_044",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_044",
           "input_sha256": "5bdfdc227f02323fba7eda46b289fb4eab62723c5e12e14dfe20edd4b21c7215"
         },
         {
@@ -2426,7 +2436,7 @@
           "weighted_slices": 2346,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_045",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_045",
           "input_sha256": "6cec19b054e3cbee5552735ab1af083026350208b9b950a061b41b95b781cab1"
         },
         {
@@ -2438,7 +2448,7 @@
           "weighted_slices": 2390,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_046",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_046",
           "input_sha256": "ead8c1bea96923c3b9a569fa195125583266a0b1fe81e5f19ebbadf2fd57367b"
         },
         {
@@ -2450,7 +2460,7 @@
           "weighted_slices": 2410,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_047",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_047",
           "input_sha256": "4130524e0838d657cf0439d3996cdb9bcfbd0a86282555f850e67e0e5c6378ad"
         },
         {
@@ -2462,7 +2472,7 @@
           "weighted_slices": 2386,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_048",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_048",
           "input_sha256": "e924f71f28970d3fb9efaf4e82b9d95cd51ec7e1bc45862f8cf68aa6c39bc54d"
         },
         {
@@ -2474,7 +2484,7 @@
           "weighted_slices": 2386,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_049",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_049",
           "input_sha256": "2d5897beaa5af23bd944f26b16460733149e87bfdaca78ad38fab7f64f3e5e42"
         },
         {
@@ -2486,7 +2496,7 @@
           "weighted_slices": 2442,
           "one_component_magic_states": 166,
           "logical_t_count": 166,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_050",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_050",
           "input_sha256": "e411c13d9d2555568d496d282e88b75f4202a47d8ab80b44dcd859c5d3da3979"
         },
         {
@@ -2498,7 +2508,7 @@
           "weighted_slices": 2414,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_051",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_051",
           "input_sha256": "a17c5814abeb26a24d5dee22eb923b76ffd349a75d5a4cad6bcb822d8c72b2ba"
         },
         {
@@ -2510,7 +2520,7 @@
           "weighted_slices": 2310,
           "one_component_magic_states": 158,
           "logical_t_count": 158,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_052",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_052",
           "input_sha256": "d6c7290da5281f81f47b3c5c3b8e824f53f0a5dd28c614227f12e025960642b2"
         },
         {
@@ -2522,7 +2532,7 @@
           "weighted_slices": 2374,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_053",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_053",
           "input_sha256": "d285d7cb6f8b00ad6ff24056cec7e4086967d2e38b4b9c2648967a771cd5c057"
         },
         {
@@ -2534,7 +2544,7 @@
           "weighted_slices": 2378,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_054",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_054",
           "input_sha256": "735bfe80070f7de8599833a34db317f1d95e9c0e38a849e6d331b1e097e0fba6"
         },
         {
@@ -2546,7 +2556,7 @@
           "weighted_slices": 2378,
           "one_component_magic_states": 160,
           "logical_t_count": 160,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_055",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_055",
           "input_sha256": "0de9f23a6d9dc23962e9332280c94d8741710590b4c637f2bd59e0b998389c62"
         },
         {
@@ -2558,7 +2568,7 @@
           "weighted_slices": 2366,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_056",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_056",
           "input_sha256": "18d8e26b306c1261c58824b439123be3badba7465e8f2faf87ea963102387ecf"
         },
         {
@@ -2570,7 +2580,7 @@
           "weighted_slices": 2414,
           "one_component_magic_states": 164,
           "logical_t_count": 164,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_057",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_057",
           "input_sha256": "b0d6ab1c77bb7606b678aa413db36c364bad5ae69298c3b62d339471ae88f750"
         },
         {
@@ -2582,7 +2592,7 @@
           "weighted_slices": 2378,
           "one_component_magic_states": 162,
           "logical_t_count": 162,
-          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_058",
+          "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0/components/R_058",
           "input_sha256": "31fee94be145b7c9052d532ff2cfead7322ec02b887eba63c863b5f5261f56bb"
         }
       ],
@@ -2615,7 +2625,7 @@
           "status": "success"
         }
       ],
-      "evidence_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/inversion_2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0",
+      "evidence_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/annealed/layout_0",
       "wall_seconds": 30.87336541712284,
       "compiler": {
         "native_commit": "82a1cbe64717a64a289dd4b0d02e3dc38cae3890",
@@ -2646,7 +2656,13 @@
         },
         "replay_verified": true,
         "best_pair_tile_slices": 12705504
-      }
+      },
+      "run_id": "20261020T025002-distance-_cj9de2x",
+      "schedule_source_run_id": "20261020T000118-2eqyyx53"
     }
-  }
+  },
+  "run_id": "20261020T025002-distance-_cj9de2x",
+  "schedule_source_run_id": "20261020T000118-2eqyyx53",
+  "schedule_source_run_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53",
+  "analysis": "Physical resources recalculated from verified saved component measurements using a method-specific minimum odd distance for one shared failure budget. Native schedules are independent of code distance in this model."
 }

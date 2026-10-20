@@ -1,4 +1,5 @@
 === liblsqecc slice-based resource estimate ===
+Run                    : 20261017T075545-6av_aayr
 
 source QASM             : /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/tools/lattice_surgery/input_circuit.qasm
 preset                 : edpc

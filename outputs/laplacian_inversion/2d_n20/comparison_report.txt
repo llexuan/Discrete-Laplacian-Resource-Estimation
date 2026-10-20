@@ -1,0 +1,71 @@
+FULL LAPLACIAN INVERSE: ARCHITECTURE COMPARISON
+Run: 20261020T025002-distance-_cj9de2x
+Status: SUCCESS
+
+Component costs are compiled once and multiplied by their occurrences.
+Physical qubits are allocated once. This is a full-sequence projection.
+
+EXAMPLE
+Dimensions: 2; n per axis: 20 (1,048,576 grid points per axis)
+Sequence degree / W applications: 117
+Projector rotations: 118; distinct angles: 59
+Resident logical qubits: 45
+Logical Clifford gates: 3,919,609
+Logical T/T-dagger gates: 2,716,805
+
+SHARED ASSUMPTIONS
+QEC cycle time (ns): 1000
+Physical qubits per tile / d^2: 2
+Physical error rate: 0.001
+Target layout-failure proxy: 0.01
+Magic-state supply interval (slices): 1
+Staggered supply: False
+Code distance policy: each method's minimum admissible odd distance for the shared failure budget
+Failure proxy: min(1, tiles * slices * d * 0.1 * (100*p_phys)^((d+1)/2)).
+Physical factory model: not supplied; abstract compiler sources
+
+RESULTS
++------------------------+----------------+----------------+----------------+
+| Metric                 |    Annealed    |    Compact     |      EDPC      |
++------------------------+----------------+----------------+----------------+
+| Layout tiles           |            196 |            168 |            289 |
+| Slices for one W       |         63,539 |         96,089 |         57,187 |
+| All walk slices        |      7,434,063 |     11,242,413 |      6,690,879 |
+| All rotation slices    |        140,702 |        146,486 |        126,758 |
+| Total projected slices |      7,574,765 |     11,388,899 |      6,817,637 |
++------------------------+----------------+----------------+----------------+
+| Code distance          |             23 |             23 |             23 |
+| Physical qubits        |        207,368 |        177,744 |        305,762 |
+| Projected runtime (s)  |     174.219595 |     261.944677 |     156.805651 |
+| Space-time (qubit*s)   | 36,127,568.976 | 46,559,094.669 | 47,945,209.461 |
+| Failure budget (<=)    |   1.000000e-02 |   1.000000e-02 |   1.000000e-02 |
+| Layout-failure proxy   |   3.414704e-03 |   4.400671e-03 |   4.531683e-03 |
+| Meets failure budget   |            Yes |            Yes |            Yes |
++------------------------+----------------+----------------+----------------+
+
+INTERPRETATION (among successful methods in this run)
+Fewest physical qubits: compact.
+Shortest projected runtime: edpc.
+Smallest space-time cost: annealed.
+Relative to EDPC:
+  annealed: 32.18% fewer physical qubits; 11.11% longer runtime.
+  compact: 41.87% fewer physical qubits; 67.05% longer runtime.
+
+METHOD DETAILS AND LIMITS
+annealed: Annealed shared layout, optimized on one W + representative projector.
+  Annealing budget 32, seed 61; optimizes one W + R_000. Full totals measure every distinct angle on the winning layout.
+compact: Compact with routing spacing 2; factory region preserved.
+edpc: Native EDPC.
+- Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.
+- One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
+- Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.
+- No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.
+- The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain.
+- Native compact failed local decomposition. The reported compact estimate uses explicitly spaced compact geometry, not the original native grid.
+
+FILES
+Logical baseline: logical/inversion_resource_report.txt
+Method reports: annealed_resource_report.txt, compact_resource_report.txt, EDPC_resource_report.txt
+Machine-readable results: data/
+Inputs and manifest: inputs/
+Complete run evidence: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T025002-distance-_cj9de2x

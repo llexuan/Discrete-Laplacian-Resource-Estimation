@@ -19,7 +19,7 @@ import time
 
 import estimate_sliced_resources as resources
 import run_lattice_surgery_compiler as compiler
-from compiler_options import output_prefix
+from output_files import prepare_output, resource_paths
 from setup_floorplanner import DEFAULT_CHECKOUT, FLOORPLANNER_PIN
 
 NATIVE_PIN = "82a1cbe64717a64a289dd4b0d02e3dc38cae3890"
@@ -174,13 +174,8 @@ def check_installation(checkout: Path) -> tuple[Path, Path]:
 
 
 def output_paths(output: Path, name: str) -> dict[str, Path]:
-    prefix = output_prefix(name)
-    return {
-        "lli": output / f"{prefix}.lli",
-        "sliced": output / f"{prefix}_sliced.lli",
-        "json": output / f"{prefix}_resource_estimate.json",
-        "report": output / f"{prefix}_resource_report.txt",
-    }
+    prepare_output(output)
+    return resource_paths(output, name)
 
 
 def compile_result(
@@ -249,7 +244,7 @@ def run_comparison(args) -> bool:
     qasm, qubits = normalize_qasm(original.decode("utf-8"))
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
-    runs = output / "annealing_runs"
+    runs = output / "runs"
     runs.mkdir(exist_ok=True)
     run = Path(
         tempfile.mkdtemp(
@@ -275,6 +270,7 @@ def run_comparison(args) -> bool:
             "cnotcorrections": "never",
         },
         "run_directory": str(run),
+        "run_id": run.name,
         "layouts": {},
     }
     for name in dict.fromkeys(args.layouts):
@@ -330,8 +326,8 @@ def run_comparison(args) -> bool:
                     raise ValueError(
                         "Final resource compilation disagrees with annealer winner"
                     )
-                stable_bundle = output / "annealed_layout"
-                stable_bundle.mkdir(exist_ok=True)
+                stable_bundle = output / "artifacts" / "annealed_layout"
+                stable_bundle.mkdir(parents=True, exist_ok=True)
                 for filename in (
                     "layout.txt",
                     "layout.svg",
@@ -368,6 +364,7 @@ def run_comparison(args) -> bool:
                 }
             result["layout_resources"] = layout_resources
             result["compiler"]["source_sha256"] = summary["source_sha256"]
+            result["run_id"] = run.name
             paths["json"].write_text(json.dumps(result, indent=2) + "\n")
             paths["report"].write_text(resources.render_report(result))
             for key, destination in output_paths(output, name).items():
@@ -398,11 +395,26 @@ def run_comparison(args) -> bool:
                 "reason": str(error),
                 "wall_seconds": time.monotonic() - started,
             }
+            failed = {
+                "method": name,
+                "status": "failed",
+                "reason": str(error),
+                "run_id": run.name,
+            }
+            destinations = output_paths(output, name)
+            destinations["json"].write_text(json.dumps(failed, indent=2) + "\n")
+            destinations["report"].write_text(
+                f"Mini-circuit architecture: {name}\nRun: {run.name}\n"
+                f"Status: FAILED\n{error}\n"
+                "No numerical estimate is available for this run.\n"
+            )
             print(f"{name} failed: {error}", flush=True)
     (run / "layout_comparison.json").write_text(json.dumps(summary, indent=2) + "\n")
-    (output / "layout_comparison.json").write_text(json.dumps(summary, indent=2) + "\n")
+    prepare_output(output)
+    (output / "data" / "comparison.json").write_text(json.dumps(summary, indent=2) + "\n")
     lines = [
         "Layout comparison (same input, compiler and scheduling settings)",
+        f"Run: {run.name}",
         "",
         "layout | tiles | slices | tile-slices | physical qubits | core time (ns)",
     ]
@@ -420,7 +432,17 @@ def run_comparison(args) -> bool:
         "Failed runs have no numeric score. Older stable files, if present, are not results of this run.",
     ]
     report = "\n".join(lines) + "\n"
-    (output / "layout_comparison.txt").write_text(report)
+    (output / "comparison_report.txt").write_text(report)
+    (output / "README.md").write_text(
+        "# Mini-circuit lattice-surgery results\n\n"
+        "Start with [comparison_report.txt](comparison_report.txt). "
+        "The annealed, compact and EDPC TXT reports summarize this small QASM circuit.\n\n"
+        "`data/` contains JSON estimates; `artifacts/` contains LLI and the winning annealed layout; "
+        "`runs/` contains local compiler/search history. Full Laplacian inverse results are in "
+        "`../laplacian_inversion/`.\n\n"
+        "Regenerate from the repository root:\n\n```bash\n"
+        "PYTHONPATH=src .venv/bin/python tools/lattice_surgery/run_layout_comparison.py\n```\n"
+    )
     print("\n" + report, flush=True)
     return all(row["status"] == "success" for row in summary["layouts"].values())
 

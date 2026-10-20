@@ -1,10 +1,11 @@
-Layout comparison (same input, compiler and scheduling settings)
+Mini-circuit layout comparison (same input, compiler and scheduling settings)
+Run: 20261017T075545-6av_aayr
 
 layout | tiles | slices | tile-slices | physical qubits | core time (ns)
 compact | 27 | 10 | 270 | 4374 | 90000
 edpc | 49 | 8 | 392 | 7938 | 72000
 annealed | 28 | 8 | 224 | 4536 | 72000
 
-Full evidence and optimized layout bundle: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr
+Full evidence and optimized layout bundle: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/mini_circuit/runs/20261017T075545-6av_aayr
 Physical resources use a fixed-distance proxy; M supplies are abstract.
 Failed runs have no numeric score. Older stable files, if present, are not results of this run.

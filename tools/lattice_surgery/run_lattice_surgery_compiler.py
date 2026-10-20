@@ -11,7 +11,7 @@ from compiler_options import backend_options, output_prefix
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_QASM = Path(__file__).resolve().with_name("input_circuit.qasm")
-COMPILER_OUTPUT_DIR = PROJECT_ROOT / "outputs" / "compiler"
+COMPILER_OUTPUT_DIR = PROJECT_ROOT / "outputs" / "mini_circuit"
 DEFAULT_SLICER = PROJECT_ROOT.parent / "liblsqecc" / "build" / "lsqecc_slicer"
 
 
@@ -187,9 +187,9 @@ def main() -> None:
     args = build_parser().parse_args()
     qasm_path = args.qasm.resolve()
     prefix = output_prefix(args.preset)
-    lli_path = (args.lli or COMPILER_OUTPUT_DIR / f"{prefix}.lli").resolve()
+    lli_path = (args.lli or COMPILER_OUTPUT_DIR / "artifacts" / f"{prefix}.lli").resolve()
     sliced_lli_path = (
-        args.sliced_lli or COMPILER_OUTPUT_DIR / f"{prefix}_sliced.lli"
+        args.sliced_lli or COMPILER_OUTPUT_DIR / "artifacts" / f"{prefix}_sliced.lli"
     ).resolve()
 
     qasm_text = qasm_path.read_text(encoding="utf-8")

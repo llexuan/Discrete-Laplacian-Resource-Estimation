@@ -1,0 +1,70 @@
+=== Full Laplacian inverse sequence: logical resource report ===
+
+Sequence              : R(phi_0) W R(phi_1) ... W R(phi_d)
+Accounting            : compiled Clifford+T component costs composed across the full sequence
+Scope                 : logical gates before physical layout/QEC mapping; no full target-size QASM export
+Spatial dimensions    : 2
+Qubits per dimension  : 20
+Grid points per axis  : 1,048,576
+Polynomial degree     : 117
+Effective degree      : 117
+W applications        : 117
+Projector rotations   : 118
+Unique phase angles   : 59
+
+--- entire sequence: logical resource counts ---
+Logical qubits        : 45
+Clifford gate count   : 3,919,609
+T-count (T + T-dagger): 2,716,805
+Total gate count      : 6,636,414
+Total depth upper bound: 2,699,199
+T-depth upper bound   : 1,057,374
+Depth accounting      : serial_component_sum_upper_bound
+
+--- contribution breakdown ---
+Component                 Clifford gates     T/T-dagger     Depth bound   T-depth bound
+One W                             33,259         23,057          22,713           8,894
+All W applications             3,891,303      2,697,669       2,657,421       1,040,598
+All projector rotations           28,306         19,136          41,778          16,776
+Entire sequence                3,919,609      2,716,805       2,699,199       1,057,374
+
+Logical qubits per W  : 44
+Additional phase flag : 1
+Borrowed system qubits: 2 (already included; not additional qubits)
+
+--- full-sequence logical gate counts ---
+cx                    : 2,052,466
+h                     : 1,322,468
+s                     : 7,884
+sdg                   : 1,908
+t                     : 1,380,052
+tdg                   : 1,336,753
+x                     : 534,847
+z                     : 36
+
+--- approximation and synthesis errors ---
+Polynomial error      : 1.845630e-02
+Phase numerical error : 4.996004e-15
+Synthesis tolerance   : 1.000000e-08
+Measured synthesis bound: 7.519663e-09
+Conservative total bound: 1.845631e-02
+Synthesized rotations : 118
+Selector rotations in walks: 0
+Tolerance per rotation: 8.474576e-11
+
+--- inversion domain and spectral coverage ---
+Kappa                 : 2.5
+Polynomial epsilon    : 0.49
+Declared domain       : 1/kappa <= |lambda| <= 1 (|lambda| >= 4.000000e-01)
+Zero mode             : excluded from inversion
+Target spectral gap   : 4.488176e-12
+Kappa for all nonzero modes: 2.228076e+11
+WARNING: supplied kappa does not cover all nonzero target-grid modes; inversion is estimated only on the declared domain.
+
+--- dense correctness checks at small verification size ---
+Verification n        : 1 (not the target resource size)
+Block encoding error  : 2.220446e-16
+QSP block max-entry error: 1.768863e-13
+QSP block spectral error: 2.985737e-13
+
+Recorded phase source : /Users/huanglexuan/quantum_research/GTRI/outputs/phases/phases_inversion.json

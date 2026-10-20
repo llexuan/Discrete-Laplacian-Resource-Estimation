@@ -202,12 +202,23 @@ applications and 118 rotations at 59 distinct angles. A single arbitrary
 rotation is not substituted for all angles.
 
 Reports for each method are written under
-`outputs/compiler/inversion_<D>d_n<n>/`: `EDPC_resource_report.txt`,
-`compact_resource_report.txt` and `annealed_resource_report.txt`, with matching
-`*_resource_estimate.json` files and `architecture_comparison.txt`/`.json`.
-`manifest.json` records logical input/phase hashes and component multiplicities.
-Detailed component QASM, LLI, layouts and search records are retained locally in
-that directory's inputs and run bundles, and are ignored by Git.
+`outputs/laplacian_inversion/<D>d_n<n>/`. For the saved 2D example, start with
+[comparison_report.txt](outputs/laplacian_inversion/2d_n20/comparison_report.txt).
+The same folder has `EDPC_resource_report.txt`, `compact_resource_report.txt`
+and `annealed_resource_report.txt`. The comparison describes the case, shared
+assumptions, walk/rotation breakdown, qubit/runtime tradeoffs and model limits.
+
+Supporting files have separate locations:
+
+- `logical/`: exact logical JSON baseline and readable logical report.
+- `data/`: method resource JSON and `comparison.json`.
+- `inputs/`: `manifest.json`, `phases.json` and generated `components/*.qasm`.
+- `runs/<run-id>/`: compiler evidence, LLI, layouts and annealing history.
+
+All visible reports identify the same run. Failed or unselected methods have no
+numeric score from an earlier run. Small reports and reproducibility inputs are
+tracked; large component QASM and run evidence remain local and ignored by Git.
+The mini-circuit workflow writes to `outputs/mini_circuit/` separately.
 
 One common geometry and logical-qubit mapping is used for all components within
 each method. The full resident register includes the phase flag even during W.
@@ -223,12 +234,16 @@ spaced compact result. `--compact-spacing 1` requires the native grid and report
 failure if it cannot compile. Annealing optimizes one W followed by the largest-T
 projector, then remeasures all distinct projectors on that one winning layout.
 
-`--auto-code-distance` chooses a common odd distance, at least `--code-distance`
-(default 9), meeting the layout-failure **proxy** for every successful method.
-It does not certify a complete hardware error budget. Omitting it keeps the fixed
-distance and emits a warning if the full sequence exceeds the target. Magic-state
-supplies remain abstract; physical factories require explicit throughput and
-footprint assumptions. See [the architecture workflow](tools/lattice_surgery/README.md#full-inverse-component-architecture)
+Each method independently chooses its minimum odd code distance meeting the same
+layout-failure **proxy** budget (`--target-failure-probability 0.01` by default).
+Automatic selection is now the default; `--auto-code-distance` remains an
+explicit alias. The search starts at 3; `--code-distance` can raise that lower
+bound. The table shows the selected distance, budget, achieved failure proxy and
+whether the budget is met. Qubits, runtime and space-time costs use each method's
+own distance. Use `--fixed-code-distance --code-distance 9` for an explicit fixed
+distance comparison. Selection does not certify a complete hardware error budget.
+Magic-state supplies remain abstract; physical factories require explicit
+throughput and footprint assumptions. See [the architecture workflow](tools/lattice_surgery/README.md#full-inverse-component-architecture)
 for controls, replay data and model limits.
 
 ## Spectral-gap and kappa warning
@@ -341,7 +356,7 @@ using the pinned `surface-code-floorplanner` geometry adapter. From this root:
 
 The comparison compiles the same `tools/lattice_surgery/input_circuit.qasm`
 under compact, EDPC and annealed layouts using one pinned compiler and matched
-settings. It writes separate LLI/resource reports and `outputs/compiler/layout_comparison.txt`.
+settings. It writes separate LLI/resource reports and `outputs/mini_circuit/comparison_report.txt`.
 The optimizer and native dependencies stay in a sibling checkout and separate
 Python environment. This setup does not require the legacy Conda compiler.
 See [the integration guide](tools/lattice_surgery/README.md#simulated-annealing-layout-comparison)
@@ -367,8 +382,8 @@ bash tools/lattice_surgery/setup_compiler.sh
 Write the circuit in `tools/lattice_surgery/input_circuit.qasm`. See
 `tools/lattice_surgery/README.md` for syntax, environment overrides, generated
 files, and current scope limitations. Layout-independent and scheduled lattice
-instructions are written to `outputs/compiler/EDPC.lli` and
-`outputs/compiler/EDPC_sliced.lli`.
+instructions are written to `outputs/mini_circuit/artifacts/EDPC.lli` and
+`outputs/mini_circuit/artifacts/EDPC_sliced.lli`.
 
 Estimate schedule-aware timing and physical space with:
 

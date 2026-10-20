@@ -17,7 +17,7 @@ from laplacian_qsvt.synthesis.rotation_synthesis import (
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_OUTPUT = PROJECT_ROOT / "outputs" / "compiler" / "synthesized_rotation.qasm"
+DEFAULT_OUTPUT = PROJECT_ROOT / "outputs" / "mini_circuit" / "artifacts" / "synthesized_rotation.qasm"
 
 
 def build_parser() -> argparse.ArgumentParser:

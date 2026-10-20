@@ -27,11 +27,11 @@
   "command": [
     "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/surface-code-floorplanner/.deps/adapter/liblsqecc_adapter",
     "-i",
-    "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/replay/input.qasm",
+    "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/mini_circuit/runs/20261017T075545-6av_aayr/annealed_layout/replay/input.qasm",
     "-I",
     "qasm",
     "-o",
-    "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/replay/slices.json",
+    "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/mini_circuit/runs/20261017T075545-6av_aayr/annealed_layout/replay/slices.json",
     "-f",
     "machine",
     "-P",
@@ -49,7 +49,7 @@
     "-L",
     "edpc",
     "--geometry-file",
-    "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/replay/layout.txt"
+    "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/mini_circuit/runs/20261017T075545-6av_aayr/annealed_layout/replay/layout.txt"
   ],
   "config": {
     "pipeline": "wave",
@@ -63,5 +63,5 @@
   "input_sha256": "2f224a050e046fcf46b18ecaafc976e5ac1ec42b61b66ebacaf828b53d47ad91",
   "layout_sha256": "f0026c87c13fe53f369e600714c1b2a4a44b9087baa6872e2b0a6aef7df1edb3",
   "binary_sha256": "96c848cf748fa1c7abf568e4408e47a9db8dc6d743f4cbc2139488d022488fd2",
-  "artifact_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/compiler/annealing_runs/20261017T075545-6av_aayr/annealed_layout/replay"
+  "artifact_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/mini_circuit/runs/20261017T075545-6av_aayr/annealed_layout/replay"
 }

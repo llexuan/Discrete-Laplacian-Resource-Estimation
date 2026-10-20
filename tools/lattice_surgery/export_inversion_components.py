@@ -35,10 +35,9 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
     if qubits != walk_qubits + 1:
         raise ValueError("Expected one clean phase flag in addition to W registers")
     output.mkdir(parents=True, exist_ok=True)
-    (output / "logical_metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
-    (output / "phases.json").write_text(json.dumps(phases_metadata, indent=2) + "\n")
-    inputs = output / "inputs"
-    inputs.mkdir(exist_ok=True)
+    snapshot_logical_inputs(metrics_path, phases_path, output)
+    inputs = output / "inputs" / "components"
+    inputs.mkdir(parents=True, exist_ok=True)
     components = []
 
     def emit(identifier, circuit, mapping, occurrences, reference, **metadata):
@@ -135,5 +134,32 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
         "registers": {"phase_flag": walk_qubits, "projector_local_to_global": mapping},
         "accounting": "One W and each unique phase rotation, weighted by occurrences; all components retain the full resident register.",
     }
-    (output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (output / "inputs" / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
+
+
+def snapshot_logical_inputs(metrics_path: Path, phases_path: Path, output: Path) -> None:
+    """Keep the exact source bytes so hashes identify the case's saved baseline."""
+    from laplacian_qsvt.laplacian.laplacian_inversion_encode import render_resource_report
+
+    logical_dir = output / "logical"
+    logical_dir.mkdir(parents=True, exist_ok=True)
+    (output / "inputs").mkdir(parents=True, exist_ok=True)
+    (logical_dir / "inversion_resource_metrics.json").write_bytes(metrics_path.read_bytes())
+    (output / "inputs" / "phases.json").write_bytes(phases_path.read_bytes())
+    metrics = json.loads(metrics_path.read_text())
+    if "verification" in metrics and "error_summary" in metrics:
+        report = render_resource_report(metrics)
+    else:
+        logical = metrics["logical_resources"]
+        report = (
+            "Full inverse sequence: logical resource baseline\n"
+            f"Dimensions / n per axis: {logical['dimensions']} / {logical['target_n']}\n"
+            f"Logical qubits: {logical['logical_qubits']:,}\n"
+            f"W applications: {logical['num_w_applications']:,}\n"
+            f"Projector rotations: {logical['num_projector_rotations']:,}\n"
+            f"Clifford gates: {logical['clifford_gate_count']:,}\n"
+            f"T/T-dagger gates: {logical['t_count']:,}\n"
+            "The supplied baseline does not include dense verification metadata.\n"
+        )
+    (logical_dir / "inversion_resource_report.txt").write_text(report)
