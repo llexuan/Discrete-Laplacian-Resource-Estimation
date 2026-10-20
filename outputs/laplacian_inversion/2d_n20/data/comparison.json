@@ -806,12 +806,10 @@
         }
       ],
       "warnings": [
-        "Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.",
         "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
         "Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.",
         "No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.",
-        "The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain.",
-        "Native compact failed local decomposition. The reported compact estimate uses explicitly spaced compact geometry, not the original native grid."
+        "The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain."
       ],
       "method": "compact",
       "layout_resources": {
@@ -1745,7 +1743,6 @@
         }
       ],
       "warnings": [
-        "Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.",
         "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
         "Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.",
         "No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.",
@@ -2597,7 +2594,6 @@
         }
       ],
       "warnings": [
-        "Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.",
         "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
         "Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.",
         "No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.",

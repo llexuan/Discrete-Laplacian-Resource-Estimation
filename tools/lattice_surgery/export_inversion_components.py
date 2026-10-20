@@ -77,7 +77,11 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
         )
 
     eps = logical["eps_per_rotation"]
-    walk = build_w_operator(n, dims, synthesis_eps=eps if dims == 3 else None)
+    selector_eps = (
+        logical["walk_contribution"]["per_w"]["rotation_synthesis"]["eps_per_rotation"]
+        if dims == 3 else None
+    )
+    walk = build_w_operator(n, dims, synthesis_eps=selector_eps)
     emit(
         "W",
         walk,

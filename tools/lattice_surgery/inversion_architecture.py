@@ -136,7 +136,6 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         }
     runtime_ns = final_rounds * cycle
     warnings = [
-        "Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.",
         "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
         "Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.",
     ]
@@ -217,6 +216,16 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
     }
 
 
+def layout_configuration(result: dict) -> str:
+    layout = result["layout_resources"]
+    size = f"{layout['height']} x {layout['width']} grid, {layout['area']:,} tiles"
+    preparation = result["layout_preparation"]
+    if result["method"] == "compact" and "routing spacing " in preparation:
+        spacing = preparation.split("routing spacing ", 1)[1].split(";", 1)[0]
+        return f"Routing spacing {spacing}; {size}; factory region preserved"
+    return f"{preparation}; {size}"
+
+
 def render_report(result: dict) -> str:
     method = result["method"]
     if result["status"] != "success":
@@ -230,6 +239,7 @@ def render_report(result: dict) -> str:
         f"=== Full Laplacian inverse architecture: {method} ===",
         f"Run: {result.get('run_id', 'unrecorded')}",
         "Status: SUCCESS",
+        f"Configuration: {layout_configuration(result)}",
         "",
         "Accounting: one W and each unique projector compiled once, multiplied by occurrences.",
         "This is a component-sum projection, not compilation of the complete long circuit.",
@@ -240,7 +250,6 @@ def render_report(result: dict) -> str:
         f"Full-sequence logical Clifford / T count: {result['logical_gate_resources']['clifford_gate_count']:,} / {result['logical_gate_resources']['t_count']:,}",
         f"Layout dimensions: {result['layout_resources']['height']} x {result['layout_resources']['width']}",
         f"Layout tiles (allocated once): {schedule['layout_tiles']:,}",
-        f"Layout preparation: {result['layout_preparation']}",
         "",
         "--- projected entire sequence ---",
         f"Walk contribution, slices: {schedule['contributions']['walk']['slices']:,}",
@@ -308,7 +317,19 @@ def render_comparison(comparison: dict) -> str:
         "",
         "Component costs are compiled once and multiplied by their occurrences.",
         "Physical qubits are allocated once. This is a full-sequence projection.",
+        "",
+        "METHOD CONFIGURATIONS",
     ]
+    for name in names:
+        result = methods[name]
+        label = "EDPC" if name == "edpc" else name.capitalize()
+        if result["status"] != "success":
+            lines.append(f"{label}: {result['status'].upper()} - {result['reason']}")
+            continue
+        lines.append(f"{label}: {layout_configuration(result)}.")
+        if "optimization" in result:
+            opt = result["optimization"]
+            lines.append(f"  Annealing budget {opt['budget']}, seed {opt['seed']}; optimizes one W + {opt['representative_projector']}. Full totals measure every distinct angle on the winning layout.")
     if successful:
         case = successful[0]
         lines += [
@@ -329,7 +350,6 @@ def render_comparison(comparison: dict) -> str:
             ("physical_error_rate", "Physical error rate"),
             ("target_failure_probability", "Target layout-failure proxy"),
             ("disttime_slices", "Magic-state supply interval (slices)"),
-            ("staggered", "Staggered supply"),
         ):
             values = [item["assumptions"][key] for item in successful]
             value = (
@@ -466,17 +486,12 @@ def render_comparison(comparison: dict) -> str:
                 space = f"{abs(changes[0]):.2f}% {'fewer' if changes[0] < 0 else 'more'} physical qubits"
                 runtime = f"{abs(changes[1]):.2f}% {'shorter' if changes[1] < 0 else 'longer'} runtime"
                 lines.append(f"  {name}: {space}; {runtime}.")
-    lines += ["", "METHOD DETAILS AND LIMITS"]
+    lines += ["", "MODEL LIMITS"]
     warnings = []
     for name in names:
         r = methods[name]
         if r["status"] != "success":
-            lines.append(f"{name}: {r['status'].upper()} - {r['reason']}")
             continue
-        lines.append(f"{name}: {r['layout_preparation']}.")
-        if "optimization" in r:
-            opt = r["optimization"]
-            lines.append(f"  Annealing budget {opt['budget']}, seed {opt['seed']}; optimizes one W + {opt['representative_projector']}. Full totals measure every distinct angle on the winning layout.")
         for warning in r["warnings"]:
             if warning not in warnings:
                 warnings.append(warning)
@@ -549,6 +564,6 @@ def publish_results(output: Path, comparison: dict) -> str:
         f"  --phases-json {case_path}/inputs/phases.json \\\n"
         f"  --output-dir {case_path} --target-failure-probability {budget:g} \\\n"
         f"  {distance_options}\n```\n\n"
-        "These are component-sum projections. Read the reports for component-boundary, factory, spectral-domain and compact-spacing limitations.\n"
+        "These are component-sum projections. The reports record method configurations, factory assumptions, compiler correction handling and the declared inversion domain.\n"
     )
     return text

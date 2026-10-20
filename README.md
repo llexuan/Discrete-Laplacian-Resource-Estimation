@@ -246,6 +246,37 @@ Magic-state supplies remain abstract; physical factories require explicit
 throughput and footprint assumptions. See [the architecture workflow](tools/lattice_surgery/README.md#full-inverse-component-architecture)
 for controls, replay data and model limits.
 
+
+### Full 3D inverse at n=20
+
+The full 3D example uses the same phase sequence and synthesis budget as 2D,
+with 66 resident logical qubits. Its logical estimate includes all four selector
+rotations inside every W. Read
+[the 3D architecture comparison](outputs/laplacian_inversion/3d_n20/comparison_report.txt)
+and [the case README](outputs/laplacian_inversion/3d_n20/README.md).
+
+To regenerate its logical baseline and architecture reports independently of 2D:
+
+```bash
+PYTHONPATH=src .venv/bin/python -m laplacian_qsvt.laplacian.laplacian_inversion_encode \
+  --dims 3 --verify-n 1 --target-n 20 --synthesis-tol 1e-8 \
+  --phases-json outputs/laplacian_inversion/3d_n20/inputs/phases.json \
+  --save-prefix inversion_3d_n20 \
+  --output-circuits-dir outputs/laplacian_inversion/3d_n20/inputs/verification \
+  --output-block-metrics outputs/laplacian_inversion/3d_n20/logical/verification_metrics.json \
+  --output-resource-metrics outputs/laplacian_inversion/3d_n20/logical/inversion_resource_metrics.json \
+  --output-resource-report outputs/laplacian_inversion/3d_n20/logical/inversion_resource_report.txt
+
+PYTHONPATH=src .venv/bin/python tools/lattice_surgery/run_inversion_architecture.py \
+  --logical-metrics outputs/laplacian_inversion/3d_n20/logical/inversion_resource_metrics.json \
+  --phases-json outputs/laplacian_inversion/3d_n20/inputs/phases.json \
+  --budget 32 --seed 61 --target-failure-probability 0.01
+```
+
+The saved phase sequence still has kappa=2.5. These costs cover the complete
+selected QSP sequence on its declared inversion domain; the logical report
+records the 3D spectral gap and kappa needed for all nonzero modes.
+
 ## Spectral-gap and kappa warning
 
 The periodic Laplacian has a zero mode and cannot be inverted on the complete

@@ -225,9 +225,15 @@ class CompositionTests(unittest.TestCase):
 )
 class NativeInverseTests(unittest.TestCase):
     def test_all_three_methods_produce_component_based_full_sequence_reports(self):
+        self.check_all_methods(dims=2)
+
+    def test_3d_all_three_methods_produce_full_sequence_reports(self):
+        self.check_all_methods(dims=3)
+
+    def check_all_methods(self, dims):
         with tempfile.TemporaryDirectory() as tmp:
             directory = Path(tmp)
-            source, phases, _ = small_inputs(directory)
+            source, phases, _ = small_inputs(directory, dims=dims)
             output = directory / "architecture"
             result = subprocess.run(
                 [
@@ -250,7 +256,7 @@ class NativeInverseTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             comparison = json.loads((output / "data/comparison.json").read_text())
             text = (output / "comparison_report.txt").read_text()
-            for label in ("EXAMPLE", "SHARED ASSUMPTIONS", "RESULTS", "INTERPRETATION", "METHOD DETAILS AND LIMITS"):
+            for label in ("METHOD CONFIGURATIONS", "EXAMPLE", "SHARED ASSUMPTIONS", "RESULTS", "INTERPRETATION", "MODEL LIMITS"):
                 self.assertIn(label, text)
             self.assertTrue((output / "logical/inversion_resource_report.txt").is_file())
             self.assertEqual((output / "logical/inversion_resource_metrics.json").read_bytes(), source.read_bytes())
@@ -270,7 +276,8 @@ class NativeInverseTests(unittest.TestCase):
                 self.assertEqual(report["num_w_applications"], 2)
                 self.assertEqual(report["num_projector_rotations"], 3)
                 self.assertEqual(report["unique_projectors"], 2)
-                self.assertEqual(report["logical_qubits"], 7)
+                self.assertEqual(report["dimensions"], dims)
+                self.assertEqual(report["logical_qubits"], 7 if dims == 2 else 9)
                 self.assertEqual(
                     report["schedule_projection"]["slices"],
                     sum(

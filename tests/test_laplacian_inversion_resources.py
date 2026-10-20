@@ -10,11 +10,27 @@ from qiskit.quantum_info import Operator
 from laplacian_qsvt.laplacian.laplacian_inversion_encode import (
     build_projector_rotation,
     build_projector_rotation_clifford_t,
+    build_qsp_sequence,
     estimate_full_qsp_resources,
+    extract_block,
+    extract_qsp_block,
 )
+from laplacian_qsvt.laplacian.laplacian_w_resource import build_w_operator
 
 
 class LaplacianInversionResourceTests(unittest.TestCase):
+    def test_cached_walk_verification_matches_direct_full_sequence(self) -> None:
+        phases = [0.13, -0.24, 0.31]
+        for dims, m in ((2, 3), (3, 4)):
+            with self.subTest(dims=dims):
+                walk = build_w_operator(1, dims)
+                sequence = build_qsp_sequence(walk.to_gate(), phases, m, dims)
+                np.testing.assert_allclose(
+                    extract_qsp_block(walk, phases, m, dims),
+                    extract_block(sequence, m, dims),
+                    rtol=0.0, atol=1e-12,
+                )
+
     def test_projector_rotation_matches_dense_reference(self) -> None:
         phi = 0.312
         epsilon = 1e-6
@@ -75,6 +91,12 @@ class LaplacianInversionResourceTests(unittest.TestCase):
         self.assertEqual(estimate["logical_qubits"], 9)
         self.assertIsNotNone(
             estimate["walk_contribution"]["per_w"]["rotation_synthesis"]
+        )
+        self.assertLessEqual(estimate["selector_eps_per_rotation"], estimate["eps_per_rotation"])
+        self.assertLessEqual(
+            estimate["num_w_selector_rotations"] * estimate["selector_eps_per_rotation"]
+            + estimate["num_projector_rotations"] * estimate["eps_per_rotation"],
+            estimate["synthesis_tolerance"],
         )
         self.assertLessEqual(
             estimate["measured_synthesis_error_bound"],

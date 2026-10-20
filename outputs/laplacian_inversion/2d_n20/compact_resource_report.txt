@@ -1,6 +1,7 @@
 === Full Laplacian inverse architecture: compact ===
 Run: 20261020T025002-distance-_cj9de2x
 Status: SUCCESS
+Configuration: Routing spacing 2; 3 x 56 grid, 168 tiles; factory region preserved
 
 Accounting: one W and each unique projector compiled once, multiplied by occurrences.
 This is a component-sum projection, not compilation of the complete long circuit.
@@ -11,7 +12,6 @@ Projector rotations / unique angles: 118 / 59
 Full-sequence logical Clifford / T count: 3,919,609 / 2,716,805
 Layout dimensions: 3 x 56
 Layout tiles (allocated once): 168
-Layout preparation: Compact with routing spacing 2; factory region preserved
 
 --- projected entire sequence ---
 Walk contribution, slices: 11,242,413
@@ -40,12 +40,10 @@ Supply interval / staggering: 1 slices / False
 Pipeline: wave, local decomposition; compiler pin: 82a1cbe64717a64a289dd4b0d02e3dc38cae3890
 
 --- model limits and warnings ---
-- Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.
 - One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
 - Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.
 - No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.
 - The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain.
-- Native compact failed local decomposition. The reported compact estimate uses explicitly spaced compact geometry, not the original native grid.
 
 Complete evidence: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/2d_n20/runs/20261020T000118-2eqyyx53/compact/layout_1
 

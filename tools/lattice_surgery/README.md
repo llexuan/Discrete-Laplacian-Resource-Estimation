@@ -176,6 +176,25 @@ exports are reused only when logical JSON, phase and QASM hashes match.
 `--rebuild-components` forces export. Phase order does not affect this
 component-sum model when multiplicities are unchanged.
 
+
+The full `3d_n20` example uses a separate logical baseline and phase snapshot:
+
+```bash
+PYTHONPATH=src .venv/bin/python tools/lattice_surgery/run_inversion_architecture.py \
+  --logical-metrics outputs/laplacian_inversion/3d_n20/logical/inversion_resource_metrics.json \
+  --phases-json outputs/laplacian_inversion/3d_n20/inputs/phases.json \
+  --budget 32 --seed 61 --target-failure-probability 0.01
+```
+
+See [the root README](../../README.md#full-3d-inverse-at-n20) for the logical
+baseline generation command. Small-size verification propagates the complete
+phase sequence using one cached W matrix; target-size counts still use explicit
+Clifford+T components. The 3D selector synthesis allowance is conservatively
+rounded down to a decimal decade to avoid pathological pyLIQTR grid searches.
+The actual selector tolerance is recorded in the logical JSON/TXT and used again
+by component export. Weighted synthesis error remains within the requested global
+budget; no change to the 2D phase sequence or saved logical baseline is needed.
+
 `export_inversion_components.py` uses the same Clifford+T basis and decomposition
 as the logical counters. It exports W and each unique synthesized projector,
 preserving inverse gates and synthesis tolerances. Projector predicates map to

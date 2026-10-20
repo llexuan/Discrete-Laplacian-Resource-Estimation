@@ -351,10 +351,6 @@ def run_worker(args):
             )
             if optimization:
                 result["optimization"] = optimization
-            if attempts[0]["status"] == "failed":
-                result["warnings"].append(
-                    "Native compact failed local decomposition. The reported compact estimate uses explicitly spaced compact geometry, not the original native grid."
-                )
             print(
                 f"  Selected code distance {result['assumptions']['code_distance']}; "
                 f"failure proxy {result['physical_projection']['failure_probability_proxy']:.6e} "

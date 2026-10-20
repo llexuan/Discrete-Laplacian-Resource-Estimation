@@ -1,0 +1,118 @@
+=== Full Laplacian inverse architecture: annealed ===
+Run: 20261020T045955-ltmaue06
+Status: SUCCESS
+Configuration: Annealed shared layout, optimized on one W + representative projector; 20 x 19 grid, 380 tiles
+
+Accounting: one W and each unique projector compiled once, multiplied by occurrences.
+This is a component-sum projection, not compilation of the complete long circuit.
+Dimensions / n per axis: 3 / 20
+Resident logical qubits: 66
+W applications: 117
+Projector rotations / unique angles: 118 / 59
+Full-sequence logical Clifford / T count: 6,345,961 / 4,384,645
+Layout dimensions: 20 x 19
+Layout tiles (allocated once): 380
+
+--- projected entire sequence ---
+Walk contribution, slices: 11,047,725
+Projector contribution, slices: 143,128
+Total component-sum slices: 11,190,853
+Tile-slices: 4,252,524,140
+QEC rounds: 257,389,619
+Resident layout physical qubits: 402,040
+Total physical qubits (allocated once): 402,040
+Projected core time: 257.389619 s
+Projected time with optional factory bound: 257.389619 s
+Space-time cost: 1.034809224e+17 ns*qubits
+Magic-state requests: 4,384,645
+Heuristic failure probability proxy: 9.780806e-03
+Shared failure budget: <= 1.000000e-02
+Meets failure budget: Yes
+Minimum odd distance under this proxy: 23
+
+--- assumptions ---
+Code distance: 23
+Distance selection: Smallest odd distance for this method satisfying the shared layout-failure budget and requested minimum; physical factory errors are excluded.
+QEC cycle time: 1000 ns
+Physical qubits/tile: 2 * d^2
+Physical error rate: 1.000000e-03
+Supply interval / staggering: 1 slices / False
+Pipeline: wave, local decomposition; compiler pin: 82a1cbe64717a64a289dd4b0d02e3dc38cae3890
+
+--- simulated annealing ---
+Budget / seed: 32 / 61
+Search objective: area * slices of one W followed by the largest-T projector; final totals use every angle's measured cost.
+Representative projector: R_000
+Search time: 61.365 s
+Replay verified: True
+
+--- model limits and warnings ---
+- One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
+- Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.
+- No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.
+- The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain.
+
+Complete evidence: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/3d_n20/runs/20261020T045955-ltmaue06/annealed/layout_0
+
+--- appendix: component measurements ---
+Component      Occurrences     Slices each    Weighted slices   T requests each
+W                      117          94,425         11,047,725            37,289
+R_000                    2           1,314              2,628               198
+R_001                    2           1,266              2,532               192
+R_002                    2           1,274              2,548               192
+R_003                    2           1,210              2,420               184
+R_004                    2           1,214              2,428               184
+R_005                    2           1,178              2,356               182
+R_006                    2           1,208              2,416               184
+R_007                    2           1,248              2,496               188
+R_008                    2           1,214              2,428               184
+R_009                    2           1,182              2,364               184
+R_010                    2           1,204              2,408               184
+R_011                    2           1,196              2,392               184
+R_012                    2           1,228              2,456               186
+R_013                    2           1,198              2,396               184
+R_014                    2           1,186              2,372               182
+R_015                    2           1,218              2,436               186
+R_016                    2           1,230              2,460               186
+R_017                    2           1,224              2,448               186
+R_018                    2           1,182              2,364               184
+R_019                    2           1,218              2,436               184
+R_020                    2           1,226              2,452               186
+R_021                    2           1,200              2,400               184
+R_022                    2           1,192              2,384               184
+R_023                    2           1,210              2,420               184
+R_024                    2           1,218              2,436               186
+R_025                    2           1,220              2,440               188
+R_026                    2           1,198              2,396               180
+R_027                    2           1,198              2,396               182
+R_028                    2           1,212              2,424               186
+R_029                    2           1,210              2,420               184
+R_030                    2           1,228              2,456               184
+R_031                    2           1,232              2,464               186
+R_032                    2           1,198              2,396               184
+R_033                    2           1,198              2,396               184
+R_034                    2           1,180              2,360               182
+R_035                    2           1,200              2,400               186
+R_036                    2           1,220              2,440               186
+R_037                    2           1,166              2,332               180
+R_038                    2           1,250              2,500               188
+R_039                    2           1,236              2,472               186
+R_040                    2           1,224              2,448               186
+R_041                    2           1,232              2,464               186
+R_042                    2           1,210              2,420               184
+R_043                    2           1,194              2,388               186
+R_044                    2           1,214              2,428               186
+R_045                    2           1,206              2,412               184
+R_046                    2           1,208              2,416               186
+R_047                    2           1,198              2,396               184
+R_048                    2           1,240              2,480               186
+R_049                    2           1,196              2,392               182
+R_050                    2           1,214              2,428               186
+R_051                    2           1,242              2,484               186
+R_052                    2           1,216              2,432               186
+R_053                    2           1,240              2,480               186
+R_054                    2           1,188              2,376               182
+R_055                    2           1,142              2,284               178
+R_056                    2           1,250              2,500               188
+R_057                    2           1,188              2,376               184
+R_058                    2           1,178              2,356               182

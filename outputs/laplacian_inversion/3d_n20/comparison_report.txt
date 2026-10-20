@@ -1,0 +1,70 @@
+FULL LAPLACIAN INVERSE: ARCHITECTURE COMPARISON
+Run: 20261020T045955-ltmaue06
+Status: SUCCESS
+
+Component costs are compiled once and multiplied by their occurrences.
+Physical qubits are allocated once. This is a full-sequence projection.
+
+METHOD CONFIGURATIONS
+Annealed: Annealed shared layout, optimized on one W + representative projector; 20 x 19 grid, 380 tiles.
+  Annealing budget 32, seed 61; optimizes one W + R_000. Full totals measure every distinct angle on the winning layout.
+Compact: Routing spacing 2; 3 x 76 grid, 228 tiles; factory region preserved.
+EDPC: Native EDPC; 21 x 21 grid, 441 tiles.
+
+EXAMPLE
+Dimensions: 3; n per axis: 20 (1,048,576 grid points per axis)
+Sequence degree / W applications: 117
+Projector rotations: 118; distinct angles: 59
+Resident logical qubits: 66
+Logical Clifford gates: 6,345,961
+Logical T/T-dagger gates: 4,384,645
+
+SHARED ASSUMPTIONS
+QEC cycle time (ns): 1000
+Physical qubits per tile / d^2: 2
+Physical error rate: 0.001
+Target layout-failure proxy: 0.01
+Magic-state supply interval (slices): 1
+Code distance policy: each method's minimum admissible odd distance for the shared failure budget
+Failure proxy: min(1, tiles * slices * d * 0.1 * (100*p_phys)^((d+1)/2)).
+Physical factory model: not supplied; abstract compiler sources
+
+RESULTS
++------------------------+-----------------+-----------------+-----------------+
+| Metric                 |    Annealed     |     Compact     |      EDPC       |
++------------------------+-----------------+-----------------+-----------------+
+| Layout tiles           |             380 |             228 |             441 |
+| Slices for one W       |          94,425 |         155,798 |          93,087 |
+| All walk slices        |      11,047,725 |      18,228,366 |      10,891,179 |
+| All rotation slices    |         143,128 |         165,468 |         143,128 |
+| Total projected slices |      11,190,853 |      18,393,834 |      11,034,307 |
++------------------------+-----------------+-----------------+-----------------+
+| Code distance          |              23 |              23 |              25 |
+| Physical qubits        |         402,040 |         241,224 |         551,250 |
+| Projected runtime (s)  |      257.389619 |      423.058182 |      275.857675 |
+| Space-time (qubit*s)   | 103,480,922.423 | 102,051,786.895 | 152,066,543.344 |
+| Failure budget (<=)    |    1.000000e-02 |    1.000000e-02 |    1.000000e-02 |
+| Layout-failure proxy   |    9.780806e-03 |    9.645727e-03 |    1.216532e-03 |
+| Meets failure budget   |             Yes |             Yes |             Yes |
++------------------------+-----------------+-----------------+-----------------+
+
+INTERPRETATION (among successful methods in this run)
+Fewest physical qubits: compact.
+Shortest projected runtime: annealed.
+Smallest space-time cost: compact.
+Relative to EDPC:
+  annealed: 27.07% fewer physical qubits; 6.69% shorter runtime.
+  compact: 56.24% fewer physical qubits; 53.36% longer runtime.
+
+MODEL LIMITS
+- One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
+- Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.
+- No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.
+- The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain.
+
+FILES
+Logical baseline: logical/inversion_resource_report.txt
+Method reports: annealed_resource_report.txt, compact_resource_report.txt, EDPC_resource_report.txt
+Machine-readable results: data/
+Inputs and manifest: inputs/
+Complete run evidence: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/3d_n20/runs/20261020T045955-ltmaue06

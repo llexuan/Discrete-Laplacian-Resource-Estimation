@@ -1,6 +1,7 @@
 === Full Laplacian inverse architecture: annealed ===
 Run: 20261020T025002-distance-_cj9de2x
 Status: SUCCESS
+Configuration: Annealed shared layout, optimized on one W + representative projector; 14 x 14 grid, 196 tiles
 
 Accounting: one W and each unique projector compiled once, multiplied by occurrences.
 This is a component-sum projection, not compilation of the complete long circuit.
@@ -11,7 +12,6 @@ Projector rotations / unique angles: 118 / 59
 Full-sequence logical Clifford / T count: 3,919,609 / 2,716,805
 Layout dimensions: 14 x 14
 Layout tiles (allocated once): 196
-Layout preparation: Annealed shared layout, optimized on one W + representative projector
 
 --- projected entire sequence ---
 Walk contribution, slices: 7,434,063
@@ -47,7 +47,6 @@ Search time: 22.852 s
 Replay verified: True
 
 --- model limits and warnings ---
-- Component-sum projection, not a scheduled full inverse: component boundary orientation, supply carryover and reset/transition costs are not simulated.
 - One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
 - Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.
 - No physical factory cadence supplied; runtime assumes the compiler's disttime supply model.

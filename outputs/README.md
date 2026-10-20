@@ -1,11 +1,13 @@
 # Generated outputs
 
-For the saved full 2D inverse, start with
-[the architecture comparison](laplacian_inversion/2d_n20/comparison_report.txt).
+For the saved full inverse examples, start with the
+[2D comparison](laplacian_inversion/2d_n20/comparison_report.txt) or
+[3D comparison](laplacian_inversion/3d_n20/comparison_report.txt).
 
 | Folder | Contents |
 | --- | --- |
 | [laplacian_inversion/2d_n20/](laplacian_inversion/2d_n20/README.md) | Full inverse: annealed, compact, EDPC and comparison reports; logical baseline; supporting data and inputs. |
+| [laplacian_inversion/3d_n20/](laplacian_inversion/3d_n20/README.md) | Full 3D inverse at n=20: the same three methods, comparison, logical baseline and reproducibility inputs. |
 | [mini_circuit/](mini_circuit/README.md) | Small QASM example: three layout reports, comparison, LLI and optimized layout. |
 | `metrics/` | Logical estimator outputs and correctness checks, including single-W 2D/3D reports. Each architecture case keeps its own exact baseline under `logical/`. |
 | `phases/` | QSP phase lists and polynomial metadata. |

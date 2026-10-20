@@ -380,11 +380,15 @@ def estimate_full_qsp_resources(
     num_approximated_rotations = num_phases + num_w_rotations
     eps_per_rotation = synthesis_tol / num_approximated_rotations
 
-    # estimate_w_resources divides a 3D per-W PREP tolerance among its four
-    # selector rotations. Passing 4*eps_per makes every approximation in the
-    # complete QSP sequence use the same conservative error allocation.
+    # Some fractional tolerances trigger pathological pyLIQTR grid searches for
+    # the 3D selector angle. Round its allowance DOWN to a decimal decade, keeping
+    # the original full-sequence budget conservative. Projectors retain eps_per.
+    selector_eps = (
+        min(eps_per_rotation, 10.0 ** math.floor(math.log10(eps_per_rotation)))
+        if rotations_per_w else None
+    )
     w_prep_tol = (
-        rotations_per_w * eps_per_rotation
+        rotations_per_w * selector_eps
         if rotations_per_w
         else synthesis_tol
     )
@@ -430,6 +434,7 @@ def estimate_full_qsp_resources(
         "num_approximated_rotations": num_approximated_rotations,
         "synthesis_tolerance": synthesis_tol,
         "eps_per_rotation": eps_per_rotation,
+        "selector_eps_per_rotation": selector_eps,
         "measured_synthesis_error_bound": measured_synthesis_bound,
         "logical_qubits": int(w_resources["logical_qubits"]) + 1,
         "phase_flag_qubits": 1,
@@ -467,6 +472,31 @@ def extract_block(full_qsp: QuantumCircuit, m: int, n_sys: int) -> np.ndarray:
     right = np.kron(i_sys, sig)
     left = np.kron(i_sys, sig.conj().T)
     return left @ U @ right
+
+
+def extract_qsp_block(
+    walk: QuantumCircuit, phases: list[float], m: int, n_sys: int
+) -> np.ndarray:
+    """Verify the full small-size sequence while constructing W's matrix once.
+
+    Propagate only the signal-subspace input columns instead of reconstructing
+    the complete unitary for every occurrence of the same walk circuit.
+    """
+    signal = signal_state(m)[:, None]
+    system_size = 2**n_sys
+    signal_size = 2 ** (1 + m)
+    inputs = np.kron(np.eye(system_size, dtype=complex), signal)
+    states = inputs.copy()
+    walk_matrix = Operator(walk).data
+    for index, phi in enumerate(phases):
+        rotation = Operator(build_projector_rotation(phi, m)).data
+        states = np.einsum(
+            "ab,ibj->iaj", rotation,
+            states.reshape(system_size, signal_size, system_size),
+        ).reshape(inputs.shape)
+        if index + 1 < len(phases):
+            states = walk_matrix @ states
+    return inputs.conj().T @ states
 
 
 def render_resource_report(metrics: dict) -> str:
@@ -540,6 +570,10 @@ def render_resource_report(metrics: dict) -> str:
             f"Synthesized rotations : {logical['num_approximated_rotations']:,}",
             f"Selector rotations in walks: {logical['num_w_selector_rotations']:,}",
             f"Tolerance per rotation: {logical['eps_per_rotation']:.6e}",
+            *(
+                [f"3D selector tolerance per rotation: {one_walk['rotation_synthesis']['eps_per_rotation']:.6e}"]
+                if one_walk["rotation_synthesis"] is not None else []
+            ),
             "",
             "--- inversion domain and spectral coverage ---",
             f"Kappa                 : {metrics['kappa']:g}",
@@ -617,6 +651,12 @@ def main() -> None:
         help="Prefix for saved ASCII circuit files.",
     )
     parser.add_argument(
+        "--output-circuits-dir",
+        type=Path,
+        default=CIRCUITS_DIR,
+        help="Folder for small verification circuit drawings (default: outputs/circuits).",
+    )
+    parser.add_argument(
         "--output-block-metrics",
         type=Path,
         default=METRICS_DIR / "block_metrics_laplacian.json",
@@ -688,9 +728,9 @@ def main() -> None:
     poly_scale = 1.0 / (2.0 * kappa) if kappa else float("nan")
 
     # Small ideal circuit for dense verification only.
+    print(f"Verifying the full {dims}D QSP sequence at n={verify_n}...", flush=True)
     u_l = build_scalable_u_l(verify_n, dims)
     w = build_scalable_w_operator(verify_n, dims)
-    full_qsp = build_qsp_sequence(w.to_gate(label="W"), phases_used, m, n_sys)
 
     # Classical references.
     lap = scaled_nd_laplacian(verify_n, dims)
@@ -708,7 +748,7 @@ def main() -> None:
     # QSVT readout: P(A) appears in the imaginary part; sign fixed by parity.
     par = parity if parity is not None else (effective_degree % 2)
     sign = -1.0 if (par % 2 == 1) else 1.0
-    qsp_block = extract_block(full_qsp, m, n_sys)
+    qsp_block = extract_qsp_block(w, phases_used, m, n_sys)
     p_recovered = sign * qsp_block.imag.astype(complex)
 
     block_err = p_recovered - poly_target_matrix.real
@@ -717,6 +757,7 @@ def main() -> None:
 
     # Target-size resources are composed without constructing the enormous full
     # circuit: every W and every projector rotation is still counted explicitly.
+    print(f"Estimating {dims}D logical component resources at n={target_n}...", flush=True)
     resource_estimate = estimate_full_qsp_resources(
         phases_used, dims, target_n, synthesis_tol
     )
@@ -849,8 +890,8 @@ def main() -> None:
         render_resource_report(resource_metrics), encoding="utf-8"
     )
 
-    u_l_path = CIRCUITS_DIR / f"laplacian_{args.save_prefix}_U_L.txt"
-    w_path = CIRCUITS_DIR / f"laplacian_{args.save_prefix}_W.txt"
+    u_l_path = args.output_circuits_dir / f"laplacian_{args.save_prefix}_U_L.txt"
+    w_path = args.output_circuits_dir / f"laplacian_{args.save_prefix}_W.txt"
     k_line = (
         f"  q_3..q_{2 + K} = k selector register (K = {K})\n" if K > 0 else ""
     )
@@ -891,7 +932,7 @@ def main() -> None:
     # QSP/QSVT phase sequence drawing. The full sequence (all phases + walks) is
     # far too wide to read, so draw a faithful but truncated illustrative slice
     # built by the same build_qsp_sequence routine.
-    qsp_path = CIRCUITS_DIR / f"laplacian_{args.save_prefix}_QSP.txt"
+    qsp_path = args.output_circuits_dir / f"laplacian_{args.save_prefix}_QSP.txt"
     n_illus = min(4, len(phases_used))
     qsp_illus = build_qsp_sequence(
         w.to_gate(label="W"), phases_used[:n_illus], m, n_sys
