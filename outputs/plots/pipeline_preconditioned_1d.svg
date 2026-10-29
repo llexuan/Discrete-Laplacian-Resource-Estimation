@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="700" viewBox="0 0 1100 700"
+     font-family="DejaVu Sans, Helvetica Neue, Arial, sans-serif">
+<defs>
+  <marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,0 L10,5 L0,10 z" fill="#4f6474"/>
+  </marker>
+</defs>
+<rect width="1100" height="700" fill="#ffffff"/>
+<text x="20" y="30" font-size="12.5" fill="#0f8a7a" font-weight="bold" letter-spacing="0.6">DISCRETE LAPLACIAN / QSVT RESOURCE ESTIMATION — PRECONDITIONED UPDATE</text>
+<text x="20" y="68" font-size="29" fill="#12324a" font-weight="bold" >Preconditioned 1D Laplacian: frequency register to gate costs</text>
+<text x="20" y="96" font-size="13.5" fill="#5b6b78" font-weight="normal" >The block encoding U<tspan dy="3.8" font-size="9.7">X</tspan><tspan dy="-3.8">​</tspan> feeds either a nested sinc<tspan dy="-5.1" font-size="9.7">2</tspan><tspan dy="5.1">​</tspan> + P<tspan dy="3.8" font-size="9.7">MI</tspan><tspan dy="-3.8">​</tspan> sequence or one direct inverse polynomial (pending PI decision).</text>
+<rect x="20" y="118" width="318" height="116" rx="7" fill="#eaf2f9" stroke="#b7c9d9" stroke-width="1.4"/>
+<text x="36" y="146" font-size="16" fill="#12324a" font-weight="bold" >1  Define the operator</text>
+<text x="36" y="174" font-size="12.5" fill="#2b3c4d" font-weight="normal" >1D: q system qubits, N = 2<tspan dy="-4.8" font-size="9.0">q</tspan><tspan dy="4.8">​</tspan> grid points</text>
+<text x="36" y="194" font-size="12.5" fill="#2b3c4d" font-weight="normal" >L<tspan dy="3.5" font-size="9.0">cond</tspan><tspan dy="-3.5">​</tspan> eigenvalues sinc<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan>(πm<tspan dy="3.5" font-size="9.0">k</tspan><tspan dy="-3.5">​</tspan>/N), m<tspan dy="3.5" font-size="9.0">k</tspan><tspan dy="-3.5">​</tspan> = min(k, N−k)</text>
+<text x="36" y="214" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Spectrum in [4/π<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan>, 1]; κ ≤ 2.47 for every N</text>
+<rect x="391" y="118" width="318" height="116" rx="7" fill="#eaf2f9" stroke="#b7c9d9" stroke-width="1.4"/>
+<text x="407" y="146" font-size="16" fill="#12324a" font-weight="bold" >2  Build the block encoding</text>
+<text x="407" y="174" font-size="12.5" fill="#2b3c4d" font-weight="normal" >QFT moves the register to the frequency basis |k⟩</text>
+<text x="407" y="194" font-size="12.5" fill="#2b3c4d" font-weight="normal" >U<tspan dy="3.5" font-size="9.0">X</tspan><tspan dy="-3.5">​</tspan> = PREP<tspan dy="-4.8" font-size="9.0">†</tspan><tspan dy="4.8">​</tspan> · SELECT · PREP → diag(2m<tspan dy="3.5" font-size="9.0">k</tspan><tspan dy="-3.5">​</tspan>/N)</text>
+<text x="407" y="214" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Shared ancilla: 2 + ⌈log<tspan dy="3.5" font-size="9.0">2</tspan><tspan dy="-3.5">​</tspan>(q−1)⌉ ancillas, α = 1</text>
+<rect x="762" y="118" width="318" height="116" rx="7" fill="#eaf2f9" stroke="#b7c9d9" stroke-width="1.4"/>
+<text x="778" y="146" font-size="16" fill="#12324a" font-weight="bold" >3  Construct the walk W</text>
+<text x="778" y="174" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Nested: inner sinc<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan> QSVT on U<tspan dy="3.5" font-size="9.0">X</tspan><tspan dy="-3.5">​</tspan> gives U<tspan dy="3.5" font-size="9.0">Lcond</tspan><tspan dy="-3.5">​</tspan></text>
+<text x="778" y="194" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Direct: walk built on U<tspan dy="3.5" font-size="9.0">X</tspan><tspan dy="-3.5">​</tspan> itself</text>
+<text x="778" y="214" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Signal projector covers PREP / SELECT ancillas</text>
+<rect x="20" y="272" width="318" height="116" rx="7" fill="#e7f4ef" stroke="#b5d3c7" stroke-width="1.4"/>
+<text x="36" y="300" font-size="16" fill="#12324a" font-weight="bold" >4  Choose the inverse target</text>
+<text x="36" y="328" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Nested: existing P<tspan dy="3.5" font-size="9.0">MI</tspan><tspan dy="-3.5">​</tspan> (κ = 2.5) applied to L<tspan dy="3.5" font-size="9.0">cond</tspan><tspan dy="-3.5">​</tspan></text>
+<text x="36" y="348" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Direct: h(θ) = θ<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan>/sin<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan>(πθ/2) = (4/π<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan>) L<tspan dy="3.5" font-size="9.0">cond</tspan><tspan dy="-3.5">​</tspan><tspan dy="-4.8" font-size="9.0">−1</tspan><tspan dy="4.8">​</tspan></text>
+<text x="36" y="368" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Zero mode excluded; all nonzero modes covered</text>
+<rect x="391" y="272" width="318" height="116" rx="7" fill="#e7f4ef" stroke="#b5d3c7" stroke-width="1.4"/>
+<text x="407" y="300" font-size="16" fill="#12324a" font-weight="bold" >5  Generate QSP phases</text>
+<text x="407" y="328" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Nested: 118 P<tspan dy="3.5" font-size="9.0">MI</tspan><tspan dy="-3.5">​</tspan> phases + inner sinc<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan> phases</text>
+<text x="407" y="348" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Direct: one even polynomial, degree ≈ 10–20</text>
+<text x="407" y="368" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Polynomial and synthesis errors budgeted together</text>
+<rect x="762" y="272" width="318" height="116" rx="7" fill="#eaf2f9" stroke="#b7c9d9" stroke-width="1.4"/>
+<text x="778" y="300" font-size="16" fill="#12324a" font-weight="bold" >6  Compose the inverse sequence</text>
+<text x="778" y="328" font-size="12.5" fill="#2b3c4d" font-weight="normal" >QFT → R(φ<tspan dy="3.5" font-size="9.0">0</tspan><tspan dy="-3.5">​</tspan>) → W → … → W → R(φ<tspan dy="3.5" font-size="9.0">r</tspan><tspan dy="-3.5">​</tspan>) → QFT<tspan dy="-4.8" font-size="9.0">†</tspan><tspan dy="4.8">​</tspan></text>
+<text x="778" y="348" font-size="12.5" fill="#2b3c4d" font-weight="normal" >r ≈ 117 × deg(sinc<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan>) nested; r ≈ 10–20 direct</text>
+<text x="778" y="368" font-size="12.5" fill="#2b3c4d" font-weight="normal" >QFT charged once, at the sequence boundaries</text>
+<rect x="20" y="426" width="318" height="116" rx="7" fill="#e7f4ef" stroke="#b5d3c7" stroke-width="1.4"/>
+<text x="36" y="454" font-size="16" fill="#12324a" font-weight="bold" >Verification at small N</text>
+<text x="36" y="482" font-size="12.5" fill="#2b3c4d" font-weight="normal" >N = 8, 16: U<tspan dy="3.5" font-size="9.0">X</tspan><tspan dy="-3.5">​</tspan> signal block = diag(2m<tspan dy="3.5" font-size="9.0">k</tspan><tspan dy="-3.5">​</tspan>/N)</text>
+<text x="36" y="502" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Polynomial response vs sinc<tspan dy="-4.8" font-size="9.0">2</tspan><tspan dy="4.8">​</tspan> or h(θ)</text>
+<text x="36" y="522" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Compare with the classical conditioned inverse</text>
+<rect x="391" y="426" width="318" height="116" rx="7" fill="#eaf2f9" stroke="#b7c9d9" stroke-width="1.4"/>
+<text x="407" y="454" font-size="16" fill="#12324a" font-weight="bold" >8  Report logical resources</text>
+<text x="407" y="482" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Logical qubits; Clifford count; T-count; depths</text>
+<text x="407" y="502" font-size="12.5" fill="#2b3c4d" font-weight="normal" >Labeled: 1D conditioned kernel, nonzero modes</text>
+<text x="407" y="522" font-size="12.5" fill="#2b3c4d" font-weight="normal" >QFT / U<tspan dy="3.5" font-size="9.0">X</tspan><tspan dy="-3.5">​</tspan> / projector breakdown; old L̃ as baseline</text>
+<rect x="762" y="426" width="318" height="116" rx="7" fill="#eaf2f9" stroke="#b7c9d9" stroke-width="1.4"/>
+<text x="778" y="454" font-size="16" fill="#12324a" font-weight="bold" >7  Compile to Clifford+T</text>
+<text x="778" y="482" font-size="12.5" fill="#2b3c4d" font-weight="normal" >QFT controlled phases and PREP R<tspan dy="3.5" font-size="9.0">y</tspan><tspan dy="-3.5">​</tspan> rotations</text>
+<text x="778" y="502" font-size="12.5" fill="#2b3c4d" font-weight="normal" >SELECT: J-controlled CNOTs (no shift MCX gates)</text>
+<text x="778" y="522" font-size="12.5" fill="#2b3c4d" font-weight="normal" >pyLIQTR synthesis of every arbitrary rotation</text>
+<line x1="344" y1="176.0" x2="383" y2="176.0" stroke="#4f6474" stroke-width="1.5" marker-end="url(#head)"/>
+<line x1="715" y1="176.0" x2="754" y2="176.0" stroke="#4f6474" stroke-width="1.5" marker-end="url(#head)"/>
+<line x1="921.0" y1="240" x2="921.0" y2="264" stroke="#4f6474" stroke-width="1.5" marker-end="url(#head)"/>
+<line x1="344" y1="330.0" x2="383" y2="330.0" stroke="#4f6474" stroke-width="1.5" marker-end="url(#head)"/>
+<line x1="715" y1="330.0" x2="754" y2="330.0" stroke="#4f6474" stroke-width="1.5" marker-end="url(#head)"/>
+<line x1="921.0" y1="394" x2="921.0" y2="418" stroke="#4f6474" stroke-width="1.5" marker-end="url(#head)"/>
+<line x1="756" y1="484.0" x2="717" y2="484.0" stroke="#4f6474" stroke-width="1.5" marker-end="url(#head)"/>
+<rect x="20" y="578" width="609" height="64" rx="7" fill="#f3f6f9" stroke="#b7c9d9" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text x="36" y="604" font-size="16" fill="#12324a" font-weight="bold" >Lattice-surgery architecture workflow</text>
+<text x="36" y="626" font-size="12.5" fill="#2b3c4d" font-weight="normal" >New QFT, U<tspan dy="3.5" font-size="9.0">X</tspan><tspan dy="-3.5">​</tspan> and projector components → compact / EDPC / annealed layouts → qubits, runtime</text>
+<text x="722" y="596" font-size="14" fill="#12324a" font-weight="bold" >Not included in the conditioned-kernel estimate:</text>
+<text x="722" y="618" font-size="12.5" fill="#5b6b78" font-weight="normal" >Preparing C<tspan dy="-4.8" font-size="9.0">−1</tspan><tspan dy="4.8">​</tspan>b (carries the original κ ≈ 10<tspan dy="-4.8" font-size="9.0">11</tspan><tspan dy="4.8">​</tspan>),</text>
+<text x="722" y="636" font-size="12.5" fill="#5b6b78" font-weight="normal" >general |b⟩ preparation, output readout, 2D / 3D extension.</text>
+<line x1="20" y1="686" x2="1080" y2="686" stroke="#c9d6e0" stroke-width="1"/>
+</svg>
