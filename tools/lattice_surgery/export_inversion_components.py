@@ -29,9 +29,10 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
     if actual != expected or len(phases) != logical["num_projector_rotations"]:
         raise ValueError("Phase input does not match the saved logical estimate")
     dims, n = logical["dimensions"], logical["target_n"]
-    m = 2 + num_k_qubits(dims)
+    preconditioned = metrics.get("case") == "preconditioned_1d_conditioned_kernel"
+    m = logical["signal_ancillas"] if preconditioned else 2 + num_k_qubits(dims)
     qubits = logical["logical_qubits"]
-    walk_qubits = 1 + m + dims * n
+    walk_qubits = 1 + m + (n if preconditioned else dims * n)
     if qubits != walk_qubits + 1:
         raise ValueError("Expected one clean phase flag in addition to W registers")
     output.mkdir(parents=True, exist_ok=True)
@@ -77,19 +78,33 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
         )
 
     eps = logical["eps_per_rotation"]
-    selector_eps = (
-        logical["walk_contribution"]["per_w"]["rotation_synthesis"]["eps_per_rotation"]
-        if dims == 3 else None
-    )
-    walk = build_w_operator(n, dims, synthesis_eps=selector_eps)
-    emit(
-        "W",
-        walk,
-        list(range(walk_qubits)),
-        logical["num_w_applications"],
-        logical["walk_contribution"]["per_w"],
-        kind="walk",
-    )
+    if preconditioned:
+        from laplacian_qsvt.preconditioned.inversion import target_components
+
+        parts = target_components(n, logical["block_encoding"]["inner_psi"], eps)
+        # W_cond's inner phase rotations use the resident flag, so it spans every qubit.
+        emit(
+            "W",
+            parts["W"],
+            list(range(qubits)),
+            logical["num_w_applications"],
+            logical["walk_contribution"]["per_w"],
+            kind="walk",
+        )
+    else:
+        selector_eps = (
+            logical["walk_contribution"]["per_w"]["rotation_synthesis"]["eps_per_rotation"]
+            if dims == 3 else None
+        )
+        walk = build_w_operator(n, dims, synthesis_eps=selector_eps)
+        emit(
+            "W",
+            walk,
+            list(range(walk_qubits)),
+            logical["num_w_applications"],
+            logical["walk_contribution"]["per_w"],
+            kind="walk",
+        )
     mapping = list(range(1 + m)) + [walk_qubits] + list(range(1 + m, 2 * m))
     for index, item in enumerate(unique):
         circuit, synthesis = build_projector_rotation_clifford_t(item["phi"], m, eps)
@@ -106,6 +121,16 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
             kind="projector",
             phi=item["phi"],
         )
+    if preconditioned:
+        for item in logical["boundary_contribution"]["components"]:
+            emit(
+                item["id"],
+                parts[item["id"]],
+                item["system_qubits"],
+                item["occurrences"],
+                item,
+                kind="boundary",
+            )
     totals = Counter()
     for component in components:
         for gate, count in component["gate_counts"].items():
@@ -138,6 +163,22 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
         "registers": {"phase_flag": walk_qubits, "projector_local_to_global": mapping},
         "accounting": "One W and each unique phase rotation, weighted by occurrences; all components retain the full resident register.",
     }
+    if preconditioned:
+        manifest.update(
+            case=metrics["case"],
+            case_title=metrics["case_title"],
+            block_encoding={
+                key: logical["block_encoding"][key]
+                for key in ("inner_degree", "u_x_calls_per_w", "select_mcx_gates")
+            },
+            scope_notes=[
+                "Conditioned kernel only: costs exclude preparing C^{-1} b and recovering the Poisson solution from L_cond^{-1}.",
+                "W_cond nests an inner degree-"
+                f"{logical['block_encoding']['inner_degree']} sinc^2 QSVT over U_X; the QFT pair is applied once at the boundaries.",
+            ],
+        )
+        manifest["algorithm"]["inner_sinc2"] = metrics.get("inner")
+        manifest["accounting"] = "One W_cond, each unique phase rotation and the QFT/QFT^dag boundaries, weighted by occurrences; all components retain the full resident register."
     (output / "inputs" / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
 
@@ -152,7 +193,13 @@ def snapshot_logical_inputs(metrics_path: Path, phases_path: Path, output: Path)
     (logical_dir / "inversion_resource_metrics.json").write_bytes(metrics_path.read_bytes())
     (output / "inputs" / "phases.json").write_bytes(phases_path.read_bytes())
     metrics = json.loads(metrics_path.read_text())
-    if "verification" in metrics and "error_summary" in metrics:
+    if metrics.get("case") == "preconditioned_1d_conditioned_kernel" and "verification" in metrics:
+        from laplacian_qsvt.preconditioned.inversion import (
+            render_resource_report as render_preconditioned_report,
+        )
+
+        report = render_preconditioned_report(metrics)
+    elif "verification" in metrics and "error_summary" in metrics:
         report = render_resource_report(metrics)
     else:
         logical = metrics["logical_resources"]

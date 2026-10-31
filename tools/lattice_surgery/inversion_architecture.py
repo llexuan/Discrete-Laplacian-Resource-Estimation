@@ -59,9 +59,11 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         )
     slices = 0
     counts = Counter()
+    kinds = ["walk", "projector"] + sorted(
+        {c["kind"] for c in manifest["components"]} - {"walk", "projector"}
+    )
     contributions = {
-        "walk": {"slices": 0, "magic_state_requests": 0},
-        "projector": {"slices": 0, "magic_state_requests": 0},
+        kind: {"slices": 0, "magic_state_requests": 0} for kind in kinds
     }
     rows = []
     for component, record in zip(manifest["components"], records):
@@ -149,6 +151,7 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         )
     if d % 2 == 0:
         warnings.append("Even code distance supplied.")
+    warnings.extend(manifest.get("scope_notes", []))
     kappa = manifest.get("algorithm", {}).get("kappa")
     if kappa and kappa < manifest.get("minimum_kappa_for_full_nonzero_spectrum", 0):
         warnings.append(
@@ -165,7 +168,9 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         "logical_qubits": manifest["logical_qubits"],
         "num_w_applications": manifest["num_w_applications"],
         "num_projector_rotations": manifest["num_projector_rotations"],
-        "unique_projectors": len(rows) - 1,
+        "unique_projectors": sum(row["kind"] == "projector" for row in rows),
+        "case_title": manifest.get("case_title"),
+        "block_encoding": manifest.get("block_encoding"),
         "logical_gate_resources": {
             "t_count": logical_t,
             "clifford_gate_count": sum(manifest["logical_gate_counts"].values())
@@ -235,13 +240,17 @@ def render_report(result: dict) -> str:
         result["physical_projection"],
         result["assumptions"],
     )
+    boundary = "boundary" in schedule["contributions"]
     lines = [
         f"=== Full Laplacian inverse architecture: {method} ===",
         f"Run: {result.get('run_id', 'unrecorded')}",
         "Status: SUCCESS",
         f"Configuration: {layout_configuration(result)}",
+        *([f"Case: {result['case_title']}"] if result.get("case_title") else []),
         "",
-        "Accounting: one W and each unique projector compiled once, multiplied by occurrences.",
+        "Accounting: one W and each unique projector"
+        + (" and the QFT/QFT^dag boundaries" if boundary else "")
+        + " compiled once, multiplied by occurrences.",
         "This is a component-sum projection, not compilation of the complete long circuit.",
         f"Dimensions / n per axis: {result['dimensions']} / {result['target_n']}",
         f"Resident logical qubits: {result['logical_qubits']}",
@@ -254,6 +263,10 @@ def render_report(result: dict) -> str:
         "--- projected entire sequence ---",
         f"Walk contribution, slices: {schedule['contributions']['walk']['slices']:,}",
         f"Projector contribution, slices: {schedule['contributions']['projector']['slices']:,}",
+        *(
+            [f"QFT boundary contribution, slices: {schedule['contributions']['boundary']['slices']:,}"]
+            if boundary else []
+        ),
         f"Total component-sum slices: {schedule['slices']:,}",
         f"Tile-slices: {schedule['tile_slices']:,}",
         f"QEC rounds: {physical['qec_rounds']:,}",
@@ -310,8 +323,10 @@ def render_comparison(comparison: dict) -> str:
     methods = comparison["methods"]
     names = [name for name in ("annealed", "compact", "edpc") if name in methods]
     successful = [methods[name] for name in names if methods[name]["status"] == "success"]
+    case_title = next((r["case_title"] for r in successful if r.get("case_title")), None)
     lines = [
         "FULL LAPLACIAN INVERSE: ARCHITECTURE COMPARISON",
+        *([f"Case: {case_title}"] if case_title else []),
         f"Run: {comparison.get('run_id', Path(comparison['run_directory']).name)}",
         "Status: " + ("SUCCESS" if len(successful) == len(names) else "INCOMPLETE / FAILED METHODS"),
         "",
@@ -337,6 +352,13 @@ def render_comparison(comparison: dict) -> str:
             "EXAMPLE",
             f"Dimensions: {case['dimensions']}; n per axis: {case['target_n']} ({2 ** case['target_n']:,} grid points per axis)",
             f"Sequence degree / W applications: {case['num_w_applications']}",
+            *(
+                [
+                    f"Block encoding per W: inner degree-{case['block_encoding']['inner_degree']} sinc^2 QSVT, "
+                    f"{case['block_encoding']['u_x_calls_per_w']} U_X calls; QFT/QFT^dag once at the boundaries"
+                ]
+                if case.get("block_encoding") else []
+            ),
             f"Projector rotations: {case['num_projector_rotations']}; distinct angles: {case['unique_projectors']}",
             f"Resident logical qubits: {case['logical_qubits']}",
             f"Logical Clifford gates: {case['logical_gate_resources']['clifford_gate_count']:,}",
@@ -411,6 +433,11 @@ def render_comparison(comparison: dict) -> str:
         "All rotation slices",
         lambda r: r["schedule_projection"]["contributions"]["projector"]["slices"],
     )
+    if any("boundary" in r["schedule_projection"]["contributions"] for r in successful):
+        table_row(
+            "QFT boundary slices",
+            lambda r: r["schedule_projection"]["contributions"]["boundary"]["slices"],
+        )
     table_row("Total projected slices", lambda r: r["schedule_projection"]["slices"])
     table_row("Code distance", lambda r: r["assumptions"]["code_distance"])
     table_row(
@@ -544,9 +571,11 @@ def publish_results(output: Path, comparison: dict) -> str:
         if mode == "per_method_minimum"
         else f"--fixed-code-distance --code-distance {distance}"
     )
+    case_title = next((r["case_title"] for r in successful if r.get("case_title")), None)
     (output / "README.md").write_text(
         "# Full Laplacian inversion resource estimates\n\n"
-        "Start with [comparison_report.txt](comparison_report.txt) for the case definition, shared assumptions, results and tradeoffs.\n\n"
+        + (f"Case: {case_title}.\n\n" if case_title else "")
+        + "Start with [comparison_report.txt](comparison_report.txt) for the case definition, shared assumptions, results and tradeoffs.\n\n"
         "- [Annealed report](annealed_resource_report.txt)\n"
         "- [Compact report](compact_resource_report.txt)\n"
         "- [EDPC report](EDPC_resource_report.txt)\n"

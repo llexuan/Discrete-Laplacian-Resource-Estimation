@@ -277,6 +277,43 @@ The saved phase sequence still has kappa=2.5. These costs cover the complete
 selected QSP sequence on its declared inversion domain; the logical report
 records the 3D spectral gap and kappa needed for all nonzero modes.
 
+### Preconditioned 1D inverse at n=20 (nested block encoding)
+
+The preconditioned operator `L_cond` is diagonal in the Fourier basis with
+eigenvalues `sinc^2(pi m_k / N)`, `m_k = min(k, N - k)`. Its spectrum lies in
+`[4/pi^2, 1] ~ [0.405, 1]` for every grid size, inside the kappa=2.5 domain.
+The pipeline is unchanged except for the block encoding inside W:
+
+- `U_X = PREP^dag SELECT_X PREP` encodes `X = diag(2 m_k / N)` exactly with
+  `2 + ceil(log2(q - 1))` ancillas (7 at q=20). All SELECT branches target one
+  shared ancilla, which makes `SELECT_X = CX(k_{q-1} -> a) SELECT_Y` exact.
+- `U_Lcond` is an inner degree-10 sinc^2 QSVT over `U_X` (`P_2d`, d=5,
+  truncation error <= 2.1e-5). Its phase rotations share the outer phase flag.
+- `W_cond = U_R X_q U'` with `U'` built by flipping the inner phase signs on
+  `q`; the 118 outer `P^MI` phases are reused, and one swap-free QFT pair is
+  applied at the boundaries.
+
+Results cover the conditioned kernel `L_cond^{-1}` and assume `C^{-1} b` is
+prepared directly (`A = C L_cond`, `C = diag((pi m_k / N)^2)`). Read
+[the comparison](outputs/laplacian_inversion/1d_cond_n20/comparison_report.txt),
+[the logical report](outputs/laplacian_inversion/1d_cond_n20/logical/inversion_resource_report.txt)
+and the PREP/SELECT drawings in `outputs/circuits/preconditioned_1d_*`.
+
+```bash
+PYTHONPATH=src .venv/bin/python -m laplacian_qsvt.preconditioned.sinc2 --d 5
+PYTHONPATH=src .venv/bin/python -m laplacian_qsvt.preconditioned.inversion \
+  --verify-n 4 --target-n 20 --synthesis-tol 1e-7
+PYTHONPATH=src .venv/bin/python tools/lattice_surgery/run_inversion_architecture.py \
+  --logical-metrics outputs/metrics/preconditioned_1d_inversion_resource_metrics.json \
+  --phases-json outputs/phases/phases_inversion.json \
+  --output-dir outputs/laplacian_inversion/1d_cond_n20 \
+  --target-failure-probability 0.01 --auto-code-distance --code-distance 3 --timeout 1200
+```
+
+The synthesis budget is 1e-7 instead of 1e-8: the nested walk has 51,571
+approximated rotations, and per-rotation tolerances below about 1e-12 reach the
+double-precision limit of pyLIQTR's error check.
+
 ## Spectral-gap and kappa warning
 
 The periodic Laplacian has a zero mode and cannot be inverted on the complete

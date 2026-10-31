@@ -25,6 +25,8 @@ laplacian-1d-resource = "laplacian_qsvt.laplacian.laplacian_1d_resource:main"
 laplacian-nd-resource = "laplacian_qsvt.laplacian.laplacian_nd_resource:main"
 laplacian-w-resource = "laplacian_qsvt.laplacian.laplacian_w_resource:main"
 laplacian-inversion-resource = "laplacian_qsvt.laplacian.laplacian_inversion_encode:main"
+sinc2-phases = "laplacian_qsvt.preconditioned.sinc2:main"
+preconditioned-inversion-resource = "laplacian_qsvt.preconditioned.inversion:main"
 ix2-block-encoding-demo = "laplacian_qsvt.demos.ix2_block_encoding:main"
 qsp-error-analysis = "laplacian_qsvt.analysis.error_analysis:main"
 

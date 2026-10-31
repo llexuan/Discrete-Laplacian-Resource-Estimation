@@ -1,0 +1,99 @@
+=== Preconditioned 1D Laplacian inverse (conditioned kernel): logical resource report ===
+
+Sequence              : QFT^dag . R(phi_0) W_cond R(phi_1) ... W_cond R(phi_d) . QFT
+Block encoding        : nested; U_Lcond = inner sinc^2 QSVT over U_X = PREP^dag SELECT_X PREP
+Accounting            : compiled Clifford+T component costs composed across the full sequence
+Scope                 : conditioned kernel L_cond^{-1}; C^{-1} b assumed prepared; logical gates before layout/QEC
+Spatial dimensions    : 1
+Qubits per dimension  : 20
+Grid points per axis  : 1,048,576
+Outer polynomial degree: 117 (P^MI, kappa = 2.5)
+Inner polynomial degree: 10 (P_2d, d = 5)
+W applications        : 117
+U_X calls per W       : 10
+U_X calls in total    : 1,170
+Projector rotations   : 118
+Unique phase angles   : 59
+
+--- entire sequence: logical resource counts ---
+Logical qubits        : 29
+Clifford gate count   : 11,798,034
+T-count (T + T-dagger): 7,684,044
+Total gate count      : 19,482,078
+Total depth upper bound: 15,651,974
+T-depth upper bound   : 6,216,714
+Depth accounting      : serial_component_sum_upper_bound
+
+--- contribution breakdown ---
+Component                         Clifford gates     T/T-dagger     Depth bound   T-depth bound
+One W_cond                                98,848         64,362         132,872          52,774
+All W applications                    11,565,216      7,530,354      15,546,024       6,174,558
+All projector rotations                   43,980         28,920          61,572          24,672
+QFT + QFT^dag boundaries                 188,838        124,770          44,378          17,484
+Entire sequence                       11,798,034      7,684,044      15,651,974       6,216,714
+
+--- anatomy of one W_cond (each part compiled separately) ---
+Part                             Uses per W   Clifford gates   T/T-dagger
+PREP                                     20            3,958        2,576
+SELECT                                   10            1,562        1,026
+U_X                                      10            9,478        6,178
+U_Lcond (q-signed inner QSVT)             1           98,752       64,308
+U_R                                       1               94           54
+
+--- registers ---
+Logical qubits per W  : 29 (includes the shared phase flag)
+Signal ancillas m     : 7 = a + p + J, |J| = ceil(log2(q-1)) = 5
+Phase flag            : 1, shared by the inner and outer phase rotations
+Borrowed system qubits: dirty-ancilla MCX ladders (already included; not additional qubits)
+SELECT                : 19 MCX gates with 7 controls on one shared ancilla a
+Inner phase rotations : 11 per W, each MCX(7 -> flag) Rz MCX, sign set by q
+Frequency bit order   : bit_reversed (swap-free QFT)
+
+--- full-sequence logical gate counts ---
+cx                    : 1,414,002
+h                     : 6,966,150
+s                     : 1,607,968
+sdg                   : 1,523,733
+t                     : 3,952,713
+tdg                   : 3,731,331
+x                     : 264,086
+z                     : 22,095
+
+--- approximation and synthesis errors ---
+Kernel polynomial error     : 1.768141e-02  (max_k |P^MI(P_2d) - 1/(2 kappa sinc^2)|, all 524,289 distinct modes)
+  inner P_2d vs sinc^2      : 2.035954e-05  (bound 2.120411e-05)
+  inner error after P^MI    : 2.007087e-05
+  outer P^MI on L_cond      : 1.770148e-02
+Phase numerical error       : 1.717743e-13  (outer + inner propagated)
+Synthesis tolerance         : 1.000000e-07
+Measured synthesis bound    : 3.331713e-08
+Conservative total bound    : 1.768151e-02
+Synthesized rotations       : 51,571
+  per W / per QFT / outer   : 431 / 513 / 118
+  per W = 20 PREP uses x 21 + 11 inner phases
+Tolerance per rotation      : 1.000000e-12
+
+--- inversion domain and spectral coverage ---
+Kappa                 : 2.5
+Polynomial epsilon    : 0.49
+Declared domain       : 1/kappa <= |lambda| <= 1 (|lambda| >= 4.000000e-01)
+Encoded spectrum      : [0.405264, 1.000000] (P_2d(2 m_k / N))
+Zero mode             : L_cond has eigenvalue 1 at k = 0; the singular mode lives in C, outside this kernel
+Target spectral gap   : 4.052644e-01
+Kappa for all modes   : 2.467525e+00 (covered by kappa = 2.5)
+
+--- dense correctness checks at small verification size ---
+Verification n        : 4 (10 dense qubits; not the target size)
+U_X block error       : 5.995204e-15
+U_X Hermiticity error : 2.359224e-16
+U_Lcond Herm-part error: 2.529088e-13  (Herm <0|U_Lcond|0> = P_2d(X))
+W signal block error  : 2.556844e-13  (<Pi|W|Pi> = -P_2d(X))
+U' adjoint-branch error: 2.281431e-15
+QFT vs bit-reversed DFT: 2.321203e-15
+QSP block max-entry error: 6.168177e-12
+QSP block spectral error: 6.168177e-12
+Position basis vs classical P^MI(L_cond,2d): 3.777034e-12
+Position basis vs exact (1/2kappa) L_cond^-1: 1.768141e-02
+
+Outer phase source    : /Users/huanglexuan/GTRI Discrete Laplacian/Discrete-Laplacian-Resource-Estimation/outputs/phases/phases_inversion.json
+Inner phase source    : /Users/huanglexuan/GTRI Discrete Laplacian/Discrete-Laplacian-Resource-Estimation/outputs/phases/phases_sinc2.json
