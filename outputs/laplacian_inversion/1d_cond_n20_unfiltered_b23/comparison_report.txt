@@ -58,7 +58,6 @@ RESULTS
 | External factory qubits |         30,700 |         30,700 |          30,700 |
 | Total physical qubits   |        181,994 |        157,660 |         268,750 |
 | Projected runtime (s)   |     485.580393 |     497.187320 |      429.131056 |
-| Runtime set by          |  Core schedule |  Core schedule |   Core schedule |
 | Space-time (qubit*s)    | 88,372,718.044 | 78,386,552.871 | 115,328,971.300 |
 | Combined failure budget |   1.000000e-02 |   1.000000e-02 |    1.000000e-02 |
 | Layout-failure proxy    |   6.943800e-03 |   5.966248e-03 |    9.655449e-03 |
@@ -82,9 +81,7 @@ direction and the full corrections conditioned on injection measurements.
 Both gates consume one magic state. Verifying the implemented operation requires
  checking that each measurement outcome, together with its applied or tracked
   correction, gives the intended gate.
-- Factory timing. The runtime estimate uses the factory's average time per 
-accepted T state across the full sequence. Even when average production
- meets demand, several injections close together can exhaust the stored
+- Factory timing. The runtime estimate uses the factory's average time per accepted T state across the full sequence. Even when average production meets demand, several injections close together can exhaust the stored
   states and delay the circuit. Quantifying that delay requires the timing 
   of individual requests and deliveries and the capacity of the storage buffer.
 

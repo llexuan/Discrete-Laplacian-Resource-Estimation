@@ -577,9 +577,6 @@ def render_comparison(comparison: dict) -> str:
         lambda r: r["physical_projection"]["runtime_seconds"],
         lambda v: f"{v:,.6f}",
     )
-    if combined_budget:
-        table_row("Runtime set by", lambda r: r["physical_projection"]["factory_model"]["is_throughput_limited"],
-                  lambda limited: "Factory supply" if limited else "Core schedule")
     table_row(
         "Space-time (qubit*s)",
         lambda r: r["physical_projection"]["space_time_ns_qubits"] * 1e-9,
