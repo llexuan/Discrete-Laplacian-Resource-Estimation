@@ -173,14 +173,22 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
                        supply_time_seconds=factory_rounds * cycle * 1e-9,
                        is_throughput_limited=factory_rounds > rounds)
     runtime_ns = final_rounds * cycle
-    warnings = [
-        "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
-    ]
     if litinski:
-        warnings.append("Factory throughput is averaged. Burst delivery, buffering and per-request stalls are outside this projection.")
-        warnings.append("Measurement-dependent corrections and the T/T-dagger distinction in printed lowering require separate validation.")
+        warnings = [
+            "Measurement-dependent corrections. The logical circuit distinguishes T from T-dagger, but the printed "
+            "lattice-surgery instructions omit the gate direction and the full corrections conditioned on injection "
+            "measurements. Both gates consume one magic state. Verifying the implemented operation requires checking "
+            "that each measurement outcome, together with its applied or tracked correction, gives the intended gate.",
+            "Factory timing. The runtime estimate uses the factory's average time per accepted T state across the "
+            "full sequence. Even when average production meets demand, several injections close together can exhaust "
+            "the stored states and delay the circuit. Quantifying that delay requires the timing of individual "
+            "requests and deliveries and the capacity of the storage buffer.",
+        ]
     else:
-        warnings.append("Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.")
+        warnings = [
+            "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
+            "Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.",
+        ]
     if factory is None:
         warnings.append(
             "No physical factory cadence supplied; runtime assumes the compiler's disttime supply model."
@@ -191,7 +199,8 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         )
     if d % 2 == 0:
         warnings.append("Even code distance supplied.")
-    warnings.extend(manifest.get("scope_notes", []))
+    if not litinski:
+        warnings.extend(manifest.get("scope_notes", []))
     kappa = manifest.get("algorithm", {}).get("kappa")
     required_kappa = manifest.get("minimum_kappa_for_full_nonzero_spectrum")
     if kappa and required_kappa and kappa < required_kappa:

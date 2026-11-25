@@ -76,12 +76,17 @@ Relative to EDPC:
   compact: 41.34% fewer physical qubits; 15.86% longer runtime.
 
 MODEL LIMITS
-- One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
-- Factory throughput is averaged. Burst delivery, buffering and per-request stalls are outside this projection.
-- Measurement-dependent corrections and the T/T-dagger distinction in printed lowering require separate validation.
-- Conditioned kernel only: costs exclude preparing C^{-1} b and recovering the Poisson solution from L_cond^{-1}.
-- W_cond nests an inner degree-10 sinc^2 QSVT over U_X; the QFT pair is applied once at the boundaries.
-- The scaled inverse is verified in the odd QSP quadrature. Coherent quadrature extraction is outside this estimate.
+- Measurement-dependent corrections. The logical circuit distinguishes T 
+from T-dagger, but the printed lattice-surgery instructions omit the gate 
+direction and the full corrections conditioned on injection measurements. 
+Both gates consume one magic state. Verifying the implemented operation requires
+ checking that each measurement outcome, together with its applied or tracked
+  correction, gives the intended gate.
+- Factory timing. The runtime estimate uses the factory's average time per 
+accepted T state across the full sequence. Even when average production
+ meets demand, several injections close together can exhaust the stored
+  states and delay the circuit. Quantifying that delay requires the timing 
+  of individual requests and deliveries and the capacity of the storage buffer.
 
 FILES
 Logical baseline: logical/inversion_resource_report.txt
