@@ -1,0 +1,572 @@
+{
+  "scope": "full_inverse_component_sum_surface_code_projection",
+  "status": "success",
+  "dimensions": 1,
+  "target_n": 20,
+  "logical_qubits": 29,
+  "num_w_applications": 45,
+  "num_projector_rotations": 46,
+  "unique_projectors": 23,
+  "case_title": "Preconditioned 1D Laplacian, conditioned kernel (nested sinc^2 block encoding), unfiltered inverse b=23",
+  "block_encoding": {
+    "inner_degree": 10,
+    "u_x_calls_per_w": 10,
+    "select_mcx_gates": 19
+  },
+  "logical_gate_resources": {
+    "t_count": 3032376,
+    "clifford_gate_count": 4660500
+  },
+  "algorithm": {
+    "target_function": "matrix_inversion_1_over_x",
+    "kappa": 2.5,
+    "epsilon": 0.01,
+    "error_summary": {
+      "polynomial_error": 0.007940053987872231,
+      "inner_polynomial_error": 2.0359538579317604e-05,
+      "inner_error_after_inversion": 2.0774966485559432e-05,
+      "outer_polynomial_error": 0.00796082895435779,
+      "phase_numerical_error": 1.4498287163782423e-13,
+      "synthesis_tolerance": 1e-07,
+      "measured_synthesis_error_bound": 1.3320594540007487e-08,
+      "conservative_total_error_bound": 0.007940153988017213
+    },
+    "inner_sinc2": {
+      "d": 5,
+      "degree": 10,
+      "truncation_bound": 2.120411329015299e-05,
+      "poly_vs_sinc2_max_abs_error": 2.0359538579317604e-05,
+      "phase_vs_poly_max_abs_error": 1.3855583347321954e-13,
+      "minimum_on_unit_interval": 0.40526437503077184
+    },
+    "unfiltered_inverse": {
+      "b": 23,
+      "b_min": 23,
+      "b_max": 25,
+      "uniform_inverse_error_bound": 0.009065538022677594,
+      "global_magnitude_bound": 0.9591663046625438
+    }
+  },
+  "schedule_projection": {
+    "slices": 21616840,
+    "layout_tiles": 120,
+    "tile_slices": 2594020800,
+    "contributions": {
+      "walk": {
+        "slices": 21212145,
+        "magic_state_requests": 2896290
+      },
+      "projector": {
+        "slices": 84022,
+        "magic_state_requests": 11316
+      },
+      "boundary": {
+        "slices": 320673,
+        "magic_state_requests": 124770
+      }
+    }
+  },
+  "physical_projection": {
+    "qec_rounds": 497187320,
+    "core_time_ns": 497187320000,
+    "core_time_seconds": 497.18732000000006,
+    "resident_layout_physical_qubits": 126960,
+    "physical_qubits": 157660,
+    "runtime_ns": 497187320000,
+    "runtime_seconds": 497.18732000000006,
+    "space_time_ns_qubits": 78386552871200000,
+    "failure_opportunities_proxy": 59662478400,
+    "failure_probability_proxy": 0.005966247840000004,
+    "minimum_odd_code_distance_proxy": 23,
+    "meets_target_failure_probability": true,
+    "factory_model": {
+      "num_factories": 1,
+      "rounds_per_state": 82.5,
+      "throughput_lower_bound_rounds": 250171020.0,
+      "external_factory_qubits": 30700,
+      "assumption": "External factory footprint added once; in-grid source/storage tiles remain in layout area. Throughput bound does not model boundary stalls.",
+      "id": "litinski-15to1-two-level",
+      "protocol": "(15-to-1)^6_(11,5,5) x (15-to-1)_(25,11,11)",
+      "source": "https://arxiv.org/pdf/1905.06903#page=2",
+      "physical_error_rate": 0.001,
+      "output_error_per_state": 2.7e-12,
+      "physical_qubits_per_factory": 30700,
+      "magic_state_requests": 3032376,
+      "output_failure_bound": 8.1874152e-06,
+      "supply_time_seconds": 250.17102000000003,
+      "is_throughput_limited": false
+    },
+    "combined_failure_proxy": 0.005974435255200004
+  },
+  "assumptions": {
+    "code_distance": 23,
+    "distance_selection_mode": "per_method_minimum",
+    "requested_minimum_code_distance": 3,
+    "distance_selection": "Minimum admissible odd distance meeting the combined layout and factory-output budget.",
+    "cycle_time_ns": 1000,
+    "physical_qubits_per_tile_factor": 2,
+    "physical_error_rate": 0.001,
+    "target_failure_probability": 0.01,
+    "disttime_slices": 1,
+    "staggered": false,
+    "component_boundary_costs_included": false,
+    "layout_transitions_required": false,
+    "failure_budget_scope": "layout_plus_factory_output",
+    "layout_failure_budget": 0.009991812584800001
+  },
+  "weighted_instruction_counts": {
+    "BellBasedCNOT": 3576762,
+    "HGate": 2756142,
+    "MeasureSinglePatch": 7315867,
+    "MultiBodyMeasure": 4283491,
+    "RequestMagicState": 3032376,
+    "RequestYState": 4283491,
+    "RotateSingleCellPatch": 2704736,
+    "XGate": 99978,
+    "ZGate": 4292370
+  },
+  "components": [
+    {
+      "id": "W",
+      "kind": "walk",
+      "phi": null,
+      "occurrences": 45,
+      "one_component_slices": 471381,
+      "weighted_slices": 21212145,
+      "one_component_magic_states": 64362,
+      "logical_t_count": 64362,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/W",
+      "input_sha256": "f71cdf6f71ae575edb25722bdaf5acd6fe36bda751654138ab6a9eda67a2596a"
+    },
+    {
+      "id": "R_000",
+      "kind": "projector",
+      "phi": 6.088710919969982e-15,
+      "occurrences": 2,
+      "one_component_slices": 873,
+      "weighted_slices": 1746,
+      "one_component_magic_states": 124,
+      "logical_t_count": 124,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_000",
+      "input_sha256": "21d0076a8148bea277037c2824711e8c5f44c2c1df4bdc1ffa0d36209211e94f"
+    },
+    {
+      "id": "R_001",
+      "kind": "projector",
+      "phi": -2.8732217049974e-13,
+      "occurrences": 2,
+      "one_component_slices": 873,
+      "weighted_slices": 1746,
+      "one_component_magic_states": 124,
+      "logical_t_count": 124,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_001",
+      "input_sha256": "21d0076a8148bea277037c2824711e8c5f44c2c1df4bdc1ffa0d36209211e94f"
+    },
+    {
+      "id": "R_002",
+      "kind": "projector",
+      "phi": 6.625175742210608e-12,
+      "occurrences": 2,
+      "one_component_slices": 2959,
+      "weighted_slices": 5918,
+      "one_component_magic_states": 374,
+      "logical_t_count": 374,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_002",
+      "input_sha256": "01bf7fa441a04c12e616f198919e3fdbb6bed3cfb551112d64f5c0efb57f49ed"
+    },
+    {
+      "id": "R_003",
+      "kind": "projector",
+      "phi": -9.97390440609915e-11,
+      "occurrences": 2,
+      "one_component_slices": 2936,
+      "weighted_slices": 5872,
+      "one_component_magic_states": 372,
+      "logical_t_count": 372,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_003",
+      "input_sha256": "46c7dbc565d613f51ecbab70d55d0af359b5ac274e36b20aceeaf20b34771aeb"
+    },
+    {
+      "id": "R_004",
+      "kind": "projector",
+      "phi": 1.102515786510325e-09,
+      "occurrences": 2,
+      "one_component_slices": 1903,
+      "weighted_slices": 3806,
+      "one_component_magic_states": 256,
+      "logical_t_count": 256,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_004",
+      "input_sha256": "2c00718899a6e78e6963dfcaeaa022648df35edb9b608abe3b37512579a629d1"
+    },
+    {
+      "id": "R_005",
+      "kind": "projector",
+      "phi": -9.541885093277555e-09,
+      "occurrences": 2,
+      "one_component_slices": 1825,
+      "weighted_slices": 3650,
+      "one_component_magic_states": 246,
+      "logical_t_count": 246,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_005",
+      "input_sha256": "0090cfa9be88facb525a2b6695b86392706f7be2b78fe0e34eba5153997b81f4"
+    },
+    {
+      "id": "R_006",
+      "kind": "projector",
+      "phi": 6.732712148589953e-08,
+      "occurrences": 2,
+      "one_component_slices": 1828,
+      "weighted_slices": 3656,
+      "one_component_magic_states": 248,
+      "logical_t_count": 248,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_006",
+      "input_sha256": "2f0adcc13552bb244aa9d7aa178c4bc8f3b65fbecb0f221b1a022b7246c4d6e6"
+    },
+    {
+      "id": "R_007",
+      "kind": "projector",
+      "phi": -3.982324677006266e-07,
+      "occurrences": 2,
+      "one_component_slices": 1790,
+      "weighted_slices": 3580,
+      "one_component_magic_states": 242,
+      "logical_t_count": 242,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_007",
+      "input_sha256": "48da0d01973f03706b4b98a09a5aa49dfff93561f4fc6ae8065a6ae87fc9da89"
+    },
+    {
+      "id": "R_008",
+      "kind": "projector",
+      "phi": 2.0150336324569745e-06,
+      "occurrences": 2,
+      "one_component_slices": 1772,
+      "weighted_slices": 3544,
+      "one_component_magic_states": 244,
+      "logical_t_count": 244,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_008",
+      "input_sha256": "1889ecb0805aaaababe353a700bd760596a01e1afb239bbf037e169c970679c1"
+    },
+    {
+      "id": "R_009",
+      "kind": "projector",
+      "phi": -8.857795332425615e-06,
+      "occurrences": 2,
+      "one_component_slices": 1775,
+      "weighted_slices": 3550,
+      "one_component_magic_states": 242,
+      "logical_t_count": 242,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_009",
+      "input_sha256": "c271e72f49aaebf2f332e46f52f61ef5d160e9e947d9dc041ca07fc80eb16396"
+    },
+    {
+      "id": "R_010",
+      "kind": "projector",
+      "phi": 3.4239681070263814e-05,
+      "occurrences": 2,
+      "one_component_slices": 1826,
+      "weighted_slices": 3652,
+      "one_component_magic_states": 246,
+      "logical_t_count": 246,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_010",
+      "input_sha256": "7a2664272264542cad836d73370d9c0c0498b3fa22dc306971bd2426848b619c"
+    },
+    {
+      "id": "R_011",
+      "kind": "projector",
+      "phi": -0.00011752756062360108,
+      "occurrences": 2,
+      "one_component_slices": 1771,
+      "weighted_slices": 3542,
+      "one_component_magic_states": 242,
+      "logical_t_count": 242,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_011",
+      "input_sha256": "b0c2bcf27d67726f28582b5d3efa3a492eaa4773378e2dc0e2d9901e81e8d34c"
+    },
+    {
+      "id": "R_012",
+      "kind": "projector",
+      "phi": 0.00036112485716811247,
+      "occurrences": 2,
+      "one_component_slices": 1799,
+      "weighted_slices": 3598,
+      "one_component_magic_states": 244,
+      "logical_t_count": 244,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_012",
+      "input_sha256": "85341f7b84e729c2cb23a51df58c0bdfa42a009d101fa70ca1e95897b250a0d9"
+    },
+    {
+      "id": "R_013",
+      "kind": "projector",
+      "phi": -0.0010000689320540392,
+      "occurrences": 2,
+      "one_component_slices": 1806,
+      "weighted_slices": 3612,
+      "one_component_magic_states": 244,
+      "logical_t_count": 244,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_013",
+      "input_sha256": "6ab378b4228c4d89e62ff577e146f97e120c6027c3455a11bc9386a2255703a7"
+    },
+    {
+      "id": "R_014",
+      "kind": "projector",
+      "phi": 0.0025106492988417857,
+      "occurrences": 2,
+      "one_component_slices": 1813,
+      "weighted_slices": 3626,
+      "one_component_magic_states": 246,
+      "logical_t_count": 246,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_014",
+      "input_sha256": "880490633fd124a8ed4dd9c1bb23d577008767bd733332224c0494d38519edeb"
+    },
+    {
+      "id": "R_015",
+      "kind": "projector",
+      "phi": -0.00574296210798212,
+      "occurrences": 2,
+      "one_component_slices": 1817,
+      "weighted_slices": 3634,
+      "one_component_magic_states": 246,
+      "logical_t_count": 246,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_015",
+      "input_sha256": "48b910148963306d2ef32f146403c3c3177af48d480dd64dc995ab84241ae9ab"
+    },
+    {
+      "id": "R_016",
+      "kind": "projector",
+      "phi": 0.012023780622700183,
+      "occurrences": 2,
+      "one_component_slices": 1803,
+      "weighted_slices": 3606,
+      "one_component_magic_states": 246,
+      "logical_t_count": 246,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_016",
+      "input_sha256": "241b8333f161ca4866085422491f46e23f3588b73c69420202cb206b146b1359"
+    },
+    {
+      "id": "R_017",
+      "kind": "projector",
+      "phi": -0.023133538844387472,
+      "occurrences": 2,
+      "one_component_slices": 1795,
+      "weighted_slices": 3590,
+      "one_component_magic_states": 244,
+      "logical_t_count": 244,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_017",
+      "input_sha256": "cd26a9bedfbcd82a3e5487de984b21a174a2355e788eabce4499eeb85c9fca07"
+    },
+    {
+      "id": "R_018",
+      "kind": "projector",
+      "phi": 0.04104021845654422,
+      "occurrences": 2,
+      "one_component_slices": 1835,
+      "weighted_slices": 3670,
+      "one_component_magic_states": 248,
+      "logical_t_count": 248,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_018",
+      "input_sha256": "8ea6907f27ba97d6b4bea6006cf85717d495003865ee5d033044605f14326664"
+    },
+    {
+      "id": "R_019",
+      "kind": "projector",
+      "phi": -0.06729072518444411,
+      "occurrences": 2,
+      "one_component_slices": 1836,
+      "weighted_slices": 3672,
+      "one_component_magic_states": 246,
+      "logical_t_count": 246,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_019",
+      "input_sha256": "45c38cbc24acd481b628020f6ebcdf25841121c5f5a44985802c319308a28c66"
+    },
+    {
+      "id": "R_020",
+      "kind": "projector",
+      "phi": 0.10201152003122295,
+      "occurrences": 2,
+      "one_component_slices": 1809,
+      "weighted_slices": 3618,
+      "one_component_magic_states": 244,
+      "logical_t_count": 244,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_020",
+      "input_sha256": "47bb3ae1c427a12f44f5c1e19590199b21693d0d5ce80bdc014d660f9dbe375b"
+    },
+    {
+      "id": "R_021",
+      "kind": "projector",
+      "phi": -0.14259618057935122,
+      "occurrences": 2,
+      "one_component_slices": 1796,
+      "weighted_slices": 3592,
+      "one_component_magic_states": 246,
+      "logical_t_count": 246,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_021",
+      "input_sha256": "87ceb6d2367a6e423c5a85b3b1b260e011b6cd168eaf2a2b00c54c70fe473186"
+    },
+    {
+      "id": "R_022",
+      "kind": "projector",
+      "phi": 0.18258561285626934,
+      "occurrences": 2,
+      "one_component_slices": 1771,
+      "weighted_slices": 3542,
+      "one_component_magic_states": 244,
+      "logical_t_count": 244,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/R_022",
+      "input_sha256": "07c78a40d7f8ba5477e63adff670fa9e66fd8b8dcd21831e114c1c4bcbdf2d30"
+    },
+    {
+      "id": "QFT",
+      "kind": "boundary",
+      "phi": null,
+      "occurrences": 1,
+      "one_component_slices": 156114,
+      "weighted_slices": 156114,
+      "one_component_magic_states": 62385,
+      "logical_t_count": 62385,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/QFT",
+      "input_sha256": "f4f493c34afbdc38c77dc6faed1c87fc554eff6458505a61a195ed4885ce94c1"
+    },
+    {
+      "id": "QFT_dg",
+      "kind": "boundary",
+      "phi": null,
+      "occurrences": 1,
+      "one_component_slices": 164559,
+      "weighted_slices": 164559,
+      "one_component_magic_states": 62385,
+      "logical_t_count": 62385,
+      "evidence": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0/components/QFT_dg",
+      "input_sha256": "b0888fc2b281eded676ecb1f8a1b82dc2845adb4d40386560c97beb79b070325"
+    }
+  ],
+  "warnings": [
+    "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
+    "Factory throughput is averaged. Burst delivery, buffering and per-request stalls are outside this projection.",
+    "Measurement-dependent corrections and the T/T-dagger distinction in printed lowering require separate validation.",
+    "Conditioned kernel only: costs exclude preparing C^{-1} b and recovering the Poisson solution from L_cond^{-1}.",
+    "W_cond nests an inner degree-10 sinc^2 QSVT over U_X; the QFT pair is applied once at the boundaries.",
+    "The scaled inverse is verified in the odd QSP quadrature. Coherent quadrature extraction is outside this estimate."
+  ],
+  "method": "compact",
+  "layout_resources": {
+    "height": 3,
+    "width": 40,
+    "area": 120,
+    "counts": {
+      "0": 15,
+      "A": 2,
+      "Q": 29,
+      "r": 74
+    },
+    "data_sites": 29,
+    "factory_count": 1,
+    "factories": [
+      {
+        "label": "0",
+        "cells": [
+          [
+            0,
+            35
+          ],
+          [
+            0,
+            36
+          ],
+          [
+            0,
+            37
+          ],
+          [
+            0,
+            38
+          ],
+          [
+            0,
+            39
+          ],
+          [
+            1,
+            35
+          ],
+          [
+            1,
+            36
+          ],
+          [
+            1,
+            37
+          ],
+          [
+            1,
+            38
+          ],
+          [
+            1,
+            39
+          ],
+          [
+            2,
+            35
+          ],
+          [
+            2,
+            36
+          ],
+          [
+            2,
+            37
+          ],
+          [
+            2,
+            38
+          ],
+          [
+            2,
+            39
+          ]
+        ],
+        "queue_cells": [
+          [
+            0,
+            34
+          ],
+          [
+            1,
+            34
+          ],
+          [
+            2,
+            34
+          ]
+        ]
+      }
+    ],
+    "warnings": []
+  },
+  "layout_preparation": "Compact with routing spacing 2; factory region preserved",
+  "layout_attempts": [
+    {
+      "preparation": "Compact with routing spacing 2; factory region preserved",
+      "status": "success"
+    }
+  ],
+  "evidence_directory": "/Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/compact/layout_0",
+  "wall_seconds": 18.152622458001133,
+  "compiler": {
+    "native_commit": "82a1cbe64717a64a289dd4b0d02e3dc38cae3890",
+    "floorplanner_commit": "7835a4ef645f7c9faccc4a74c678574285a7c82b",
+    "binary_sha256": "96c848cf748fa1c7abf568e4408e47a9db8dc6d743f4cbc2139488d022488fd2",
+    "config": {
+      "pipeline": "wave",
+      "router": "graph_search",
+      "graph_search": "djikstra",
+      "distillation_time": 1,
+      "staggered": false,
+      "timeout": 1200.0,
+      "local": true
+    }
+  },
+  "logical_metrics_sha256": "a10ac2bde30bac783000234052262fd86d1b0475b2e3e38b7be4ac5ad12ac40f",
+  "phases_sha256": "011a6c946eda98e32ac0d9f7dc6a3f84b87521c6a4a461f3a8e862afb0af6e03",
+  "run_id": "20261125T013224-sq35hfdb"
+}

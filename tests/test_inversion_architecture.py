@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import contextlib
+from collections import Counter
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -10,9 +12,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
-from qiskit import qasm2
+from qiskit import QuantumCircuit, qasm2
 from qiskit.quantum_info import Operator
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,7 +23,8 @@ sys.path.insert(0, str(ROOT / "tools/lattice_surgery"))
 
 from export_inversion_components import export_components
 from inversion_architecture import (
-    aggregate_components, minimum_distance_proxy, publish_results, space_compact,
+    aggregate_components, minimum_distance_proxy, publish_results, render_comparison,
+    render_report, space_compact,
 )
 from estimate_sliced_resources import logical_error_per_round
 from run_inversion_architecture import build_parser
@@ -42,6 +46,105 @@ def small_inputs(directory, dims=2):
 
 
 class InverseExportTests(unittest.TestCase):
+    def compiled_conditioned_inputs(self, directory):
+        """A small explicit artifact fixture, independent of operator synthesis."""
+        components = []
+        totals = Counter()
+        for identifier, kind, occurrences in (
+            ("W", "walk", 2), ("R_000", "projector", 3),
+            ("QFT_IN", "boundary", 1), ("QFT_OUT", "boundary", 1),
+        ):
+            circuit = QuantumCircuit(5)
+            circuit.h(0)
+            if kind != "boundary":
+                circuit.t(1)
+                circuit.cx(0, 2)
+            qasm = directory / f"{identifier}.qasm"
+            qasm.write_text(qasm2.dumps(circuit))
+            counts = dict(circuit.count_ops())
+            component = {
+                "id": identifier, "kind": kind, "occurrences": occurrences,
+                "qasm": qasm.name,
+                "qasm_sha256": hashlib.sha256(qasm.read_bytes()).hexdigest(),
+                "gate_counts": counts, "t_count": counts.get("t", 0),
+            }
+            if kind == "projector":
+                component["phi"] = 0.13
+            components.append(component)
+            for gate, count in counts.items():
+                totals[gate] += count * occurrences
+        metrics = {
+            "operator_family": "preconditioned_1d",
+            "architecture_scope": "Conditioned inverse kernel on nonzero modes",
+            "scope_notes": ["Source conditioning is excluded."],
+            "compiled_components": components,
+            "kappa": 2.5,
+            "logical_resources": {
+                "dimensions": 1, "target_n": 3, "logical_qubits": 5,
+                "num_w_applications": 2, "num_projector_rotations": 3,
+                "gate_counts": dict(totals),
+            },
+        }
+        source = directory / "logical.json"
+        source.write_text(json.dumps(metrics))
+        phases = directory / "phases.json"
+        phases.write_text(json.dumps({"phases": [0.13] * 3}))
+        return source, phases, metrics
+
+    def test_preconditioned_export_validates_artifacts_and_keeps_boundaries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source, phases, metrics = self.compiled_conditioned_inputs(directory)
+            with contextlib.redirect_stdout(io.StringIO()), patch("export_inversion_components.snapshot_logical_inputs"):
+                manifest = export_components(source, phases, directory / "case")
+            self.assertEqual(manifest["operator_family"], "preconditioned_1d")
+            self.assertEqual(manifest["num_boundary_components"], 2)
+            self.assertEqual(manifest["logical_gate_counts"], metrics["logical_resources"]["gate_counts"])
+            self.assertEqual([c["kind"] for c in manifest["components"]], ["walk", "projector", "boundary", "boundary"])
+            for item in manifest["components"]:
+                path = Path(item["qasm"])
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), item["qasm_sha256"])
+                self.assertEqual(qasm2.loads(path.read_text()).num_qubits, 5)
+
+    def test_preconditioned_export_rejects_tampering_and_false_counts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source, phases, metrics = self.compiled_conditioned_inputs(directory)
+            qasm = directory / "W.qasm"
+            qasm.write_text(qasm.read_text() + "x q[3];\n")
+            with self.assertRaisesRegex(ValueError, "QASM hash"):
+                export_components(source, phases, directory / "bad")
+            metrics["compiled_components"][0]["qasm_sha256"] = hashlib.sha256(qasm.read_bytes()).hexdigest()
+            source.write_text(json.dumps(metrics))
+            with self.assertRaisesRegex(ValueError, "gate counts"):
+                export_components(source, phases, directory / "bad")
+            self.assertFalse((directory / "bad").exists())
+
+    def test_preconditioned_export_rejects_wrong_phase_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            source, phases, _ = self.compiled_conditioned_inputs(directory)
+            phases.write_text(json.dumps({"phases": [0.13, 0.13, 0.14]}))
+            with self.assertRaisesRegex(ValueError, "Phase input does not match"):
+                export_components(source, phases, directory / "bad")
+
+    def test_preconditioned_export_keeps_endpoint_variants_and_source_hashes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp)
+            directory = output / "inputs" / "components"
+            directory.mkdir(parents=True)
+            source, phases, metrics = self.compiled_conditioned_inputs(directory)
+            original = (directory / "W.qasm").read_bytes()
+            metrics["compiled_components"][1]["occurrences"] = 2
+            variant = {**metrics["compiled_components"][1], "id": "R_END", "occurrences": 1}
+            metrics["compiled_components"].append(variant)
+            source.write_text(json.dumps(metrics))
+            with contextlib.redirect_stdout(io.StringIO()), patch("export_inversion_components.snapshot_logical_inputs"):
+                manifest = export_components(source, phases, output)
+            self.assertEqual((directory / "W.qasm").read_bytes(), original)
+            self.assertEqual(sum(c["kind"] == "projector" for c in manifest["components"]), 2)
+            self.assertEqual(sum(c["occurrences"] for c in manifest["components"] if c["kind"] == "projector"), 3)
+
     def test_projector_export_restores_flag_and_preserves_dirty_system_state(self):
         with tempfile.TemporaryDirectory() as tmp:
             directory = Path(tmp)
@@ -87,6 +190,46 @@ class InverseExportTests(unittest.TestCase):
 
 
 class CompositionTests(unittest.TestCase):
+    def test_conditioned_boundary_cost_is_included_without_extra_projector(self):
+        args, manifest, records = self.fixture()
+        manifest.update(
+            operator_family="preconditioned_1d", dimensions=1,
+            architecture_scope="Conditioned inverse kernel on nonzero modes",
+            scope_notes=["Source conditioning is excluded."],
+            num_boundary_components=2,
+            minimum_kappa_for_full_nonzero_spectrum=None,
+            algorithm={"kappa": 2.5},
+        )
+        manifest["components"].append({"id": "BOUNDARY", "kind": "boundary", "occurrences": 2, "t_count": 3})
+        manifest["logical_gate_counts"]["t"] += 6
+        records.append({
+            "status": "success", "slices": 5,
+            "resources": {"area": 30},
+            "instruction_counts": {"RequestMagicState": 3},
+            "artifact_directory": "evidence", "input_sha256": "hash",
+        })
+        result = aggregate_components(manifest, records, 30, args)
+        self.assertEqual(result["schedule_projection"]["slices"], 45)
+        self.assertEqual(result["schedule_projection"]["contributions"]["boundary"]["slices"], 10)
+        self.assertEqual(result["weighted_instruction_counts"]["RequestMagicState"], 34)
+        self.assertEqual(result["unique_projectors"], 2)
+        self.assertTrue(result["assumptions"]["explicit_sequence_boundary_gates_included"])
+        self.assertFalse(any("full nonzero target spectrum" in warning for warning in result["warnings"]))
+        result.update(method="compact", layout_resources={"height": 3, "width": 10, "area": 30}, layout_preparation="Native compact", compiler={"native_commit": "test"}, evidence_directory="evidence")
+        report = render_report(result)
+        self.assertIn("1D preconditioned inverse architecture", report)
+        self.assertIn("Explicit boundary contribution, slices: 10", report)
+        comparison = render_comparison({"methods": {"compact": result}, "run_directory": "test"})
+        self.assertIn("1D PRECONDITIONED INVERSE", comparison)
+        self.assertIn("Explicit boundary slices", comparison)
+        self.assertIn("Source conditioning is excluded.", comparison)
+
+    def test_magic_state_count_mismatch_cannot_produce_estimate(self):
+        args, manifest, records = self.fixture()
+        records[0]["instruction_counts"]["RequestMagicState"] -= 1
+        with self.assertRaisesRegex(ValueError, "magic-state requests"):
+            aggregate_components(manifest, records, 30, args)
+
     def test_failed_or_unselected_methods_replace_previous_visible_results(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp)
@@ -217,6 +360,33 @@ class CompositionTests(unittest.TestCase):
         for symbol in "QA0":
             self.assertEqual(source.count(symbol), spaced.count(symbol))
         self.assertGreater(len(spaced.splitlines()[0]), len(source.splitlines()[0]))
+
+    def test_litinski_factory_sizes_for_supply_time_and_combined_failure(self):
+        args, manifest, records = self.fixture()
+        args.factory_model = "litinski-15to1-two-level"
+        args.auto_code_distance, args.code_distance = True, 3
+        # At d=11 the layout alone passes this target, the combined proxy fails.
+        rounds = 28 * 82.5
+        layout_at_11 = 30 * rounds * logical_error_per_round(0.001, 11)
+        args.target_failure_probability = layout_at_11 + 14 * 2.7e-12
+        r = aggregate_components(manifest, records, 30, args)
+        self.assertEqual(r["assumptions"]["code_distance"], 13)
+        p = r["physical_projection"]
+        self.assertEqual(p["physical_qubits"], 30 * 2 * 13**2 + 30_700)
+        self.assertEqual(p["runtime_ns"], rounds * 1000)
+        self.assertTrue(p["factory_model"]["is_throughput_limited"])
+        self.assertAlmostEqual(p["combined_failure_proxy"], 30 * rounds * logical_error_per_round(0.001, 13) + 28 * 2.7e-12)
+        self.assertLessEqual(p["combined_failure_proxy"], args.target_failure_probability)
+
+    def test_litinski_profile_rejects_incompatible_assumptions(self):
+        args, manifest, records = self.fixture()
+        args.factory_model = "litinski-15to1-two-level"
+        args.factory_cycle_rounds = 10
+        with self.assertRaisesRegex(ValueError, "already specifies"):
+            aggregate_components(manifest, records, 30, args)
+        args.factory_cycle_rounds, args.physical_error_rate = None, 1e-4
+        with self.assertRaisesRegex(ValueError, "0.001"):
+            aggregate_components(manifest, records, 30, args)
 
 
 @unittest.skipUnless(

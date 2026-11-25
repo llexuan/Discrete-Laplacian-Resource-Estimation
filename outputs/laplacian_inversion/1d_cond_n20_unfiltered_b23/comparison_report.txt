@@ -1,0 +1,91 @@
+FULL LAPLACIAN INVERSE: ARCHITECTURE COMPARISON
+Case: Preconditioned 1D Laplacian, conditioned kernel (nested sinc^2 block encoding), unfiltered inverse b=23
+Run: 20261125T013224-sq35hfdb
+Status: SUCCESS
+
+Component costs are compiled once and multiplied by their occurrences.
+Physical qubits are allocated once. This is a full-sequence projection.
+
+METHOD CONFIGURATIONS
+Annealed: Annealed shared layout, optimized on one W + representative projector; 11 x 13 grid, 143 tiles.
+  Annealing budget 32, seed 61; optimizes one W + R_002. Full totals measure every distinct angle on the winning layout.
+Compact: Routing spacing 2; 3 x 40 grid, 120 tiles; factory region preserved.
+EDPC: Native EDPC; 15 x 15 grid, 225 tiles.
+
+EXAMPLE
+Dimensions: 1; n per axis: 20 (1,048,576 grid points per axis)
+Sequence degree / W applications: 45
+Block encoding per W: inner degree-10 sinc^2 QSVT, 10 U_X calls; QFT/QFT^dag once at the boundaries
+Projector rotations: 46; distinct angles: 23
+Resident logical qubits: 29
+Logical Clifford gates: 4,660,500
+Logical T/T-dagger gates: 3,032,376
+
+SHARED ASSUMPTIONS
+QEC cycle time (ns): 1000
+Physical qubits per tile / d^2: 2
+Physical error rate: 0.001
+Target combined failure proxy: 0.01
+Compiler source interval (slices): 1
+Code distance policy: each method's minimum admissible odd distance for the shared failure budget
+Layout proxy: min(1, layout tiles x projected runtime in QEC rounds x logical error per round).
+Combined proxy: min(1, layout proxy + T-state requests x output error per state).
+
+PHYSICAL FACTORY
+Litinski two-level T-state factory: (15-to-1)^6_(11,5,5) x (15-to-1)_(25,11,11)
+Complete factories: 1; physical qubits per factory: 30,700
+Average QEC rounds per accepted T state per factory: 82.5
+Error per accepted T state: 2.70e-12
+Full-sequence T-state requests: 3,032,376
+Factory production time at average throughput: 250.171020 s
+Source: Litinski, Table 1, https://arxiv.org/pdf/1905.06903#page=2
+Layout failure allowance: 9.9918125848e-03
+Projected runtime is the larger of core schedule time and factory production time.
+
+RESULTS
++-------------------------+----------------+----------------+-----------------+
+| Metric                  |    Annealed    |    Compact     |      EDPC       |
++-------------------------+----------------+----------------+-----------------+
+| Layout tiles            |            143 |            120 |             225 |
+| Slices for one W        |        463,502 |        471,381 |         409,753 |
+| All walk slices         |     20,857,590 |     21,212,145 |      18,438,885 |
+| All rotation slices     |         82,164 |         84,022 |          72,266 |
+| QFT boundary slices     |        172,437 |        320,673 |         146,721 |
+| Total projected slices  |     21,112,191 |     21,616,840 |      18,657,872 |
++-------------------------+----------------+----------------+-----------------+
+| Code distance           |             23 |             23 |              23 |
+| Core layout qubits      |        151,294 |        126,960 |         238,050 |
+| External factory qubits |         30,700 |         30,700 |          30,700 |
+| Total physical qubits   |        181,994 |        157,660 |         268,750 |
+| Projected runtime (s)   |     485.580393 |     497.187320 |      429.131056 |
+| Runtime set by          |  Core schedule |  Core schedule |   Core schedule |
+| Space-time (qubit*s)    | 88,372,718.044 | 78,386,552.871 | 115,328,971.300 |
+| Combined failure budget |   1.000000e-02 |   1.000000e-02 |    1.000000e-02 |
+| Layout-failure proxy    |   6.943800e-03 |   5.966248e-03 |    9.655449e-03 |
+| Factory-output bound    |   8.187415e-06 |   8.187415e-06 |    8.187415e-06 |
+| Combined failure proxy  |   6.951987e-03 |   5.974435e-03 |    9.663636e-03 |
+| Meets failure budget    |            Yes |            Yes |             Yes |
++-------------------------+----------------+----------------+-----------------+
+
+INTERPRETATION (among successful methods in this run)
+Fewest physical qubits: compact.
+Shortest projected runtime: edpc.
+Smallest space-time cost: compact.
+Relative to EDPC:
+  annealed: 32.28% fewer physical qubits; 13.15% longer runtime.
+  compact: 41.34% fewer physical qubits; 15.86% longer runtime.
+
+MODEL LIMITS
+- One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
+- Factory throughput is averaged. Burst delivery, buffering and per-request stalls are outside this projection.
+- Measurement-dependent corrections and the T/T-dagger distinction in printed lowering require separate validation.
+- Conditioned kernel only: costs exclude preparing C^{-1} b and recovering the Poisson solution from L_cond^{-1}.
+- W_cond nests an inner degree-10 sinc^2 QSVT over U_X; the QFT pair is applied once at the boundaries.
+- The scaled inverse is verified in the odd QSP quadrature. Coherent quadrature extraction is outside this estimate.
+
+FILES
+Logical baseline: logical/inversion_resource_report.txt
+Method reports: annealed_resource_report.txt, compact_resource_report.txt, EDPC_resource_report.txt
+Machine-readable results: data/
+Inputs and manifest: inputs/
+Complete run evidence: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb

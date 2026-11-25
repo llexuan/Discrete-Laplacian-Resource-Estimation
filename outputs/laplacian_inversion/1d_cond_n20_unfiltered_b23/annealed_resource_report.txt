@@ -1,0 +1,101 @@
+=== Full Laplacian inverse architecture: annealed ===
+Run: 20261125T013224-sq35hfdb
+Status: SUCCESS
+Configuration: Annealed shared layout, optimized on one W + representative projector; 11 x 13 grid, 143 tiles
+Case: Preconditioned 1D Laplacian, conditioned kernel (nested sinc^2 block encoding), unfiltered inverse b=23
+
+Accounting: one W and each unique projector and the QFT/QFT^dag boundaries compiled once, multiplied by occurrences.
+This is a component-sum projection, not compilation of the complete long circuit.
+Dimensions / n per axis: 1 / 20
+Resident logical qubits: 29
+W applications: 45
+Projector rotations / unique angles: 46 / 23
+Full-sequence logical Clifford / T count: 4,660,500 / 3,032,376
+Layout dimensions: 11 x 13
+Layout tiles (allocated once): 143
+
+--- projected entire sequence ---
+Walk contribution, slices: 20,857,590
+Projector contribution, slices: 82,164
+QFT boundary contribution, slices: 172,437
+Total component-sum slices: 21,112,191
+Tile-slices: 3,019,043,313
+QEC rounds: 485,580,393
+Resident layout physical qubits: 151,294
+Total physical qubits (allocated once): 181,994
+Projected core time: 485.580393 s
+Projected time with optional factory bound: 485.580393 s
+Space-time cost: 8.837271804e+16 ns*qubits
+Magic-state requests: 3,032,376
+Layout failure proxy: 6.943800e-03
+Shared failure budget: <= 1.000000e-02
+Meets failure budget: Yes
+Minimum odd distance under this proxy: 23
+
+--- assumptions ---
+Code distance: 23
+Distance selection: Minimum admissible odd distance meeting the combined layout and factory-output budget.
+QEC cycle time: 1000 ns
+Physical qubits/tile: 2 * d^2
+Physical error rate: 1.000000e-03
+Supply interval / staggering: 1 slices / False
+Pipeline: wave, local decomposition; compiler pin: 82a1cbe64717a64a289dd4b0d02e3dc38cae3890
+
+--- physical factory and combined reliability ---
+Litinski two-level T-state factory: (15-to-1)^6_(11,5,5) x (15-to-1)_(25,11,11)
+Complete factories: 1; physical qubits per factory: 30,700
+Average QEC rounds per accepted T state per factory: 82.5
+Error per accepted T state: 2.70e-12
+Full-sequence T-state requests: 3,032,376
+Factory production time at average throughput: 250.171020 s
+Source: Litinski, Table 1, https://arxiv.org/pdf/1905.06903#page=2
+Layout failure allowance after reserving factory outputs: 9.9918125848e-03
+Factory-output failure bound (requests x error per state): 8.187415200e-06
+Combined failure proxy (layout + factory outputs): 6.951987035e-03
+Runtime set by: core schedule
+
+--- simulated annealing ---
+Budget / seed: 32 / 61
+Search objective: area * slices of one W followed by the largest-T projector; final totals use every angle's measured cost.
+Representative projector: R_002
+Search time: 58.383 s
+Replay verified: True
+
+--- model limits and warnings ---
+- One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.
+- Factory throughput is averaged. Burst delivery, buffering and per-request stalls are outside this projection.
+- Measurement-dependent corrections and the T/T-dagger distinction in printed lowering require separate validation.
+- Conditioned kernel only: costs exclude preparing C^{-1} b and recovering the Poisson solution from L_cond^{-1}.
+- W_cond nests an inner degree-10 sinc^2 QSVT over U_X; the QFT pair is applied once at the boundaries.
+- The scaled inverse is verified in the odd QSP quadrature. Coherent quadrature extraction is outside this estimate.
+
+Complete evidence: /Users/huanglexuan/Documents/Codex/2026-10-17/pul/Discrete-Laplacian-Resource-Estimation/outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/runs/20261125T013224-sq35hfdb/annealed/layout_0
+
+--- appendix: component measurements ---
+Component      Occurrences     Slices each    Weighted slices   T requests each
+W                       45         463,502         20,857,590            64,362
+R_000                    2             852              1,704               124
+R_001                    2             852              1,704               124
+R_002                    2           2,914              5,828               374
+R_003                    2           2,896              5,792               372
+R_004                    2           1,864              3,728               256
+R_005                    2           1,776              3,552               246
+R_006                    2           1,784              3,568               248
+R_007                    2           1,744              3,488               242
+R_008                    2           1,746              3,492               244
+R_009                    2           1,732              3,464               242
+R_010                    2           1,782              3,564               246
+R_011                    2           1,732              3,464               242
+R_012                    2           1,760              3,520               244
+R_013                    2           1,766              3,532               244
+R_014                    2           1,778              3,556               246
+R_015                    2           1,768              3,536               246
+R_016                    2           1,756              3,512               246
+R_017                    2           1,752              3,504               244
+R_018                    2           1,786              3,572               248
+R_019                    2           1,788              3,576               246
+R_020                    2           1,772              3,544               244
+R_021                    2           1,758              3,516               246
+R_022                    2           1,724              3,448               244
+QFT                      1          87,081             87,081            62,385
+QFT_dg                   1          85,356             85,356            62,385

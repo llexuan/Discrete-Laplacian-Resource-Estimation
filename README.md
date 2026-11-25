@@ -314,6 +314,83 @@ The synthesis budget is 1e-7 instead of 1e-8: the nested walk has 51,571
 approximated rotations, and per-rotation tolerances below about 1e-12 reach the
 double-precision limit of pyLIQTR's error check.
 
+### Unfiltered 1D conditioned inverse at n=20
+
+The [unfiltered architecture comparison](outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/comparison_report.txt)
+and [logical report](outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/logical/inversion_resource_report.txt)
+use the full odd polynomial
+`p(x) = x/(2κ) · Σ_{j=0}^{b−1}(1−x²)^j`. At κ=2.5 and outer error budget 0.01,
+the certified exponents are 23 through 25. The smallest, b=23, gives degree 45,
+46 outer phases, and a uniform error bound of 0.00906554 for the scaled target
+`1/(2κx)` on `1/κ ≤ |x| ≤ 1`. The inner degree-10 encoding and QFT boundaries
+are the same as in the [filtered degree-117 run](outputs/laplacian_inversion/1d_cond_n20/comparison_report.txt).
+Both estimates count the QSP sequence for the conditioned kernel. Its inverse
+response is verified in the odd QSP quadrature. State preparation and coherent
+extraction of that quadrature have separate costs.
+
+| Full sequence at n=20 | Archived filtered | Unfiltered, b=23 |
+| --- | ---: | ---: |
+| Walk applications | 117 | 45 |
+| Outer projectors (distinct angles) | 118 (59) | 46 (23) |
+| Logical qubits | 29 | 29 |
+| Clifford gates | 11,798,034 | 4,660,500 |
+| T and T† gates | 7,684,044 | 3,032,376 |
+| Maximum kernel polynomial error on the grid | 0.01768141 | 0.00794005 |
+
+The archived filtered construction used its original approximation input ε=0.49.
+The new ε=0.01 is the uniform outer-inverse error budget. The last row compares
+both polynomials against the same scaled inverse across all 524,289 distinct
+folded frequencies. Both runs allocate `1e-7` to Clifford+T synthesis. The fresh
+compilation yields 98,988 Clifford gates per walk versus 98,848 in the archive;
+both use 64,362 T/T† gates per walk.
+
+| Layout | Filtered core qubits | Unfiltered core qubits | Filtered time (s) | Unfiltered time (s) |
+| --- | ---: | ---: | ---: | ---: |
+| Compact, spacing 2 | 150,000 | 126,960 | 1,390.64 | 497.19 |
+| EDPC | 281,250 | 238,050 | 1,205.72 | 429.13 |
+| Annealed | 178,750 | 151,294 | 1,364.20 | 485.58 |
+
+The archived filtered run selects distance 25 under its 1% layout-failure
+budget. The unfiltered run selects distance 23 under a combined 1% budget for
+the layout and factory outputs. The table compares core layouts. The unfiltered
+comparison report also includes the 30,700-qubit external factory in its totals.
+
+Reproduce the phase fit, logical counts and three layout estimates from the repository root:
+
+```bash
+case_dir=outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23
+export PYTHONPATH=src
+.venv/bin/python -m laplacian_qsvt.phases.inversion_phase_rotations \
+  --unfiltered-b 23 --kappa 2.5 --epsilon 0.01 --synthesis-tol 1e-7 \
+  --output-phases "$case_dir/inputs/phases.json" --output-plot "$case_dir/inputs/outer_inverse_fit.png"
+.venv/bin/python -m laplacian_qsvt.preconditioned.inversion \
+  --target-n 20 --verify-n 4 --synthesis-tol 1e-7 --phases-json "$case_dir/inputs/phases.json" \
+  --output-circuits-dir "$case_dir/inputs/verification" \
+  --output-resource-metrics "$case_dir/logical/inversion_resource_metrics.json"
+.venv/bin/python tools/lattice_surgery/run_inversion_architecture.py \
+  --logical-metrics "$case_dir/logical/inversion_resource_metrics.json" \
+  --phases-json "$case_dir/inputs/phases.json" --output-dir "$case_dir" \
+  --factory-model litinski-15to1-two-level --num-factories 1 \
+  --compact-spacing 2 --budget 32 --seed 61 --auto-code-distance \
+  --target-failure-probability 0.01 --timeout 1200 --skip-lli
+```
+
+#### Unfiltered inverse with one external T-state factory
+
+The [factory-inclusive comparison](outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/comparison_report.txt)
+uses one two-level Litinski factory per layout. Its six first-stage blocks and
+one second-stage block together occupy 30,700 physical qubits and deliver one
+accepted state every 82.5 QEC rounds on average. The published output error
+is 2.7e-12 per state at a physical error rate of 0.001.
+[Litinski, Table 1](https://arxiv.org/pdf/1905.06903#page=2)
+
+For 3,032,376 requests, the factory-output error allowance used is 8.1874152e-6.
+Each layout selects its minimum odd distance under a 1% combined proxy for
+layout and factory-output errors. Runtime uses the larger of core time and
+factory production time. This projection uses average throughput and excludes
+individual delivery stalls. The report lists core layout qubits, factory qubits
+and total physical qubits for each method.
+
 ## Spectral-gap and kappa warning
 
 The periodic Laplacian has a zero mode and cannot be inverted on the complete

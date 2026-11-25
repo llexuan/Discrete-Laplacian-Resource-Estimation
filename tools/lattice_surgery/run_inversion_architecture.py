@@ -19,8 +19,8 @@ import time
 import estimate_sliced_resources as resources
 from compiler_options import backend_options, output_prefix
 from export_inversion_components import export_components, snapshot_logical_inputs
-from inversion_architecture import aggregate_components, publish_results, space_compact
-from run_layout_comparison import check_installation, NATIVE_PIN
+from inversion_architecture import LITINSKI_FACTORY, aggregate_components, factory_parameters, publish_results, space_compact
+from run_layout_comparison import check_installation, normalize_qasm, NATIVE_PIN
 from setup_floorplanner import DEFAULT_CHECKOUT, FLOORPLANNER_PIN
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -91,6 +91,8 @@ def build_parser():
     parser.add_argument("--physical-error-rate", type=float, default=1e-3)
     parser.add_argument("--target-failure-probability", type=float, default=1e-2)
     parser.add_argument("--factory-cycle-rounds", type=float)
+    parser.add_argument("--factory-model", choices=[LITINSKI_FACTORY["id"]],
+                        help="Apply the published factory and reserve its output error within --target-failure-probability.")
     parser.add_argument("--factory-physical-qubits", type=float)
     parser.add_argument("--num-factories", type=int)
     parser.add_argument(
@@ -202,7 +204,7 @@ def run_worker(args):
         path = Path(component["qasm"])
         if digest(path) != component["qasm_sha256"]:
             raise ValueError(f"Component input changed: {path}")
-        texts[component["id"]] = path.read_text()
+        texts[component["id"]], _ = normalize_qasm(path.read_text())
     adapter, exporter = check_installation(args.floorplanner_dir.resolve())
     config = CompilerConfig(
         local=True,
@@ -351,9 +353,11 @@ def run_worker(args):
             )
             if optimization:
                 result["optimization"] = optimization
+            physical = result["physical_projection"]
+            proxy = physical.get("combined_failure_proxy", physical["failure_probability_proxy"])
             print(
                 f"  Selected code distance {result['assumptions']['code_distance']}; "
-                f"failure proxy {result['physical_projection']['failure_probability_proxy']:.6e} "
+                f"failure proxy {proxy:.6e} "
                 f"(budget {args.target_failure_probability:.6e}).",
                 flush=True,
             )
@@ -383,6 +387,12 @@ def run_worker(args):
         "run_directory": str(run),
         "methods": results,
     }
+    if manifest.get("operator_family") == "preconditioned_1d":
+        comparison.update(
+            operator_family=manifest["operator_family"],
+            scope="preconditioned_1d_inverse_component_sum_comparison",
+            architecture_scope=manifest["architecture_scope"],
+        )
     success = all(r["status"] == "success" for r in results.values())
     text = publish_results(output, comparison)
     print("\n" + text, flush=True)
@@ -394,20 +404,27 @@ def main():
     args = parser.parse_args()
     try:
         resources.validate_arguments(args)
+        factory_parameters(args)
         if args.budget < 13:
             raise ValueError("--budget must be at least 13")
-        if args.factory_cycle_rounds is not None and args.num_factories is None:
-            raise ValueError(
-                "Supply cells are not factories; provide --num-factories with --factory-cycle-rounds"
-            )
         if args.supply_count is not None and args.supply_count < 1:
             raise ValueError("--supply-count must be positive")
         if args.output_dir is None:
-            logical = json.loads(args.logical_metrics.read_text())["logical_resources"]
+            metrics = json.loads(args.logical_metrics.read_text())
+            logical = metrics["logical_resources"]
+            family = (
+                "preconditioned_laplacian"
+                if metrics.get("operator_family") == "preconditioned_1d"
+                else "laplacian_inversion"
+            )
             args.output_dir = (
                 ROOT
-                / f"outputs/laplacian_inversion/{logical['dimensions']}d_n{logical['target_n']}"
+                / f"outputs/{family}/{logical['dimensions']}d_n{logical['target_n']}"
             )
+            if metrics.get("case") == "preconditioned_1d_conditioned_kernel" and metrics.get("unfiltered_inverse"):
+                args.output_dir = ROOT / "outputs/laplacian_inversion" / (
+                    f"1d_cond_n{logical['target_n']}_unfiltered_b{metrics['unfiltered_inverse']['b']}"
+                )
         args.output_dir = args.output_dir.resolve()
         if args.worker:
             raise SystemExit(0 if run_worker(args) else 1)

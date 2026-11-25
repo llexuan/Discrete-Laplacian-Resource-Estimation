@@ -302,7 +302,7 @@ def estimate_projector_rotation_resources(
                 "rotation_synthesis": {
                     "backend": "pyLIQTR",
                     "backend_version": synthesis.backend_version,
-                    "method": "get_ring_elts_direct + exact_decomp",
+                    "method": synthesis.method,
                     "epsilon": synthesis.epsilon,
                     "projective_error": synthesis.projective_error,
                     "raw_phase_offset": synthesis.raw_phase_offset,

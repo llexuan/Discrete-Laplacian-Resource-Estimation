@@ -76,15 +76,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Skip the rectangular filter and use only the 1/x approximation.",
     )
     parser.add_argument(
+        "--unfiltered-b", type=int, metavar="B",
+        help="Use the full degree-(2B-1) geometric inverse with the supplied kappa and epsilon (Eqs. 54–57).",
+    )
+    parser.add_argument(
         "--output-phases",
         type=Path,
-        default=PHASES_DIR / "phases_inversion.json",
         help="Where to write synthesized phases as JSON.",
     )
     parser.add_argument(
         "--output-plot",
         type=Path,
-        default=PLOTS_DIR / "qsp_inversion_fit.png",
         help="Where to save the verification plot.",
     )
     return parser
@@ -134,6 +136,22 @@ def build_one_over_x_cheb(b: int, D: int) -> C.Chebyshev:
             inner_sum += binomial_to_log_gamma_half(2 * b, b + i)
         coef[2 * j + 1] = 4.0 * ((-1.0) ** j) * inner_sum
     return C.Chebyshev(coef)
+
+
+def unfiltered_bounds(b: int, kappa: float, epsilon: float) -> dict:
+    """Certify the scaled geometric inverse on |x| >= 1/kappa and bound it on [-1, 1]."""
+    if not math.isfinite(kappa) or kappa <= 1 or not 0 < epsilon < 0.5:
+        raise ValueError("The unfiltered inverse requires finite kappa > 1 and 0 < epsilon < 1/2.")
+    log_decay = math.log1p(-1 / kappa**2)
+    b_min = math.ceil(math.log(2 * epsilon) / log_decay)
+    b_max = math.floor(4 * kappa**2)
+    if not b_min <= b <= b_max:
+        raise ValueError(f"Unfiltered b={b} is outside the certified interval [{b_min}, {b_max}].")
+    return {
+        "b": b, "b_min": b_min, "b_max": b_max,
+        "uniform_inverse_error_bound": 0.5 * math.exp(b * log_decay),
+        "global_magnitude_bound": math.sqrt(b) / (2 * kappa),
+    }
 
 
 def build_rect_cheb(degree: int, delta: float, kappa: float, epsilon: float) -> C.Chebyshev:
@@ -201,17 +219,29 @@ def main() -> None:
     epsilon = float(args.epsilon)
     kappa = float(args.kappa)
 
-    # Paper-style split: inverse-poly budget uses eps/4 at 2*kappa.
-    eps_inv = epsilon / 4.0
-    kappa_inv = 2.0 * kappa
-
-    b = cks_b(eps_inv, kappa_inv)
-    D_inv = cks_D(eps_inv, kappa_inv)
+    certificate = None
+    suffix = ""
+    if args.unfiltered_b is not None:
+        if args.no_rect or args.rect_degree is not None:
+            raise ValueError("--unfiltered-b specifies the complete construction; omit rectangular-filter options.")
+        b = args.unfiltered_b
+        certificate = unfiltered_bounds(b, kappa, epsilon)
+        eps_inv, kappa_inv = epsilon, kappa
+        D_inv = b - 1  # Full finite Chebyshev expansion of x * sum_j (1-x^2)^j.
+        suffix = f"_unfiltered_b{b}"
+    else:
+        eps_inv, kappa_inv = epsilon / 4.0, 2.0 * kappa
+        b = cks_b(eps_inv, kappa_inv)
+        D_inv = cks_D(eps_inv, kappa_inv)
+    if args.output_phases is None:
+        args.output_phases = PHASES_DIR / f"phases_inversion{suffix}.json"
+    if args.output_plot is None:
+        args.output_plot = PLOTS_DIR / f"qsp_inversion_fit{suffix}.png"
     if b < 1:
         raise ValueError("Derived b is < 1; reduce epsilon or increase kappa.")
 
     poly_inv = build_one_over_x_cheb(b, D_inv)
-    use_rect = not args.no_rect
+    use_rect = certificate is None and not args.no_rect
     fixed_scale = 1.0 / (2.0 * kappa)
 
     eps_rect = float("nan")
@@ -325,7 +355,7 @@ def main() -> None:
         "num_w_applications": int(max(len(phases) - 1, 0)),
         "synthesis_tolerance": float(args.synthesis_tol),
         "synthesis_tolerance_scope": "full_qsp_clifford_t_implementation",
-        "max_scale": float(DEFAULT_MAX_SCALE),
+        "max_scale": 1.0 if certificate else float(DEFAULT_MAX_SCALE),
         "returned_scale": float(fixed_scale),
         "parity": int(parity),
         "domain_of_validity": f"[1/{kappa:g}, 1] U [-1, -1/{kappa:g}]",
@@ -338,6 +368,10 @@ def main() -> None:
         "cheb_coeffs": cheb_coeffs.tolist(),
         "phases": phases.tolist(),
     }
+    if certificate is not None:
+        if effective_degree != 2 * b - 1 or parity != 1 or not phase_vs_poly_max_abs_err <= 1e-10:
+            raise ValueError("Synthesized QSP phases failed the unfiltered polynomial degree/parity/response check.")
+        payload["unfiltered_inverse"] = certificate
     ensure_parent(args.output_phases).write_text(
         json.dumps(payload, indent=2) + "\n", encoding="utf-8"
     )
@@ -361,8 +395,8 @@ def main() -> None:
     print("=== matrix-inversion (1/x) phase synthesis (pyqsp) ===")
     print(f"epsilon            : {epsilon:g}")
     print(f"kappa              : {kappa:g}")
-    print(f"eps_inverse        : {eps_inv:g}   (= epsilon/4)")
-    print(f"kappa_inverse      : {kappa_inv:g}   (= 2*kappa)")
+    print(f"eps_inverse        : {eps_inv:g}")
+    print(f"kappa_inverse      : {kappa_inv:g}")
     print(f"b (target exponent): {b}   -> exact g degree = {2*b - 1}")
     print(f"D (truncation deg) : {D_inv}   -> 1/x poly degree = {2*D_inv + 1}")
     print(f"use_rect_filter    : {use_rect}")

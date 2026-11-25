@@ -195,6 +195,44 @@ The actual selector tolerance is recorded in the logical JSON/TXT and used again
 by component export. Weighted synthesis error remains within the requested global
 budget; no change to the 2D phase sequence or saved logical baseline is needed.
 
+### 1D preconditioned inverse
+
+The conditioned 1D operator has a separate circuit producer and output directory.
+Generate its logical baseline and compiled component QASM first:
+
+```bash
+PYTHONPATH=src .venv/bin/python -m laplacian_qsvt.laplacian.preconditioned_inversion_resource \
+  --target-n 20 --output-dir outputs/preconditioned_laplacian/1d_n20
+
+PYTHONPATH=src .venv/bin/python tools/lattice_surgery/run_inversion_architecture.py \
+  --logical-metrics outputs/preconditioned_laplacian/1d_n20/logical/inversion_resource_metrics.json \
+  --phases-json outputs/preconditioned_laplacian/1d_n20/inputs/phases.json \
+  --output-dir outputs/preconditioned_laplacian/1d_n20 \
+  --budget 32 --seed 61 --target-failure-probability 0.01
+```
+
+The `operator_family: preconditioned_1d` marker selects the compiled-artifact
+exporter. It verifies each component's SHA-256 hash, Clifford+T gate counts,
+resident register width and occurrence-weighted totals against the logical
+report. It does not rebuild an ordinary-Laplacian walk from the dimension field.
+Projector endpoint variants may share an original phase while having different
+compiled circuits; both their multiplicities and their separate costs are kept.
+
+Explicit Fourier and coherent-extraction boundary circuits supplied by the
+logical producer are compiled on the same resident layout and included in the
+total slices, runtime and failure-distance selection. The report shows their
+contribution separately. This counts the specified boundary gates; it does not
+model patch-orientation reconciliation or supply carryover between independently
+scheduled components.
+
+The reports describe a conditioned inverse kernel on the nonzero-frequency
+subspace. Source conditioning, state preparation and output success amplification
+are outside that kernel unless explicitly included by its producer. The original
+periodic Laplacian's zero mode remains a separate application-level condition.
+The ordinary 2D and 3D outputs under `outputs/laplacian_inversion/` are preserved.
+Generated QASM and run evidence are ignored by Git, so regenerate the logical
+baseline before running the architecture command in a fresh checkout.
+
 `export_inversion_components.py` uses the same Clifford+T basis and decomposition
 as the logical counters. It exports W and each unique synthesized projector,
 preserving inverse gates and synthesis tolerances. Projector predicates map to
@@ -271,6 +309,16 @@ once, in addition to abstract in-grid regions. Do not assign the same hardware t
 both. This global throughput bound does not reconstruct supply stalls, and the
 layout-error proxy excludes factory output errors. Polynomial/synthesis errors
 and spectral limitations remain separate in the logical input metadata.
+
+The inverse runner also supports `--factory-model litinski-15to1-two-level`.
+At `--physical-error-rate 0.001`, this selects the published 30,700-qubit
+two-level 15-to-1 factory, averaging 82.5 rounds per accepted T state with
+output error 2.7e-12. One complete factory is the default. With this model
+the target failure probability covers the layout proxy plus the request count
+times the output error. Data patches accrue storage exposure over the longer
+of core execution and factory production. The comparison lists the two
+contributions separately and includes external factories in total qubits
+and space-time. [Litinski, Table 1](https://arxiv.org/pdf/1905.06903#page=2)
 
 Outputs default to `outputs/laplacian_inversion/<D>d_n<n>/` (override with
 `--output-dir`), using `EDPC`, `compact` and `annealed` method prefixes:

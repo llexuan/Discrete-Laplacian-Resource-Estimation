@@ -5,8 +5,8 @@ Nested QSVT inversion of the 1D preconditioned periodic Laplacian (conditioned k
     full sequence = QFT^dag . [R(phi_0) W_cond R(phi_1) ... W_cond R(phi_d)] . QFT
 
 W_cond is the repository's qubitization walk with U_L replaced by U_Lcond, the
-inner sinc^2 QSVT over U_X. The outer P^MI phases (kappa = 2.5) are reused, and
-the encoded operator's spectrum P_2d(2 m_k / N) lies in [0.405, 1].
+inner sinc^2 QSVT over U_X. The outer phases specify the filtered or unfiltered
+inverse. The encoded spectrum P_2d(2 m_k / N) lies in [0.405, 1] at d=5.
 
 Scope: the conditioned kernel L_cond^{-1} (A = C L_cond, C = diag((pi m_k/N)^2)),
 assuming C^{-1} b is prepared directly.
@@ -33,7 +33,7 @@ import time
 
 import numpy as np
 
-from ..paths import CIRCUITS_DIR, METRICS_DIR, MPLCONFIG_DIR, PHASES_DIR, ensure_parent
+from ..paths import CIRCUITS_DIR, METRICS_DIR, MPLCONFIG_DIR, OUTPUTS_DIR, PHASES_DIR, ensure_parent
 
 os.environ["MPLCONFIGDIR"] = str(MPLCONFIG_DIR)
 from numpy.polynomial import chebyshev as C
@@ -44,7 +44,7 @@ from ..demos.ix2_block_encoding import chebyshev_matrix_eval, load_phase_metadat
 from ..laplacian.laplacian_1d_resource import resource_counts
 from ..laplacian.laplacian_inversion_encode import estimate_projector_rotation_resources
 from ..laplacian.laplacian_nd_resource import CT_BASIS
-from .gates import RotationEmitter, eighth_turns
+from .gates import RotationEmitter
 from .sinc2 import (
     DEFAULT_PHASES_JSON as DEFAULT_INNER_JSON,
     block_phase_factor,
@@ -265,7 +265,8 @@ def per_rotation_tolerance(n: int, psi: list[float], phases: list[float], synthe
     build_walk(lay, psi, walk_counter)
     qft_counter = RotationEmitter()
     build_qft(lay, qft_counter)
-    outer = sum(1 for phi in phases if eighth_turns(2.0 * phi) is None)
+    # Every outer projector calls synthesize_rz, including angles close to zero.
+    outer = len(phases)
     counts = {
         "per_w": len(walk_counter.records),
         "per_qft": len(qft_counter.records),
@@ -432,6 +433,18 @@ def render_resource_report(metrics: dict) -> str:
     verification = metrics["verification"]
     block = logical["block_encoding"]
     synth = one_walk["rotation_synthesis"]
+    unfiltered = metrics.get("unfiltered_inverse")
+    outer_name = "p_b,kappa" if unfiltered else "P^MI"
+    outer_details = []
+    if unfiltered:
+        outer_details = [
+            f"Outer construction    : unfiltered geometric inverse, b = {unfiltered['b']} "
+            f"(certified range {unfiltered['b_min']}..{unfiltered['b_max']})",
+            f"Uniform inverse error : <= {unfiltered['uniform_inverse_error_bound']:.8f} "
+            f"on |x| in [1/kappa, 1] (budget {metrics['epsilon']:g})",
+            f"Global |p_b,kappa|    : <= {unfiltered['global_magnitude_bound']:.8f} on [-1, 1]",
+            "Signal convention     : scaled inverse in the odd QSP quadrature; coherent extraction is outside this estimate",
+        ]
     lines = [
         "=== Preconditioned 1D Laplacian inverse (conditioned kernel): logical resource report ===",
         "",
@@ -442,7 +455,8 @@ def render_resource_report(metrics: dict) -> str:
         f"Spatial dimensions    : {logical['dimensions']}",
         f"Qubits per dimension  : {logical['target_n']}",
         f"Grid points per axis  : {logical['grid_points_per_dimension']:,}",
-        f"Outer polynomial degree: {metrics['polynomial_degree']} (P^MI, kappa = {metrics['kappa']:g})",
+        f"Outer polynomial degree: {metrics['polynomial_degree']} ({outer_name}, kappa = {metrics['kappa']:g})",
+        *outer_details,
         f"Inner polynomial degree: {block['inner_degree']} (P_2d, d = {metrics['inner']['d']})",
         f"W applications        : {logical['num_w_applications']:,}",
         f"U_X calls per W       : {block['u_x_calls_per_w']}",
@@ -507,10 +521,10 @@ def render_resource_report(metrics: dict) -> str:
     lines += [
         "",
         "--- approximation and synthesis errors ---",
-        f"Kernel polynomial error     : {errors['polynomial_error']:.6e}  (max_k |P^MI(P_2d) - 1/(2 kappa sinc^2)|, all {spectrum['modes_checked']:,} distinct modes)",
+        f"Kernel polynomial error     : {errors['polynomial_error']:.6e}  (max_k |{outer_name}(P_2d) - 1/(2 kappa sinc^2)|, all {spectrum['modes_checked']:,} distinct modes)",
         f"  inner P_2d vs sinc^2      : {spectrum['inner_polynomial_error']:.6e}  (bound {metrics['inner']['truncation_bound']:.6e})",
-        f"  inner error after P^MI    : {spectrum['inner_error_after_inversion']:.6e}",
-        f"  outer P^MI on L_cond      : {spectrum['outer_polynomial_error_on_spectrum']:.6e}",
+        f"  inner error after {outer_name:<8}: {spectrum['inner_error_after_inversion']:.6e}",
+        f"{('  outer ' + outer_name + ' on L_cond'):<28}: {spectrum['outer_polynomial_error_on_spectrum']:.6e}",
         f"Phase numerical error       : {errors['phase_numerical_error']:.6e}  (outer + inner propagated)",
         f"Synthesis tolerance         : {errors['synthesis_tolerance']:.6e}",
         f"Measured synthesis bound    : {errors['measured_synthesis_error_bound']:.6e}",
@@ -539,7 +553,7 @@ def render_resource_report(metrics: dict) -> str:
         f"QFT vs bit-reversed DFT: {verification['qft_bit_reversed_dft_error']:.6e}",
         f"QSP block max-entry error: {verification['qsp_block_max_entry_error']:.6e}",
         f"QSP block spectral error: {verification['qsp_block_spectral_error']:.6e}",
-        f"Position basis vs classical P^MI(L_cond,2d): {verification['position_vs_classical_polynomial_error']:.6e}",
+        f"Position basis vs classical {outer_name}(L_cond,2d): {verification['position_vs_classical_polynomial_error']:.6e}",
         f"Position basis vs exact (1/2kappa) L_cond^-1: {verification['position_vs_exact_conditioned_kernel_error']:.6e}",
         "",
         f"Outer phase source    : {metrics['source_json']}",
@@ -630,15 +644,9 @@ def main() -> None:
     parser.add_argument("--inner-phases-json", type=Path, default=DEFAULT_INNER_JSON)
     parser.add_argument("--inner-d", type=int, default=None, help="Odd sinc^2 truncation index (default: phases file, else 5).")
     parser.add_argument("--synthesis-tol", type=float, default=DEFAULT_SYNTHESIS_TOL)
-    parser.add_argument("--output-circuits-dir", type=Path, default=CIRCUITS_DIR)
-    parser.add_argument(
-        "--output-resource-metrics", type=Path,
-        default=METRICS_DIR / "preconditioned_1d_inversion_resource_metrics.json",
-    )
+    parser.add_argument("--output-circuits-dir", type=Path)
+    parser.add_argument("--output-resource-metrics", type=Path)
     args = parser.parse_args()
-    report_path = args.output_resource_metrics.with_name(
-        args.output_resource_metrics.stem.removesuffix("_metrics") + "_report.txt"
-    )
     if not 0.0 < args.synthesis_tol < 1.0:
         raise ValueError("--synthesis-tol must satisfy 0 < tolerance < 1.")
 
@@ -648,6 +656,19 @@ def main() -> None:
         args.phases_json
     )
     meta = json.loads(args.phases_json.read_text(encoding="utf-8"))
+    unfiltered = meta.get("unfiltered_inverse")
+    if unfiltered:
+        case_dir = OUTPUTS_DIR / "laplacian_inversion" / f"1d_cond_n{args.target_n}_unfiltered_b{unfiltered['b']}"
+        default_metrics = case_dir / "logical/inversion_resource_metrics.json"
+        default_drawings = case_dir / "inputs/verification"
+    else:
+        default_metrics = METRICS_DIR / "preconditioned_1d_inversion_resource_metrics.json"
+        default_drawings = CIRCUITS_DIR
+    args.output_resource_metrics = args.output_resource_metrics or default_metrics
+    args.output_circuits_dir = args.output_circuits_dir or default_drawings
+    report_path = args.output_resource_metrics.with_name(
+        args.output_resource_metrics.stem.removesuffix("_metrics") + "_report.txt"
+    )
     kappa, epsilon = float(meta["kappa"]), float(meta["epsilon"])
     parity = parity if parity is not None else effective_degree % 2
     phases = [float(phi) for phi in phases]
@@ -663,6 +684,11 @@ def main() -> None:
 
     print(f"Spectral analysis at n = {args.target_n} ...", flush=True)
     spectrum = spectral_summary(args.target_n, inner["d"], cheb, kappa, inner["phase_vs_poly_max_abs_error"])
+    if unfiltered:
+        if not (1 / kappa <= spectrum["encoded_min_eigenvalue"] <= spectrum["encoded_max_eigenvalue"] <= 1 + 1e-12):
+            raise ValueError("The encoded spectrum falls outside the certified inverse domain.")
+        if not verification["qsp_block_spectral_error"] < 1e-9 or not verification["position_vs_classical_polynomial_error"] < 1e-9:
+            raise ValueError("The small-grid circuit failed the unfiltered polynomial response check.")
 
     print(f"Logical Clifford+T resources at n = {args.target_n} ...", flush=True)
     started = time.monotonic()
@@ -687,7 +713,7 @@ def main() -> None:
     metrics = {
         "scope": "full_qsp_logical_resource_estimate",
         "case": CASE,
-        "case_title": CASE_TITLE,
+        "case_title": CASE_TITLE if not unfiltered else f"{CASE_TITLE}, unfiltered inverse b={unfiltered['b']}",
         "source_json": str(args.phases_json),
         "inner_phases_json": str(args.inner_phases_json),
         "target_function": target_function,
@@ -705,6 +731,8 @@ def main() -> None:
         "verification": verification,
         "logical_resources": logical,
     }
+    if unfiltered:
+        metrics["unfiltered_inverse"] = unfiltered
     ensure_parent(args.output_resource_metrics).write_text(
         json.dumps(metrics, indent=2) + "\n", encoding="utf-8"
     )

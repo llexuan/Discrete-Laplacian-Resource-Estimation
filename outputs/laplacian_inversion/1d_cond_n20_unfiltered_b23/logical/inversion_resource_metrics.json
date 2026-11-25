@@ -1,0 +1,1265 @@
+{
+  "scope": "full_qsp_logical_resource_estimate",
+  "case": "preconditioned_1d_conditioned_kernel",
+  "case_title": "Preconditioned 1D Laplacian, conditioned kernel (nested sinc^2 block encoding), unfiltered inverse b=23",
+  "source_json": "outputs/laplacian_inversion/1d_cond_n20_unfiltered_b23/inputs/phases.json",
+  "inner_phases_json": "outputs/phases/phases_sinc2.json",
+  "target_function": "matrix_inversion_1_over_x",
+  "epsilon": 0.01,
+  "kappa": 2.5,
+  "polynomial_degree": 45,
+  "effective_degree": 45,
+  "parity": 1,
+  "inner": {
+    "d": 5,
+    "degree": 10,
+    "truncation_bound": 2.120411329015299e-05,
+    "poly_vs_sinc2_max_abs_error": 2.0359538579317604e-05,
+    "phase_vs_poly_max_abs_error": 1.3855583347321954e-13,
+    "minimum_on_unit_interval": 0.40526437503077184
+  },
+  "error_summary": {
+    "polynomial_error": 0.007940053987872231,
+    "inner_polynomial_error": 2.0359538579317604e-05,
+    "inner_error_after_inversion": 2.0774966485559432e-05,
+    "outer_polynomial_error": 0.00796082895435779,
+    "phase_numerical_error": 1.4498287163782423e-13,
+    "synthesis_tolerance": 1e-07,
+    "measured_synthesis_error_bound": 1.3320594540007487e-08,
+    "conservative_total_error_bound": 0.007940153988017213
+  },
+  "spectral_summary": {
+    "modes_checked": 524289,
+    "encoded_min_eigenvalue": 0.40526437503077184,
+    "encoded_max_eigenvalue": 1.0,
+    "exact_min_eigenvalue": 0.40528473456935116,
+    "inner_polynomial_error": 2.0359538579317604e-05,
+    "inner_error_after_inversion": 2.0774966485559432e-05,
+    "outer_polynomial_error_on_spectrum": 0.00796082895435779,
+    "kernel_error": 0.007940053987872231,
+    "outer_slope_on_domain": 1.0287577030179642,
+    "inner_phase_error_after_inversion_bound": 1.4254038098364889e-13
+  },
+  "verification": {
+    "verify_n": 4,
+    "dense_qubits": 10,
+    "u_x_block_error": 5.995204332975845e-15,
+    "u_x_hermiticity_error": 2.3592239273284576e-16,
+    "u_lcond_hermitian_part_error": 2.5290880500961066e-13,
+    "walk_signal_block_error": 2.556843625963821e-13,
+    "u_prime_adjoint_branch_error": 2.28143116649211e-15,
+    "u_prime_offdiagonal_max": 7.797213816280311e-16,
+    "qft_bit_reversed_dft_error": 2.3212026220081975e-15,
+    "qft_clifford_t_error_at_1e-6": 4.598463629133259e-06,
+    "qsp_block_max_entry_error": 2.42067477174146e-12,
+    "qsp_block_spectral_error": 2.4206747722079245e-12,
+    "position_vs_classical_polynomial_error": 1.4661605263200358e-12,
+    "position_vs_exact_conditioned_kernel_error": 0.007940053990293397,
+    "wall_seconds": 35.62557504099095
+  },
+  "logical_resources": {
+    "composition": "QFT^dag . R(phi_0) W_cond R(phi_1) ... W_cond R(phi_d) . QFT",
+    "dimensions": 1,
+    "target_n": 20,
+    "grid_points_per_dimension": 1048576,
+    "num_projector_rotations": 46,
+    "num_w_applications": 45,
+    "num_w_selector_rotations": 19395,
+    "num_approximated_rotations": 20467,
+    "approximated_rotation_breakdown": {
+      "per_w": 431,
+      "per_qft": 513,
+      "outer_projectors": 46,
+      "total": 20467
+    },
+    "synthesis_tolerance": 1e-07,
+    "eps_per_rotation": 1e-12,
+    "selector_eps_per_rotation": 1e-12,
+    "measured_synthesis_error_bound": 1.3320594540007487e-08,
+    "signal_ancillas": 7,
+    "system_qubits": 20,
+    "walk_register_qubits": 28,
+    "logical_qubits": 29,
+    "phase_flag_qubits": 1,
+    "phase_flag_shared_with_inner_qsvt": true,
+    "depth_accounting": "serial_component_sum_upper_bound",
+    "clifford_gate_count": 4660500,
+    "t_count": 3032376,
+    "total_depth": 6054256,
+    "t_depth": 2402070,
+    "gate_counts": {
+      "h": 2756142,
+      "t": 1558821,
+      "tdg": 1473555,
+      "s": 641778,
+      "sdg": 609337,
+      "cx": 544386,
+      "x": 99978,
+      "z": 8879
+    },
+    "walk_contribution": {
+      "per_w": {
+        "logical_qubits": 29,
+        "gate_counts": {
+          "h": 58294,
+          "t": 33064,
+          "tdg": 31298,
+          "s": 13505,
+          "sdg": 12846,
+          "cx": 11962,
+          "x": 2198,
+          "z": 183
+        },
+        "clifford_gate_count": 98988,
+        "t_count": 64362,
+        "total_depth": 133012,
+        "t_depth": 52774,
+        "rotation_synthesis": {
+          "backend": "pyLIQTR",
+          "method": "get_ring_elts_direct + exact_decomp",
+          "eps_per_rotation": 1e-12,
+          "rotations_per_w": 431,
+          "prep_rotations": 21,
+          "prep_uses_per_w": 20,
+          "signal_rotations_per_w": 11,
+          "summed_projective_error_per_w": 2.769211417527489e-10,
+          "prep_angles": [
+            2.4188584057763776,
+            1.5082555649984053,
+            1.5082555649984053,
+            2.6439337353208505,
+            -1.3258176636680326,
+            1.318116071652818,
+            2.1843218522894348,
+            -0.029975583298746555,
+            -0.029975583298746444,
+            -0.220101186645213,
+            0.1901256033464665,
+            1.8681536225672535,
+            -0.04247961368176492,
+            -0.04247961368176498,
+            -0.04247961368176581,
+            -0.04247961368176548,
+            -0.04247961368176509,
+            0.5201379227440192,
+            -0.4351786953804889,
+            0.3926990816987237,
+            -0.5626175364257843
+          ],
+          "signal_rz_angles": [
+            1.5707949103097087,
+            3.1416554438186584,
+            3.139318703707692,
+            3.191581009876027,
+            2.567104118675509,
+            5.029554162199877,
+            2.567104118675509,
+            3.191581009876027,
+            3.139318703707692,
+            3.1416554438186584,
+            1.5707949103097087
+          ]
+        },
+        "anatomy": {
+          "PREP": {
+            "logical_qubits": 29,
+            "gate_counts": {
+              "h": 2592,
+              "t": 2557,
+              "s": 1255,
+              "cx": 64,
+              "sdg": 29,
+              "tdg": 19,
+              "x": 16,
+              "z": 9
+            },
+            "clifford_gate_count": 3965,
+            "t_count": 2576,
+            "total_depth": 5274,
+            "t_depth": 2081
+          },
+          "SELECT": {
+            "logical_qubits": 29,
+            "gate_counts": {
+              "cx": 951,
+              "t": 532,
+              "tdg": 494,
+              "h": 456,
+              "x": 155
+            },
+            "clifford_gate_count": 1562,
+            "t_count": 1026,
+            "total_depth": 2242,
+            "t_depth": 911
+          },
+          "U_X": {
+            "logical_qubits": 29,
+            "gate_counts": {
+              "h": 5640,
+              "t": 3108,
+              "tdg": 3070,
+              "sdg": 1284,
+              "s": 1284,
+              "cx": 1079,
+              "x": 187,
+              "z": 18
+            },
+            "clifford_gate_count": 9492,
+            "t_count": 6178,
+            "total_depth": 12757,
+            "t_depth": 5059
+          },
+          "U_Lcond (q-signed inner QSVT)": {
+            "logical_qubits": 29,
+            "gate_counts": {
+              "h": 58266,
+              "t": 33036,
+              "tdg": 31272,
+              "s": 13505,
+              "sdg": 12846,
+              "cx": 11912,
+              "x": 2181,
+              "z": 182
+            },
+            "clifford_gate_count": 98892,
+            "t_count": 64308,
+            "total_depth": 132894,
+            "t_depth": 52726
+          },
+          "U_R": {
+            "logical_qubits": 29,
+            "gate_counts": {
+              "cx": 50,
+              "h": 28,
+              "t": 28,
+              "tdg": 26,
+              "x": 16
+            },
+            "clifford_gate_count": 94,
+            "t_count": 54,
+            "total_depth": 122,
+            "t_depth": 48
+          }
+        }
+      },
+      "num_w_applications": 45,
+      "clifford_gate_count": 4454460,
+      "t_count": 2896290,
+      "total_depth": 5985540,
+      "t_depth": 2374830
+    },
+    "projector_rotation_contribution": {
+      "num_projector_rotations": 46,
+      "num_unique_phase_angles": 23,
+      "eps_per_rotation": 1e-12,
+      "summed_projective_error_bound": 3.100365374010433e-11,
+      "logical_workspace_qubits": 1,
+      "borrowed_dirty_system_qubits": 6,
+      "gate_counts": {
+        "cx": 5336,
+        "t": 8556,
+        "tdg": 2760,
+        "h": 8280,
+        "x": 754,
+        "s": 2802,
+        "z": 14,
+        "sdg": 16
+      },
+      "clifford_gate_count": 17202,
+      "t_count": 11316,
+      "total_depth": 24338,
+      "t_depth": 9756,
+      "unique_rotation_resources": [
+        {
+          "phi": 6.088710919969982e-15,
+          "rz_angle": 1.2177421839939965e-14,
+          "occurrences": 2,
+          "projective_error": 6.088710919969982e-15,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "identity within tolerance",
+            "epsilon": 1e-12,
+            "projective_error": 6.088710919969982e-15,
+            "raw_phase_offset": 0.0,
+            "gate_counts": {},
+            "t_count": 0,
+            "clifford_gate_count": 0,
+            "depth": 0,
+            "t_depth": 0
+          },
+          "gate_counts": {
+            "cx": 116,
+            "t": 64,
+            "tdg": 60,
+            "h": 58,
+            "x": 16
+          },
+          "clifford_gate_count": 190,
+          "t_count": 124,
+          "total_depth": 277,
+          "t_depth": 112
+        },
+        {
+          "phi": -2.8732217049974e-13,
+          "rz_angle": -5.7464434099948e-13,
+          "occurrences": 2,
+          "projective_error": 2.8732217049974e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "identity within tolerance",
+            "epsilon": 1e-12,
+            "projective_error": 2.8732217049974e-13,
+            "raw_phase_offset": 0.0,
+            "gate_counts": {},
+            "t_count": 0,
+            "clifford_gate_count": 0,
+            "depth": 0,
+            "t_depth": 0
+          },
+          "gate_counts": {
+            "cx": 116,
+            "t": 64,
+            "tdg": 60,
+            "h": 58,
+            "x": 16
+          },
+          "clifford_gate_count": 190,
+          "t_count": 124,
+          "total_depth": 277,
+          "t_depth": 112
+        },
+        {
+          "phi": 6.625175742210608e-12,
+          "rz_angle": 1.3250351484421215e-11,
+          "occurrences": 2,
+          "projective_error": 2.3796994664382005e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "two offset Rz rotations, pyLIQTR at half tolerance",
+            "epsilon": 1e-12,
+            "projective_error": 2.3796994664382005e-13,
+            "raw_phase_offset": -2.1459363747202294e-16,
+            "gate_counts": {
+              "t": 250,
+              "h": 248,
+              "s": 125,
+              "x": 2
+            },
+            "t_count": 250,
+            "clifford_gate_count": 375,
+            "depth": 625,
+            "t_depth": 250
+          },
+          "gate_counts": {
+            "t": 314,
+            "h": 306,
+            "s": 125,
+            "cx": 116,
+            "tdg": 60,
+            "x": 18
+          },
+          "clifford_gate_count": 565,
+          "t_count": 374,
+          "total_depth": 843,
+          "t_depth": 338
+        },
+        {
+          "phi": -9.97390440609915e-11,
+          "rz_angle": -1.99478088121983e-10,
+          "occurrences": 2,
+          "projective_error": 5.192089302543568e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "two offset Rz rotations, pyLIQTR at half tolerance",
+            "epsilon": 1e-12,
+            "projective_error": 5.192089302543568e-13,
+            "raw_phase_offset": -1.1775693459608608e-16,
+            "gate_counts": {
+              "t": 248,
+              "h": 248,
+              "s": 119,
+              "x": 1,
+              "z": 1,
+              "sdg": 1
+            },
+            "t_count": 248,
+            "clifford_gate_count": 370,
+            "depth": 618,
+            "t_depth": 248
+          },
+          "gate_counts": {
+            "t": 312,
+            "h": 306,
+            "s": 119,
+            "cx": 116,
+            "tdg": 60,
+            "x": 17,
+            "z": 1,
+            "sdg": 1
+          },
+          "clifford_gate_count": 560,
+          "t_count": 372,
+          "total_depth": 836,
+          "t_depth": 336
+        },
+        {
+          "phi": 1.102515786510325e-09,
+          "rz_angle": 2.20503157302065e-09,
+          "occurrences": 2,
+          "projective_error": 9.52832454200922e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.52832454200922e-13,
+            "raw_phase_offset": 1.1775693517769563e-16,
+            "gate_counts": {
+              "t": 132,
+              "h": 132,
+              "s": 68,
+              "x": 1
+            },
+            "t_count": 132,
+            "clifford_gate_count": 201,
+            "depth": 333,
+            "t_depth": 132
+          },
+          "gate_counts": {
+            "t": 196,
+            "h": 190,
+            "cx": 116,
+            "s": 68,
+            "tdg": 60,
+            "x": 17
+          },
+          "clifford_gate_count": 391,
+          "t_count": 256,
+          "total_depth": 551,
+          "t_depth": 220
+        },
+        {
+          "phi": -9.541885093277555e-09,
+          "rz_angle": -1.908377018655511e-08,
+          "occurrences": 2,
+          "projective_error": 7.565656780939219e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 7.565656780939219e-13,
+            "raw_phase_offset": 2.356194490192345,
+            "gate_counts": {
+              "t": 122,
+              "h": 122,
+              "s": 64,
+              "y": 1
+            },
+            "t_count": 122,
+            "clifford_gate_count": 187,
+            "depth": 309,
+            "t_depth": 122
+          },
+          "gate_counts": {
+            "t": 186,
+            "h": 180,
+            "cx": 116,
+            "s": 64,
+            "tdg": 60,
+            "x": 17,
+            "z": 1
+          },
+          "clifford_gate_count": 378,
+          "t_count": 246,
+          "total_depth": 528,
+          "t_depth": 210
+        },
+        {
+          "phi": 6.732712148589953e-08,
+          "rz_angle": 1.3465424297179906e-07,
+          "occurrences": 2,
+          "projective_error": 5.305338209497752e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 5.305338209497752e-13,
+            "raw_phase_offset": -1.5707963267948968,
+            "gate_counts": {
+              "t": 124,
+              "h": 123,
+              "s": 62
+            },
+            "t_count": 124,
+            "clifford_gate_count": 185,
+            "depth": 309,
+            "t_depth": 124
+          },
+          "gate_counts": {
+            "t": 188,
+            "h": 181,
+            "cx": 116,
+            "s": 62,
+            "tdg": 60,
+            "x": 16
+          },
+          "clifford_gate_count": 375,
+          "t_count": 248,
+          "total_depth": 527,
+          "t_depth": 212
+        },
+        {
+          "phi": -3.982324677006266e-07,
+          "rz_angle": -7.964649354012533e-07,
+          "occurrences": 2,
+          "projective_error": 3.424048862488947e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 3.424048862488947e-13,
+            "raw_phase_offset": 2.3561944901923453,
+            "gate_counts": {
+              "h": 119,
+              "t": 118,
+              "s": 62
+            },
+            "t_count": 118,
+            "clifford_gate_count": 181,
+            "depth": 299,
+            "t_depth": 118
+          },
+          "gate_counts": {
+            "t": 182,
+            "h": 177,
+            "cx": 116,
+            "s": 62,
+            "tdg": 60,
+            "x": 16
+          },
+          "clifford_gate_count": 371,
+          "t_count": 242,
+          "total_depth": 517,
+          "t_depth": 206
+        },
+        {
+          "phi": 2.0150336324569745e-06,
+          "rz_angle": 4.030067264913949e-06,
+          "occurrences": 2,
+          "projective_error": 7.847741861790497e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 7.847741861790497e-13,
+            "raw_phase_offset": 0.7853981633974487,
+            "gate_counts": {
+              "h": 121,
+              "t": 120,
+              "s": 55
+            },
+            "t_count": 120,
+            "clifford_gate_count": 176,
+            "depth": 296,
+            "t_depth": 120
+          },
+          "gate_counts": {
+            "t": 184,
+            "h": 179,
+            "cx": 116,
+            "tdg": 60,
+            "s": 55,
+            "x": 16
+          },
+          "clifford_gate_count": 366,
+          "t_count": 244,
+          "total_depth": 514,
+          "t_depth": 208
+        },
+        {
+          "phi": -8.857795332425615e-06,
+          "rz_angle": -1.771559066485123e-05,
+          "occurrences": 2,
+          "projective_error": 9.154122282314302e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.154122282314302e-13,
+            "raw_phase_offset": 0.7853981633974482,
+            "gate_counts": {
+              "h": 118,
+              "t": 118,
+              "s": 57,
+              "sdg": 1,
+              "z": 1
+            },
+            "t_count": 118,
+            "clifford_gate_count": 177,
+            "depth": 295,
+            "t_depth": 118
+          },
+          "gate_counts": {
+            "t": 182,
+            "h": 176,
+            "cx": 116,
+            "tdg": 60,
+            "s": 57,
+            "x": 16,
+            "sdg": 1,
+            "z": 1
+          },
+          "clifford_gate_count": 367,
+          "t_count": 242,
+          "total_depth": 513,
+          "t_depth": 206
+        },
+        {
+          "phi": 3.4239681070263814e-05,
+          "rz_angle": 6.847936214052763e-05,
+          "occurrences": 2,
+          "projective_error": 6.721706889520158e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 6.721706889520158e-13,
+            "raw_phase_offset": -1.5707963267948963,
+            "gate_counts": {
+              "h": 123,
+              "t": 122,
+              "s": 64,
+              "sdg": 1
+            },
+            "t_count": 122,
+            "clifford_gate_count": 188,
+            "depth": 310,
+            "t_depth": 122
+          },
+          "gate_counts": {
+            "t": 186,
+            "h": 181,
+            "cx": 116,
+            "s": 64,
+            "tdg": 60,
+            "x": 16,
+            "sdg": 1
+          },
+          "clifford_gate_count": 378,
+          "t_count": 246,
+          "total_depth": 528,
+          "t_depth": 210
+        },
+        {
+          "phi": -0.00011752756062360108,
+          "rz_angle": -0.00023505512124720216,
+          "occurrences": 2,
+          "projective_error": 9.409702164594429e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.409702164594429e-13,
+            "raw_phase_offset": -0.7853981633974483,
+            "gate_counts": {
+              "t": 118,
+              "h": 118,
+              "s": 58,
+              "y": 1
+            },
+            "t_count": 118,
+            "clifford_gate_count": 177,
+            "depth": 295,
+            "t_depth": 118
+          },
+          "gate_counts": {
+            "t": 182,
+            "h": 176,
+            "cx": 116,
+            "tdg": 60,
+            "s": 58,
+            "x": 17,
+            "z": 1
+          },
+          "clifford_gate_count": 368,
+          "t_count": 242,
+          "total_depth": 514,
+          "t_depth": 206
+        },
+        {
+          "phi": 0.00036112485716811247,
+          "rz_angle": 0.0007222497143362249,
+          "occurrences": 2,
+          "projective_error": 9.408425519091178e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.408425519091178e-13,
+            "raw_phase_offset": -1.5707963267948966,
+            "gate_counts": {
+              "h": 121,
+              "t": 120,
+              "s": 61,
+              "sdg": 1
+            },
+            "t_count": 120,
+            "clifford_gate_count": 183,
+            "depth": 303,
+            "t_depth": 120
+          },
+          "gate_counts": {
+            "t": 184,
+            "h": 179,
+            "cx": 116,
+            "s": 61,
+            "tdg": 60,
+            "x": 16,
+            "sdg": 1
+          },
+          "clifford_gate_count": 373,
+          "t_count": 244,
+          "total_depth": 521,
+          "t_depth": 208
+        },
+        {
+          "phi": -0.0010000689320540392,
+          "rz_angle": -0.0020001378641080784,
+          "occurrences": 2,
+          "projective_error": 9.86782069124441e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.86782069124441e-13,
+            "raw_phase_offset": -2.356194490192345,
+            "gate_counts": {
+              "h": 121,
+              "t": 120,
+              "s": 64,
+              "sdg": 1
+            },
+            "t_count": 120,
+            "clifford_gate_count": 186,
+            "depth": 306,
+            "t_depth": 120
+          },
+          "gate_counts": {
+            "t": 184,
+            "h": 179,
+            "cx": 116,
+            "s": 64,
+            "tdg": 60,
+            "x": 16,
+            "sdg": 1
+          },
+          "clifford_gate_count": 376,
+          "t_count": 244,
+          "total_depth": 524,
+          "t_depth": 208
+        },
+        {
+          "phi": 0.0025106492988417857,
+          "rz_angle": 0.0050212985976835715,
+          "occurrences": 2,
+          "projective_error": 4.4859034863461774e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 4.4859034863461774e-13,
+            "raw_phase_offset": 1.5707963267948966,
+            "gate_counts": {
+              "h": 122,
+              "t": 122,
+              "s": 64,
+              "z": 1,
+              "sdg": 1
+            },
+            "t_count": 122,
+            "clifford_gate_count": 188,
+            "depth": 310,
+            "t_depth": 122
+          },
+          "gate_counts": {
+            "t": 186,
+            "h": 180,
+            "cx": 116,
+            "s": 64,
+            "tdg": 60,
+            "x": 16,
+            "z": 1,
+            "sdg": 1
+          },
+          "clifford_gate_count": 378,
+          "t_count": 246,
+          "total_depth": 528,
+          "t_depth": 210
+        },
+        {
+          "phi": -0.00574296210798212,
+          "rz_angle": -0.01148592421596424,
+          "occurrences": 2,
+          "projective_error": 9.088805051254762e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.088805051254762e-13,
+            "raw_phase_offset": -2.356194490192345,
+            "gate_counts": {
+              "t": 122,
+              "h": 121,
+              "s": 62
+            },
+            "t_count": 122,
+            "clifford_gate_count": 183,
+            "depth": 305,
+            "t_depth": 122
+          },
+          "gate_counts": {
+            "t": 186,
+            "h": 179,
+            "cx": 116,
+            "s": 62,
+            "tdg": 60,
+            "x": 16
+          },
+          "clifford_gate_count": 373,
+          "t_count": 246,
+          "total_depth": 523,
+          "t_depth": 210
+        },
+        {
+          "phi": 0.012023780622700183,
+          "rz_angle": 0.024047561245400365,
+          "occurrences": 2,
+          "projective_error": 6.549467849765389e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 6.549467849765389e-13,
+            "raw_phase_offset": 0.7853981633974486,
+            "gate_counts": {
+              "t": 122,
+              "h": 122,
+              "s": 54,
+              "x": 1
+            },
+            "t_count": 122,
+            "clifford_gate_count": 177,
+            "depth": 299,
+            "t_depth": 122
+          },
+          "gate_counts": {
+            "t": 186,
+            "h": 180,
+            "cx": 116,
+            "tdg": 60,
+            "s": 54,
+            "x": 17
+          },
+          "clifford_gate_count": 367,
+          "t_count": 246,
+          "total_depth": 517,
+          "t_depth": 210
+        },
+        {
+          "phi": -0.023133538844387472,
+          "rz_angle": -0.046267077688774944,
+          "occurrences": 2,
+          "projective_error": 8.438672335279494e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 8.438672335279494e-13,
+            "raw_phase_offset": -3.141592653589793,
+            "gate_counts": {
+              "h": 120,
+              "t": 120,
+              "s": 58,
+              "sdg": 2
+            },
+            "t_count": 120,
+            "clifford_gate_count": 180,
+            "depth": 300,
+            "t_depth": 120
+          },
+          "gate_counts": {
+            "t": 184,
+            "h": 178,
+            "cx": 116,
+            "tdg": 60,
+            "s": 58,
+            "x": 16,
+            "sdg": 2
+          },
+          "clifford_gate_count": 370,
+          "t_count": 244,
+          "total_depth": 518,
+          "t_depth": 208
+        },
+        {
+          "phi": 0.04104021845654422,
+          "rz_angle": 0.08208043691308844,
+          "occurrences": 2,
+          "projective_error": 9.646156032385325e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.646156032385325e-13,
+            "raw_phase_offset": 0.7853981633974482,
+            "gate_counts": {
+              "t": 124,
+              "h": 123,
+              "s": 63,
+              "z": 1
+            },
+            "t_count": 124,
+            "clifford_gate_count": 187,
+            "depth": 311,
+            "t_depth": 124
+          },
+          "gate_counts": {
+            "t": 188,
+            "h": 181,
+            "cx": 116,
+            "s": 63,
+            "tdg": 60,
+            "x": 16,
+            "z": 1
+          },
+          "clifford_gate_count": 377,
+          "t_count": 248,
+          "total_depth": 529,
+          "t_depth": 212
+        },
+        {
+          "phi": -0.06729072518444411,
+          "rz_angle": -0.13458145036888822,
+          "occurrences": 2,
+          "projective_error": 6.357830685129198e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 6.357830685129198e-13,
+            "raw_phase_offset": -2.356194490192345,
+            "gate_counts": {
+              "t": 122,
+              "h": 122,
+              "s": 70,
+              "x": 1
+            },
+            "t_count": 122,
+            "clifford_gate_count": 193,
+            "depth": 315,
+            "t_depth": 122
+          },
+          "gate_counts": {
+            "t": 186,
+            "h": 180,
+            "cx": 116,
+            "s": 70,
+            "tdg": 60,
+            "x": 17
+          },
+          "clifford_gate_count": 383,
+          "t_count": 246,
+          "total_depth": 533,
+          "t_depth": 210
+        },
+        {
+          "phi": 0.10201152003122295,
+          "rz_angle": 0.2040230400624459,
+          "occurrences": 2,
+          "projective_error": 9.433446454527137e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 9.433446454527137e-13,
+            "raw_phase_offset": -1.5707963267948966,
+            "gate_counts": {
+              "h": 121,
+              "t": 120,
+              "s": 68
+            },
+            "t_count": 120,
+            "clifford_gate_count": 189,
+            "depth": 309,
+            "t_depth": 120
+          },
+          "gate_counts": {
+            "t": 184,
+            "h": 179,
+            "cx": 116,
+            "s": 68,
+            "tdg": 60,
+            "x": 16
+          },
+          "clifford_gate_count": 379,
+          "t_count": 244,
+          "total_depth": 527,
+          "t_depth": 208
+        },
+        {
+          "phi": -0.14259618057935122,
+          "rz_angle": -0.28519236115870245,
+          "occurrences": 2,
+          "projective_error": 4.711424743131576e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 4.711424743131576e-13,
+            "raw_phase_offset": 8.243568667021927e-16,
+            "gate_counts": {
+              "t": 122,
+              "h": 122,
+              "s": 55
+            },
+            "t_count": 122,
+            "clifford_gate_count": 177,
+            "depth": 299,
+            "t_depth": 122
+          },
+          "gate_counts": {
+            "t": 186,
+            "h": 180,
+            "cx": 116,
+            "tdg": 60,
+            "s": 55,
+            "x": 16
+          },
+          "clifford_gate_count": 367,
+          "t_count": 246,
+          "total_depth": 517,
+          "t_depth": 210
+        },
+        {
+          "phi": 0.18258561285626934,
+          "rz_angle": 0.3651712257125387,
+          "occurrences": 2,
+          "projective_error": 7.567776676033569e-13,
+          "rotation_synthesis": {
+            "backend": "pyLIQTR",
+            "backend_version": "1.4.2",
+            "method": "get_ring_elts_direct + exact_decomp",
+            "epsilon": 1e-12,
+            "projective_error": 7.567776676033569e-13,
+            "raw_phase_offset": -1.6076636669406902e-16,
+            "gate_counts": {
+              "t": 120,
+              "h": 119,
+              "s": 48,
+              "y": 1
+            },
+            "t_count": 120,
+            "clifford_gate_count": 168,
+            "depth": 288,
+            "t_depth": 120
+          },
+          "gate_counts": {
+            "t": 184,
+            "h": 177,
+            "cx": 116,
+            "tdg": 60,
+            "s": 48,
+            "x": 17,
+            "z": 1
+          },
+          "clifford_gate_count": 359,
+          "t_count": 244,
+          "total_depth": 507,
+          "t_depth": 208
+        }
+      ]
+    },
+    "boundary_contribution": {
+      "components": [
+        {
+          "logical_qubits": 20,
+          "gate_counts": {
+            "t": 62366,
+            "h": 62316,
+            "s": 31152,
+            "cx": 380,
+            "z": 315,
+            "x": 157,
+            "sdg": 99,
+            "tdg": 19
+          },
+          "clifford_gate_count": 94419,
+          "t_count": 62385,
+          "total_depth": 22189,
+          "t_depth": 8742,
+          "id": "QFT",
+          "occurrences": 1,
+          "synthesized_rotations": 513,
+          "summed_projective_error": 4.1406975369684073e-10,
+          "system_qubits": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27
+          ]
+        },
+        {
+          "logical_qubits": 20,
+          "gate_counts": {
+            "tdg": 62366,
+            "h": 62316,
+            "sdg": 31152,
+            "cx": 380,
+            "z": 315,
+            "x": 157,
+            "s": 99,
+            "t": 19
+          },
+          "clifford_gate_count": 94419,
+          "t_count": 62385,
+          "total_depth": 22189,
+          "t_depth": 8742,
+          "id": "QFT_dg",
+          "occurrences": 1,
+          "synthesized_rotations": 513,
+          "summed_projective_error": 4.1406975369684073e-10,
+          "system_qubits": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27
+          ]
+        }
+      ],
+      "clifford_gate_count": 188838,
+      "t_count": 124770,
+      "total_depth": 44378,
+      "t_depth": 17484
+    },
+    "block_encoding": {
+      "kind": "preconditioned_1d_conditioned_kernel",
+      "inner_psi": [
+        0.7853974551548544,
+        1.5708277219093292,
+        1.569659351853846,
+        1.5957905049380134,
+        1.2835520593377545,
+        2.5147770810999384,
+        1.2835520593377545,
+        1.5957905049380134,
+        1.569659351853846,
+        1.5708277219093292,
+        0.7853974551548544
+      ],
+      "inner_degree": 10,
+      "u_x_calls_per_w": 10,
+      "index_qubits": 5,
+      "select_mcx_gates": 19,
+      "select_mcx_controls": 7,
+      "signal_mcx_controls": 7,
+      "fourier_bit_order": "bit_reversed (swap-free QFT)"
+    },
+    "registers": {
+      "q": 0,
+      "a": 1,
+      "p": 2,
+      "J": [
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "system": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "phase_flag": 28
+    },
+    "target_spectral_gap": 0.40526437503077184,
+    "minimum_kappa_for_full_nonzero_spectrum": 2.467525056758492
+  },
+  "unfiltered_inverse": {
+    "b": 23,
+    "b_min": 23,
+    "b_max": 25,
+    "uniform_inverse_error_bound": 0.009065538022677594,
+    "global_magnitude_bound": 0.9591663046625438
+  }
+}

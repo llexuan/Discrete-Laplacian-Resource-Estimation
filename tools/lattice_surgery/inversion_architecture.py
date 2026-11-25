@@ -10,14 +10,38 @@ from estimate_sliced_resources import logical_error_per_round
 from output_files import resource_paths
 
 
-def minimum_distance_proxy(tile_slices, physical_error_rate, target, minimum=3):
+LITINSKI_FACTORY = {
+    "id": "litinski-15to1-two-level",
+    "protocol": "(15-to-1)^6_(11,5,5) x (15-to-1)_(25,11,11)",
+    "source": "https://arxiv.org/pdf/1905.06903#page=2",
+    "physical_error_rate": 1e-3,
+    "output_error_per_state": 2.7e-12,
+    "physical_qubits_per_factory": 30_700,
+    "rounds_per_state": 82.5,
+}
+
+
+def factory_parameters(args):
+    """Return rounds per accepted state, footprint per factory, and complete factory count."""
+    if not getattr(args, "factory_model", None):
+        if args.factory_cycle_rounds is not None and args.num_factories is None:
+            raise ValueError("Supply tiles are not physical factories: specify --num-factories with --factory-cycle-rounds")
+        return args.factory_cycle_rounds, args.factory_physical_qubits, args.num_factories
+    if args.physical_error_rate != LITINSKI_FACTORY["physical_error_rate"]:
+        raise ValueError("This Litinski Table 1 row assumes --physical-error-rate 0.001")
+    if args.factory_cycle_rounds is not None or args.factory_physical_qubits is not None:
+        raise ValueError("--factory-model already specifies the factory cadence and footprint")
+    count = 1 if args.num_factories is None else args.num_factories
+    return LITINSKI_FACTORY["rounds_per_state"], LITINSKI_FACTORY["physical_qubits_per_factory"], count
+
+
+def minimum_distance_proxy(tile_slices, physical_error_rate, target, minimum=3, minimum_tile_rounds=0):
     """Find the smallest admissible odd distance for one layout's failure budget."""
     first = max(3, minimum)
     first += first % 2 == 0
     for distance in range(first, 102, 2):
         if (
-            tile_slices
-            * distance
+            max(tile_slices * distance, minimum_tile_rounds)
             * logical_error_per_round(physical_error_rate, distance)
             <= target
         ):
@@ -65,6 +89,8 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
     contributions = {
         kind: {"slices": 0, "magic_state_requests": 0} for kind in kinds
     }
+    if any(c["kind"] not in {"walk", "projector", "boundary"} for c in manifest["components"]):
+        raise ValueError("Unsupported component kind")
     rows = []
     for component, record in zip(manifest["components"], records):
         if record["resources"]["area"] != area:
@@ -75,6 +101,8 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         weighted = weight * record["slices"]
         slices += weighted
         requests = record["instruction_counts"].get("RequestMagicState", 0)
+        if requests != component["t_count"]:
+            raise ValueError(f"{component['id']}: magic-state requests disagree with logical T count")
         for instruction, count in record["instruction_counts"].items():
             counts[instruction] += weight * count
         contributions[component["kind"]]["slices"] += weighted
@@ -93,15 +121,24 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
                 "input_sha256": record["input_sha256"],
             }
         )
+    litinski = getattr(args, "factory_model", None) == LITINSKI_FACTORY["id"]
+    cadence, footprint, factory_count = factory_parameters(args)
+    factory_rounds = 0
+    if cadence is not None:
+        factory_rounds = counts["RequestMagicState"] * cadence / factory_count
+    factory_error = counts["RequestMagicState"] * LITINSKI_FACTORY["output_error_per_state"] if litinski else 0
+    layout_budget = args.target_failure_probability - factory_error
+    # A throughput-limited run must keep its data patches alive during the extra rounds.
+    minimum_tile_rounds = area * factory_rounds if litinski else 0
     unconstrained_minimum = minimum_distance_proxy(
-        area * slices, args.physical_error_rate, args.target_failure_probability
+        area * slices, args.physical_error_rate, layout_budget, minimum_tile_rounds=minimum_tile_rounds
     )
     d = args.code_distance
     auto = args.auto_code_distance
     if auto:
         d = minimum_distance_proxy(
             area * slices, args.physical_error_rate,
-            args.target_failure_probability, minimum=args.code_distance,
+            layout_budget, minimum=args.code_distance, minimum_tile_rounds=minimum_tile_rounds,
         )
         if d is None:
             raise ValueError(
@@ -111,41 +148,44 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
     rounds = slices * d
     core_ns = rounds * cycle
     core_qubits = area * factor * d**2
-    opportunities = area * rounds
+    opportunities = max(area * rounds, minimum_tile_rounds)
     failure = min(
         1.0, opportunities * logical_error_per_round(args.physical_error_rate, d)
     )
     final_rounds = rounds
     physical_qubits = core_qubits
     factory = None
-    if args.factory_cycle_rounds is not None:
-        if args.num_factories is None:
-            raise ValueError(
-                "Supply tiles are not physical factories: specify --num-factories with --factory-cycle-rounds"
-            )
-        factory_rounds = (
-            counts["RequestMagicState"] * args.factory_cycle_rounds / args.num_factories
-        )
+    if cadence is not None:
         final_rounds = max(rounds, factory_rounds)
-        added_qubits = args.num_factories * (args.factory_physical_qubits or 0)
+        added_qubits = factory_count * (footprint or 0)
         physical_qubits += added_qubits
         factory = {
-            "num_factories": args.num_factories,
-            "rounds_per_state": args.factory_cycle_rounds,
+            "num_factories": factory_count,
+            "rounds_per_state": cadence,
             "throughput_lower_bound_rounds": factory_rounds,
             "external_factory_qubits": added_qubits,
             "assumption": "External factory footprint added once; in-grid source/storage tiles remain in layout area. Throughput bound does not model boundary stalls.",
         }
+    combined = min(1.0, failure + factory_error)
+    if litinski:
+        factory.update(LITINSKI_FACTORY, magic_state_requests=counts["RequestMagicState"],
+                       output_failure_bound=min(1.0, factory_error),
+                       supply_time_seconds=factory_rounds * cycle * 1e-9,
+                       is_throughput_limited=factory_rounds > rounds)
     runtime_ns = final_rounds * cycle
     warnings = [
         "One fixed geometry and logical identity map is reused; all logical qubits, including the phase flag, remain resident for every component.",
-        "Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.",
     ]
+    if litinski:
+        warnings.append("Factory throughput is averaged. Burst delivery, buffering and per-request stalls are outside this projection.")
+        warnings.append("Measurement-dependent corrections and the T/T-dagger distinction in printed lowering require separate validation.")
+    else:
+        warnings.append("Magic-state sources are abstract. The compiler omits execution-correction details and does not distinguish T/T-dagger in its printed lowering.")
     if factory is None:
         warnings.append(
             "No physical factory cadence supplied; runtime assumes the compiler's disttime supply model."
         )
-    if failure > args.target_failure_probability:
+    if combined > args.target_failure_probability:
         warnings.append(
             "Full-sequence heuristic failure proxy exceeds the target; this fixed-distance report does not certify the requested reliability."
         )
@@ -153,14 +193,15 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         warnings.append("Even code distance supplied.")
     warnings.extend(manifest.get("scope_notes", []))
     kappa = manifest.get("algorithm", {}).get("kappa")
-    if kappa and kappa < manifest.get("minimum_kappa_for_full_nonzero_spectrum", 0):
+    required_kappa = manifest.get("minimum_kappa_for_full_nonzero_spectrum")
+    if kappa and required_kappa and kappa < required_kappa:
         warnings.append(
             "The supplied polynomial kappa does not cover the full nonzero target spectrum; these costs apply to its declared inversion domain."
         )
     logical_t = manifest["logical_gate_counts"].get("t", 0) + manifest[
         "logical_gate_counts"
     ].get("tdg", 0)
-    return {
+    result = {
         "scope": "full_inverse_component_sum_surface_code_projection",
         "status": "success",
         "dimensions": manifest["dimensions"],
@@ -195,7 +236,7 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
             "failure_opportunities_proxy": opportunities,
             "failure_probability_proxy": failure,
             "minimum_odd_code_distance_proxy": unconstrained_minimum,
-            "meets_target_failure_probability": failure <= args.target_failure_probability,
+            "meets_target_failure_probability": combined <= args.target_failure_probability,
             "factory_model": factory,
         },
         "assumptions": {
@@ -219,6 +260,23 @@ def aggregate_components(manifest: dict, records: list[dict], area: int, args) -
         "components": rows,
         "warnings": warnings,
     }
+    if litinski:
+        result["physical_projection"]["combined_failure_proxy"] = combined
+        result["assumptions"].update(failure_budget_scope="layout_plus_factory_output",
+                                     layout_failure_budget=layout_budget)
+        if auto:
+            result["assumptions"]["distance_selection"] = "Minimum admissible odd distance meeting the combined layout and factory-output budget."
+    if manifest.get("operator_family") == "preconditioned_1d":
+        result.update(
+            operator_family=manifest["operator_family"],
+            scope="preconditioned_1d_inverse_component_sum_surface_code_projection",
+            architecture_scope=manifest["architecture_scope"],
+            scope_notes=manifest.get("scope_notes", []),
+            num_boundary_components=manifest.get("num_boundary_components", 0),
+            unique_projector_angles=len({row["phi"] for row in rows if row["kind"] == "projector"}),
+        )
+        result["assumptions"]["explicit_sequence_boundary_gates_included"] = "boundary" in contributions
+    return result
 
 
 def layout_configuration(result: dict) -> str:
@@ -231,6 +289,18 @@ def layout_configuration(result: dict) -> str:
     return f"{preparation}; {size}"
 
 
+def factory_description(factory: dict) -> list[str]:
+    return [
+        f"Litinski two-level T-state factory: {factory['protocol']}",
+        f"Complete factories: {factory['num_factories']}; physical qubits per factory: {factory['physical_qubits_per_factory']:,}",
+        f"Average QEC rounds per accepted T state per factory: {factory['rounds_per_state']:g}",
+        f"Error per accepted T state: {factory['output_error_per_state']:.2e}",
+        f"Full-sequence T-state requests: {factory['magic_state_requests']:,}",
+        f"Factory production time at average throughput: {factory['supply_time_seconds']:.6f} s",
+        f"Source: Litinski, Table 1, {factory['source']}",
+    ]
+
+
 def render_report(result: dict) -> str:
     method = result["method"]
     if result["status"] != "success":
@@ -241,16 +311,22 @@ def render_report(result: dict) -> str:
         result["assumptions"],
     )
     boundary = "boundary" in schedule["contributions"]
+    conditioned = result.get("operator_family") == "preconditioned_1d"
+    title = "1D preconditioned inverse architecture" if conditioned else "Full Laplacian inverse architecture"
+    accounting = (
+        "Accounting: one conditioned W and each unique projector weighted by occurrences; explicit boundary circuits are also included."
+        if conditioned else ("Accounting: one W and each unique projector"
+                            + (" and the QFT/QFT^dag boundaries" if boundary else "")
+                            + " compiled once, multiplied by occurrences.")
+    )
     lines = [
-        f"=== Full Laplacian inverse architecture: {method} ===",
+        f"=== {title}: {method} ===",
         f"Run: {result.get('run_id', 'unrecorded')}",
         "Status: SUCCESS",
         f"Configuration: {layout_configuration(result)}",
         *([f"Case: {result['case_title']}"] if result.get("case_title") else []),
         "",
-        "Accounting: one W and each unique projector"
-        + (" and the QFT/QFT^dag boundaries" if boundary else "")
-        + " compiled once, multiplied by occurrences.",
+        accounting,
         "This is a component-sum projection, not compilation of the complete long circuit.",
         f"Dimensions / n per axis: {result['dimensions']} / {result['target_n']}",
         f"Resident logical qubits: {result['logical_qubits']}",
@@ -264,7 +340,7 @@ def render_report(result: dict) -> str:
         f"Walk contribution, slices: {schedule['contributions']['walk']['slices']:,}",
         f"Projector contribution, slices: {schedule['contributions']['projector']['slices']:,}",
         *(
-            [f"QFT boundary contribution, slices: {schedule['contributions']['boundary']['slices']:,}"]
+            [f"{'Explicit' if conditioned else 'QFT'} boundary contribution, slices: {schedule['contributions']['boundary']['slices']:,}"]
             if boundary else []
         ),
         f"Total component-sum slices: {schedule['slices']:,}",
@@ -276,7 +352,7 @@ def render_report(result: dict) -> str:
         f"Projected time with optional factory bound: {physical['runtime_seconds']:.9g} s",
         f"Space-time cost: {physical['space_time_ns_qubits']:.9e} ns*qubits",
         f"Magic-state requests: {result['weighted_instruction_counts'].get('RequestMagicState', 0):,}",
-        f"Heuristic failure probability proxy: {physical['failure_probability_proxy']:.6e}",
+        f"Layout failure proxy: {physical['failure_probability_proxy']:.6e}",
         f"Shared failure budget: <= {assumptions['target_failure_probability']:.6e}",
         f"Meets failure budget: {'Yes' if physical['meets_target_failure_probability'] else 'No'}",
         f"Minimum odd distance under this proxy: {physical['minimum_odd_code_distance_proxy']}",
@@ -290,6 +366,24 @@ def render_report(result: dict) -> str:
         f"Supply interval / staggering: {assumptions['disttime_slices']} slices / {assumptions['staggered']}",
         f"Pipeline: wave, local decomposition; compiler pin: {result['compiler']['native_commit']}",
     ]
+    if "combined_failure_proxy" in physical:
+        model = physical["factory_model"]
+        lines.extend([
+            "", "--- physical factory and combined reliability ---",
+            *factory_description(model),
+            f"Layout failure allowance after reserving factory outputs: {assumptions['layout_failure_budget']:.10e}",
+            f"Factory-output failure bound (requests x error per state): {model['output_failure_bound']:.9e}",
+            f"Combined failure proxy (layout + factory outputs): {physical['combined_failure_proxy']:.9e}",
+            f"Runtime set by: {'factory throughput' if model['is_throughput_limited'] else 'core schedule'}",
+        ])
+    if conditioned:
+        lines[5:5] = [
+            f"Scope: {result['architecture_scope']}",
+            *[f"Scope note: {note}" for note in result.get("scope_notes", [])],
+            "",
+        ]
+        index = next(i for i, line in enumerate(lines) if line.startswith("Projector rotations / unique angles:"))
+        lines[index] = f"Projector rotations / distinct circuit types / original angles: {result['num_projector_rotations']} / {result['unique_projectors']} / {result['unique_projector_angles']}"
     if "optimization" in result:
         optimization = result["optimization"]
         lines += [
@@ -323,9 +417,15 @@ def render_comparison(comparison: dict) -> str:
     methods = comparison["methods"]
     names = [name for name in ("annealed", "compact", "edpc") if name in methods]
     successful = [methods[name] for name in names if methods[name]["status"] == "success"]
+    combined_budget = bool(successful) and all(
+        "combined_failure_proxy" in r["physical_projection"] for r in successful
+    )
     case_title = next((r["case_title"] for r in successful if r.get("case_title")), None)
+    conditioned = comparison.get("operator_family") == "preconditioned_1d" or any(
+        item.get("operator_family") == "preconditioned_1d" for item in successful
+    )
     lines = [
-        "FULL LAPLACIAN INVERSE: ARCHITECTURE COMPARISON",
+        "1D PRECONDITIONED INVERSE: ARCHITECTURE COMPARISON" if conditioned else "FULL LAPLACIAN INVERSE: ARCHITECTURE COMPARISON",
         *([f"Case: {case_title}"] if case_title else []),
         f"Run: {comparison.get('run_id', Path(comparison['run_directory']).name)}",
         "Status: " + ("SUCCESS" if len(successful) == len(names) else "INCOMPLETE / FAILED METHODS"),
@@ -366,12 +466,21 @@ def render_comparison(comparison: dict) -> str:
             "",
             "SHARED ASSUMPTIONS",
         ]
+        if conditioned:
+            index = next(i for i, line in enumerate(lines) if line.startswith("Projector rotations:"))
+            lines[index] = f"Projector rotations: {case['num_projector_rotations']}; distinct circuit types: {case['unique_projectors']}; original angles: {case['unique_projector_angles']}"
+            index = lines.index("SHARED ASSUMPTIONS") - 1
+            lines[index:index] = [
+                f"Scope: {case['architecture_scope']}",
+                *[f"Scope note: {note}" for note in case.get("scope_notes", [])],
+                f"Explicit boundary component applications: {case['num_boundary_components']}",
+            ]
         for key, label in (
             ("cycle_time_ns", "QEC cycle time (ns)"),
             ("physical_qubits_per_tile_factor", "Physical qubits per tile / d^2"),
             ("physical_error_rate", "Physical error rate"),
-            ("target_failure_probability", "Target layout-failure proxy"),
-            ("disttime_slices", "Magic-state supply interval (slices)"),
+            ("target_failure_probability", "Target combined failure proxy" if combined_budget else "Target layout-failure proxy"),
+            ("disttime_slices", "Compiler source interval (slices)" if combined_budget else "Magic-state supply interval (slices)"),
         ):
             values = [item["assumptions"][key] for item in successful]
             value = (
@@ -389,18 +498,24 @@ def render_comparison(comparison: dict) -> str:
                 else "fixed or mixed settings; see individual reports"
             )
         )
-        lines.append("Failure proxy: min(1, tiles * slices * d * 0.1 * (100*p_phys)^((d+1)/2)).")
+        if combined_budget:
+            lines += [
+                "Layout proxy: min(1, layout tiles x projected runtime in QEC rounds x logical error per round).",
+                "Combined proxy: min(1, layout proxy + T-state requests x output error per state).",
+            ]
+        else:
+            lines.append("Failure proxy: min(1, tiles * slices * d * 0.1 * (100*p_phys)^((d+1)/2)).")
         factory_models = [
             item["physical_projection"]["factory_model"] for item in successful
         ]
-        lines.append(
-            "Physical factory model: "
-            + (
-                "not supplied; abstract compiler sources"
-                if all(m is None for m in factory_models)
-                else "see each method report"
-            )
-        )
+        if combined_budget:
+            lines += ["", "PHYSICAL FACTORY", *factory_description(factory_models[0]),
+                      f"Layout failure allowance: {case['assumptions']['layout_failure_budget']:.10e}",
+                      "Projected runtime is the larger of core schedule time and factory production time."]
+        elif all(m is None for m in factory_models):
+            lines.append("Physical factory model: not supplied; abstract compiler sources")
+        else:
+            lines.append("Physical factory model: see each method report")
 
     lines += ["", "RESULTS"]
     table = [["Metric", *[
@@ -435,13 +550,16 @@ def render_comparison(comparison: dict) -> str:
     )
     if any("boundary" in r["schedule_projection"]["contributions"] for r in successful):
         table_row(
-            "QFT boundary slices",
-            lambda r: r["schedule_projection"]["contributions"]["boundary"]["slices"],
+            "Explicit boundary slices" if conditioned else "QFT boundary slices",
+            lambda r: r["schedule_projection"]["contributions"].get("boundary", {}).get("slices", 0),
         )
     table_row("Total projected slices", lambda r: r["schedule_projection"]["slices"])
     table_row("Code distance", lambda r: r["assumptions"]["code_distance"])
+    if combined_budget:
+        table_row("Core layout qubits", lambda r: r["physical_projection"]["resident_layout_physical_qubits"], lambda v: f"{v:,.0f}")
+        table_row("External factory qubits", lambda r: r["physical_projection"]["factory_model"]["external_factory_qubits"])
     table_row(
-        "Physical qubits",
+        "Total physical qubits" if combined_budget else "Physical qubits",
         lambda r: r["physical_projection"]["physical_qubits"],
         lambda v: f"{v:,.0f}",
     )
@@ -450,13 +568,16 @@ def render_comparison(comparison: dict) -> str:
         lambda r: r["physical_projection"]["runtime_seconds"],
         lambda v: f"{v:,.6f}",
     )
+    if combined_budget:
+        table_row("Runtime set by", lambda r: r["physical_projection"]["factory_model"]["is_throughput_limited"],
+                  lambda limited: "Factory supply" if limited else "Core schedule")
     table_row(
         "Space-time (qubit*s)",
         lambda r: r["physical_projection"]["space_time_ns_qubits"] * 1e-9,
         lambda v: f"{v:,.3f}",
     )
     table_row(
-        "Failure budget (<=)",
+        "Combined failure budget" if combined_budget else "Failure budget (<=)",
         lambda r: r["assumptions"]["target_failure_probability"],
         lambda v: f"{v:.6e}",
     )
@@ -465,6 +586,9 @@ def render_comparison(comparison: dict) -> str:
         lambda r: r["physical_projection"]["failure_probability_proxy"],
         lambda v: f"{v:.6e}",
     )
+    if combined_budget:
+        table_row("Factory-output bound", lambda r: r["physical_projection"]["factory_model"]["output_failure_bound"], lambda v: f"{v:.6e}")
+        table_row("Combined failure proxy", lambda r: r["physical_projection"]["combined_failure_proxy"], lambda v: f"{v:.6e}")
     table_row(
         "Meets failure budget",
         lambda r: r["physical_projection"]["meets_target_failure_probability"],
@@ -571,9 +695,20 @@ def publish_results(output: Path, comparison: dict) -> str:
         if mode == "per_method_minimum"
         else f"--fixed-code-distance --code-distance {distance}"
     )
+    if successful:
+        model = successful[0]["physical_projection"]["factory_model"]
+        if model and model.get("id"):
+            distance_options += (
+                f" --factory-model {model['id']} --num-factories {model['num_factories']}"
+                f" --timeout {successful[0]['compiler']['config']['timeout']:g}"
+            )
     case_title = next((r["case_title"] for r in successful if r.get("case_title")), None)
+    conditioned = comparison.get("operator_family") == "preconditioned_1d" or any(
+        item.get("operator_family") == "preconditioned_1d" for item in successful
+    )
+    title = "1D preconditioned Laplacian inverse resource estimates" if conditioned else "Full Laplacian inversion resource estimates"
     (output / "README.md").write_text(
-        "# Full Laplacian inversion resource estimates\n\n"
+        f"# {title}\n\n"
         + (f"Case: {case_title}.\n\n" if case_title else "")
         + "Start with [comparison_report.txt](comparison_report.txt) for the case definition, shared assumptions, results and tradeoffs.\n\n"
         "- [Annealed report](annealed_resource_report.txt)\n"

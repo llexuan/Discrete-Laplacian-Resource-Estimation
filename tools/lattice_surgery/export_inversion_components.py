@@ -10,6 +10,9 @@ from pathlib import Path
 
 def export_components(metrics_path: Path, phases_path: Path, output: Path) -> dict:
     """Match saved gate counts before exporting W and each distinct projector."""
+    metrics = json.loads(metrics_path.read_text())
+    if metrics.get("operator_family") == "preconditioned_1d":
+        return export_compiled_components(metrics_path, phases_path, output, metrics)
     from qiskit import QuantumCircuit, qasm2, transpile
     from laplacian_qsvt.laplacian.laplacian_inversion_encode import (
         build_projector_rotation_clifford_t,
@@ -19,7 +22,6 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
     from laplacian_qsvt.laplacian.laplacian_w_resource import build_w_operator
     from run_layout_comparison import normalize_qasm
 
-    metrics = json.loads(metrics_path.read_text())
     phases_metadata = json.loads(phases_path.read_text())
     logical = metrics["logical_resources"]
     phases = [float(phi) for phi in phases_metadata["phases"]]
@@ -178,7 +180,124 @@ def export_components(metrics_path: Path, phases_path: Path, output: Path) -> di
             ],
         )
         manifest["algorithm"]["inner_sinc2"] = metrics.get("inner")
+        if "unfiltered_inverse" in metrics:
+            manifest["algorithm"]["unfiltered_inverse"] = metrics["unfiltered_inverse"]
+            manifest["scope_notes"].append("The scaled inverse is verified in the odd QSP quadrature. Coherent quadrature extraction is outside this estimate.")
         manifest["accounting"] = "One W_cond, each unique phase rotation and the QFT/QFT^dag boundaries, weighted by occurrences; all components retain the full resident register."
+    (output / "inputs" / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    return manifest
+
+
+def export_compiled_components(
+    metrics_path: Path, phases_path: Path, output: Path, metrics: dict
+) -> dict:
+    """Validate and import the exact compiled conditioned-operator components.
+
+    Rebuilding an ordinary-Laplacian W from dimensions alone would silently
+    substitute a different operator. The logical producer therefore supplies
+    hashed, fully resident Clifford+T QASM for every component, including the
+    Fourier/extraction boundary operations counted once per inverse sequence.
+    """
+    from qiskit import qasm2
+    from laplacian_qsvt.laplacian.laplacian_nd_resource import CT_BASIS
+    from run_layout_comparison import normalize_qasm
+
+    logical = metrics["logical_resources"]
+    if logical["dimensions"] != 1:
+        raise ValueError("The preconditioned_1d exporter requires dimensions=1")
+    source_components = metrics["compiled_components"]
+    identifiers = [item["id"] for item in source_components]
+    if len(set(identifiers)) != len(identifiers) or "W" not in identifiers:
+        raise ValueError("Compiled component identifiers must be unique and include W")
+    for item in source_components:
+        identifier = item["id"]
+        if not identifier or not all(char.isalnum() or char == "_" for char in identifier):
+            raise ValueError(f"Invalid compiled component identifier: {identifier!r}")
+        if item["kind"] not in {"walk", "projector", "boundary"}:
+            raise ValueError(f"Unsupported component kind: {item['kind']}")
+        if not isinstance(item["occurrences"], int) or item["occurrences"] < 1:
+            raise ValueError("Component occurrences must be positive integers")
+    if sum(c["kind"] == "walk" for c in source_components) != 1:
+        raise ValueError("Expected one shared compiled W component")
+    if next(c for c in source_components if c["id"] == "W")["kind"] != "walk":
+        raise ValueError("Component W must have kind=walk")
+    phases = [float(phi) for phi in json.loads(phases_path.read_text())["phases"]]
+    expected = Counter()
+    for item in source_components:
+        if item["kind"] == "projector":
+            expected[repr(float(item["phi"]))] += item["occurrences"]
+    if Counter(repr(phi) for phi in phases) != expected or len(phases) != logical["num_projector_rotations"]:
+        raise ValueError("Phase input does not match the saved logical estimate")
+    if sum(c["occurrences"] for c in source_components if c["kind"] == "walk") != logical["num_w_applications"]:
+        raise ValueError("Walk multiplicity does not match the saved logical estimate")
+
+    # Validate every input before replacing any published inputs or snapshots.
+    validated = []
+    totals = Counter()
+    qubits = logical["logical_qubits"]
+    for item in source_components:
+        source = Path(item["qasm"])
+        if not source.is_absolute():
+            source = metrics_path.parent / source
+        source_bytes = source.read_bytes()
+        if hashlib.sha256(source_bytes).hexdigest() != item["qasm_sha256"]:
+            raise ValueError(f"{item['id']} compiled QASM hash differs from the logical report")
+        circuit = qasm2.loads(source_bytes.decode())
+        counts = dict(circuit.count_ops())
+        if set(counts) - set(CT_BASIS):
+            raise ValueError(f"{item['id']} is not an explicit Clifford+T circuit")
+        if counts != item["gate_counts"]:
+            raise ValueError(f"{item['id']} gate counts differ from the logical report")
+        t_count = counts.get("t", 0) + counts.get("tdg", 0)
+        if t_count != item["t_count"]:
+            raise ValueError(f"{item['id']} T count differs from the logical report")
+        _, size = normalize_qasm(source_bytes.decode())
+        if size != qubits or circuit.num_qubits != qubits:
+            raise ValueError(f"{item['id']} does not retain the full resident register")
+        validated.append((item, source_bytes))
+        for gate, count in counts.items():
+            totals[gate] += count * item["occurrences"]
+    if dict(totals) != logical["gate_counts"]:
+        raise ValueError("Exported component totals do not match the full logical estimate")
+
+    inputs = output / "inputs" / "components"
+    inputs.mkdir(parents=True, exist_ok=True)
+    snapshot_logical_inputs(metrics_path, phases_path, output)
+    components = []
+    for item, source_bytes in validated:
+        path = inputs / f"{item['id']}.qasm"
+        # Preserve the producer's hashed bytes, including when it already wrote
+        # directly to this path. The worker normalizes text after hash checking.
+        path.write_bytes(source_bytes)
+        components.append({
+            **item,
+            "qasm": str(path.resolve()),
+            "qasm_sha256": hashlib.sha256(source_bytes).hexdigest(),
+            "logical_qubits": qubits,
+        })
+        print(f"Exported {item['id']}: {sum(item['gate_counts'].values()):,} gates, {item['occurrences']} occurrences", flush=True)
+    manifest = {
+        "schema_version": 1,
+        "operator_family": metrics["operator_family"],
+        "scope": "preconditioned_1d_inverse_component_architecture_inputs",
+        "architecture_scope": metrics.get("architecture_scope", "1D conditioned inverse kernel on the nonzero-frequency subspace"),
+        "scope_notes": metrics.get("scope_notes", []),
+        "logical_metrics_source": str(metrics_path.resolve()),
+        "logical_metrics_sha256": hashlib.sha256(metrics_path.read_bytes()).hexdigest(),
+        "phases_source": str(phases_path.resolve()),
+        "phases_sha256": hashlib.sha256(phases_path.read_bytes()).hexdigest(),
+        "dimensions": 1,
+        "target_n": logical["target_n"],
+        "logical_qubits": qubits,
+        "num_w_applications": logical["num_w_applications"],
+        "num_projector_rotations": logical["num_projector_rotations"],
+        "num_boundary_components": sum(c["occurrences"] for c in components if c["kind"] == "boundary"),
+        "logical_gate_counts": dict(totals),
+        "algorithm": {key: metrics.get(key) for key in ("target_function", "kappa", "epsilon", "error_summary")},
+        "minimum_kappa_for_full_nonzero_spectrum": logical.get("minimum_kappa_for_full_nonzero_spectrum"),
+        "components": components,
+        "accounting": "One conditioned W and each unique projector weighted by occurrences, plus explicitly compiled boundary components; all components retain the full resident register.",
+    }
     (output / "inputs" / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
 
@@ -193,7 +312,11 @@ def snapshot_logical_inputs(metrics_path: Path, phases_path: Path, output: Path)
     (logical_dir / "inversion_resource_metrics.json").write_bytes(metrics_path.read_bytes())
     (output / "inputs" / "phases.json").write_bytes(phases_path.read_bytes())
     metrics = json.loads(metrics_path.read_text())
-    if metrics.get("case") == "preconditioned_1d_conditioned_kernel" and "verification" in metrics:
+    if metrics.get("operator_family") == "preconditioned_1d":
+        from laplacian_qsvt.laplacian.preconditioned_inversion_resource import render_resource_report as render_preconditioned_report
+
+        report = render_preconditioned_report(metrics)
+    elif metrics.get("case") == "preconditioned_1d_conditioned_kernel" and "verification" in metrics:
         from laplacian_qsvt.preconditioned.inversion import (
             render_resource_report as render_preconditioned_report,
         )

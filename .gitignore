@@ -18,6 +18,8 @@ surface-code-floorplanner/
 outputs/compiler/
 outputs/laplacian_inversion/*/runs/
 outputs/laplacian_inversion/*/inputs/components/
+outputs/preconditioned_laplacian/*/runs/
+outputs/preconditioned_laplacian/*/inputs/components/
 outputs/mini_circuit/runs/
 outputs/mini_circuit/artifacts/*
 !outputs/mini_circuit/artifacts/EDPC.lli

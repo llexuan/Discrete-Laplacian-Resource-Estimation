@@ -43,6 +43,7 @@ class RotationSynthesis:
     clifford_count: int
     depth: int
     t_depth: int
+    method: str = "get_ring_elts_direct + exact_decomp"
 
 
 def projective_operator_norm_error(
@@ -122,6 +123,7 @@ def _rotation_result(
     target,
     epsilon: float,
     reported_t_count: int,
+    method: str = "get_ring_elts_direct + exact_decomp",
 ) -> RotationSynthesis:
     """Correct pyLIQTR's global phase and collect emitted circuit resources."""
     target_matrix = Operator(target).data
@@ -156,15 +158,34 @@ def _rotation_result(
         clifford_count=clifford_count,
         depth=int(circuit.depth()),
         t_depth=t_depth,
+        method=method,
     )
 
 
 @lru_cache(maxsize=None)
 def _synthesize_rz_cached(theta_text: str, epsilon_text: str) -> RotationSynthesis:
+    theta, epsilon = float(theta_text), float(epsilon_text)
+    circuit = QuantumCircuit(1, name="Rz_Clifford_T")
+    # The endpoint phases of a full Chebyshev series can be below tolerance.
+    # Certify the identity directly and retain its actual error in the sum.
+    if abs(theta) <= 2 * epsilon:
+        return _rotation_result(circuit, RZGate(theta), epsilon, 0, "identity within tolerance")
+    if abs(theta) < 1e-9:
+        # pyLIQTR's direct lattice search can stall at sub-nanoradian angles.
+        # Add two commuting rotations about Z, each synthesized to half the budget.
+        offset = math.pi / 8
+        half_budget = repr(epsilon / 2)
+        first = _synthesize_rz_cached(repr(offset), half_budget)
+        second = _synthesize_rz_cached(repr(theta - offset), half_budget)
+        circuit.compose(first.circuit, inplace=True)
+        circuit.compose(second.circuit, inplace=True)
+        return _rotation_result(
+            circuit, RZGate(theta), epsilon, first.t_count + second.t_count,
+            "two offset Rz rotations, pyLIQTR at half tolerance",
+        )
     rz_gates, reported_t_count, theta, epsilon = _pyliqtr_rz_gates(
         theta_text, epsilon_text, "Rz"
     )
-    circuit = QuantumCircuit(1, name="Rz_Clifford_T")
     for gate in rz_gates:
         circuit.append(gate, [0])
     return _rotation_result(circuit, RZGate(theta), epsilon, reported_t_count)
@@ -201,6 +222,7 @@ def _copy_result(result: RotationSynthesis) -> RotationSynthesis:
         clifford_count=result.clifford_count,
         depth=result.depth,
         t_depth=result.t_depth,
+        method=result.method,
     )
 
 
